@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpumach:info" action="init" caption="Actual Uses" index="1" mnemonic="U"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.RPUMachInfoActualUseModel">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.RPUMachInfoActualUsePage"/>
+    </pages>
+</workunit>

@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="landspecificclass" 
+          windowTitle="Machines"
+          cols="code,name,state" 
+          orderBy="code" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Land Specific Classes"  index="3" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Land Specific Classes"  index="3" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/lands.png"/-->
+        
+        <invoker type="quick_launcher" code="LSC00" caption="Land Specific Classes"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpuland:info" caption="Memoranda" index="1000" mnemonic="M" />
+        <invoker type="rpubldg:info" caption="Memoranda" index="1000" mnemonic="M" />
+        <invoker type="rpumach:info" caption="Memoranda" index="1000" mnemonic="M" />
+        <invoker type="rpuplanttree:info" caption="Memoranda" index="1000" mnemonic="M" />
+        <invoker type="rpumisc:info" caption="Memoranda" index="1000" mnemonic="M" />
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.RPUInfoMemorandaModel" >
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.RPUInfoMemorandaPage"/>
+    </pages>
+</workunit>

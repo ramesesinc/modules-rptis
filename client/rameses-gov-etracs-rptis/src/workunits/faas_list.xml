@@ -1,0 +1,18 @@
+<workunit extends="wtemplates/ExplorerViewController.xml" defaultFileType="faaslist" autoSelect="true">
+    <invokers>
+        <invoker folderid="/menucategory/rpt/mgmt" 
+                 caption="View FAAS List"  
+                 role="SHARED,ASSESSOR_SHARED" 
+                 index="101" />
+        
+        <invoker type="quick_launcher" 
+                 code="FM00" caption="FAAS List"  
+                 role="SHARED,ASSESSOR_SHARED" index="101"/>
+    </invokers>
+        <code class="com.rameses.gov.etracs.rptis.models.FAASExplorerViewModel">
+    </code>   
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.FAASExplorerViewPage" />
+        <page name="queryform" template="com.rameses.gov.etracs.rptis.views.FAASListQueryForm"/>
+    </pages>
+</workunit>

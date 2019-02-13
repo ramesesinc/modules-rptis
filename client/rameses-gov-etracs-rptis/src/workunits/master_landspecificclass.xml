@@ -1,0 +1,19 @@
+<workunit extends="rpt_wtemplates/MasterModel.xml"
+    schemaName="landspecificclass">
+    
+    <invokers>
+        <invoker type="landspecificclass:create" 
+                 caption="Land Specific Class" 
+                 action="create" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="landspecificclass.create" />
+        
+        <invoker type="landspecificclass:open" 
+                 caption="Land Specific Class" 
+                 action="open" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="landspecificclass.read"/>
+    </invokers>
+</workunit>

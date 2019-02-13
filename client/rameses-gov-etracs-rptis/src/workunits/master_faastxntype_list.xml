@@ -1,0 +1,20 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="faastxntype" 
+          windowTitle="Transaction Types"
+          cols="objid,name,displaycode" 
+          orderBy="objid" 
+          allowDelete="false">
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Transaction Types"  index="15" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Transaction Types"  index="15" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/txntypes.png"/-->
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.master.models.TxnTypeListModel"/>
+</workunit>

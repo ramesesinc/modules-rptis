@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpuland:info" caption="Signatories" index="55" mnemonic="T" visibleWhen="#{entity.datacapture == 1 || entity.datacapture == true}"/>
+        <invoker type="rpubldg:info" caption="Signatories" index="55" mnemonic="T" visibleWhen="#{entity.datacapture == 1 || entity.datacapture == true}"/>
+        <invoker type="rpumach:info" caption="Signatories" index="55" mnemonic="T" visibleWhen="#{entity.datacapture == 1 || entity.datacapture == true}"/>
+        <invoker type="rpuplanttree:info" caption="Signatories" index="55" mnemonic="T" visibleWhen="#{entity.datacapture == 1 || entity.datacapture == true}"/>
+        <invoker type="rpumisc:info" caption="Signatories" index="55" mnemonic="T" visibleWhen="#{entity.datacapture == 1 || entity.datacapture == true}"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.RPUInfoSignatoriesModel">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.RPUInfoSignatoriesPage"/>
+    </pages>
+</workunit>

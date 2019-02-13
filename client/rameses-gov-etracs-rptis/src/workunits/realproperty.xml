@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="realproperty:create" action="init" caption="Real Property" role="TAXMAPPER" target="popup" />
+        <invoker type="extActions" action="add" caption="Add" mnemonic="a" />
+    </invokers>
+        
+    <code class="com.rameses.gov.etracs.rpt.realproperty.ui.RealPropertyController" >
+
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rpt.realproperty.ui.RealPropertyPage" />
+    </pages>
+</workunit>

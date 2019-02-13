@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingModel.xml">
+    <invokers>
+        <invoker type="planttreerysetting:create" 
+                 action="create" 
+                 caption="Miscellaneous Revision Setting" 
+                 target="window" 
+                 entityName="planttreerysetting" 
+                 serviceName="PlantTreeRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+        <invoker type="planttreerysetting:open" 
+                 action="open" 
+                 caption="Edit Plant/TreeRevision Setting" 
+                 target="window" 
+                 entityName="planttreerysetting" 
+                 serviceName="PlantTreeRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+    </invokers>
+</workunit>

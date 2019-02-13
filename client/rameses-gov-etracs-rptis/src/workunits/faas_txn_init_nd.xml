@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASInitTxnModel.xml">
+    <invokers>       
+        <invoker type="quick_launcher" code="ND01" action="init" caption="New Discovery" 
+            txntype="ND" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createNewDiscovery" index="110"/>
+            
+        <invoker type="faas:transaction" action="init" caption="New Discovery" 
+            txntype="ND" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createNewDiscovery" index="110"  />
+            
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.models.FAASInitNewDiscoveyModel">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.FAASInitNewDiscoveryPage"/>
+    </pages>    
+</workunit>
+
+

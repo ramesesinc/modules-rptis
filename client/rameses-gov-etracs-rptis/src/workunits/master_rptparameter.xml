@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/MasterModel.xml"
+    schemaName="rptparameter">
+    
+    <invokers>
+        <invoker type="rptparameter:create" 
+                 caption="Parameter" 
+                 action="create" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="rptparameter.create" />
+        
+        <invoker type="rptparameter:open" 
+                 caption="Parameter" 
+                 action="open" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="rptparameter.read"/>
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.master.models.RPTParameterModel"/>
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.master.views.RPTParameterPage"/>
+    </pages>
+</workunit>

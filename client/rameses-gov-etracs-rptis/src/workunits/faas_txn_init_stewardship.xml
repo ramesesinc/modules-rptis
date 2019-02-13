@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASInitTxnModel.xml">
+    <invokers>       
+        <invoker type="quick_launcher" code="STW01" action="init" caption="Stewardship" 
+            txntype="ST" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createStewardship" index="150"/>
+            
+        <invoker type="faas:transaction" action="init" caption="Stewardship" 
+            txntype="ST" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createStewardship" index="150"  />
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.models.FAASInitStewardshipModel">
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.FAASInitStewardshipPage"/>
+    </pages>    
+</workunit>

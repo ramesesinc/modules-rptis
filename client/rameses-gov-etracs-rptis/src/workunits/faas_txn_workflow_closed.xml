@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faas:open:closedwf" action="open" caption="FAAS" target="window"  />
+        <invoker type="formActions" action="_close" caption="Close" immediate="true" />
+   </invokers>
+   
+   <code class="com.rameses.gov.etracs.rptis.models.FAASClosedModel" >
+   </code>    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rptis.views.WorkflowPage"/>
+    </pages>
+</workunit>
+
+

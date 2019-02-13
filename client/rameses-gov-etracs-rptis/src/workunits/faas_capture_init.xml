@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+         <invoker type="quick_launcher" code="DC01" 
+         	action="init"  caption="Data Capture" index="1" role="ENCODER" />
+         
+         <invoker folderid="/menucategory/rpt/manual" 
+         	action="init" caption="Data Capture FAAS" 
+         	index="1" 
+         	newrpu="true" 
+         	newrealproperty="true"  
+         	role="ENCODER" />         
+
+         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" icon="images/toolbars/cancel.png" immediate="true" />
+         <invoker type="formActions" action="process" caption="Next" mnemonic="n" icon="images/toolbars/arrow_right.png" />
+    </invokers>
+        
+<code class="com.rameses.gov.etracs.rptis.models.FAASInitCaptureModel">
+</code>
+
+<pages>
+    <page template="com.rameses.gov.etracs.rptis.views.FAASInitCapturePage"/>
+</pages>
+</workunit>
+
+

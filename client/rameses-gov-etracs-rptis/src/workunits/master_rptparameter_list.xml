@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="rptparameter" 
+          windowTitle="Parameters"
+          cols="name,caption,paramtype,state" 
+          orderBy="name" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Parameters"  index="11" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Parameters"  index="11" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/parameters.png"/-->
+        
+        <invoker type="quick_launcher" code="PARAM00" caption="Parameters"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

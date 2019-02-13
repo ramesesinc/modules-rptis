@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingListModel.xml" formName="planttreerysetting:list">
+    <invokers>
+        <invoker folderid="/explorer/setting/rpt" 
+                 caption="Plant/Tree Revision Settings" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="planttreerysetting"
+                 serviceName="PlantTreeRYSettingService"
+                 index="4"/>
+        
+        <!--invoker folderid="/home/rpt/setting"
+                 caption="Plant/Tree" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="planttreerysetting"
+                 serviceName="PlantTreeRYSettingService"
+                 icon="home/icons/settingplanttree.png"
+                 index="4"/-->        
+    </invokers>
+</workunit>

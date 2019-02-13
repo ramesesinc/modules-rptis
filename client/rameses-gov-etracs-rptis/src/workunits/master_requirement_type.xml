@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterModel.xml"
+    schemaName="rpt_requirement_type">
+    
+    <invokers>
+        <invoker type="rpt_requirement_type:create" 
+                 caption="Requirement Type" 
+                 action="create" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="rpt_requirement_type.create" />
+        
+        <invoker type="rpt_requirement_type:open" 
+                 caption="Requirement Type" 
+                 action="open" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="rpt_requirement_type.read"/>
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.master.models.RequirementTypeModel"/>
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.master.views.RequirementTypePage"/>
+    </pages>
+</workunit>

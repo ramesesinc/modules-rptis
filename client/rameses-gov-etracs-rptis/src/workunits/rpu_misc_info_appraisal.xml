@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpumisc:info" action="init" caption="Property Appraisal" index="5" mnemonic="a"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.RPUMiscInfoAppraisalModel">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.RPUMiscInfoAppraisalPage"/>
+    </pages>
+</workunit>

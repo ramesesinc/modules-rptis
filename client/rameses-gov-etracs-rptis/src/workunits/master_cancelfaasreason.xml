@@ -1,0 +1,19 @@
+<workunit extends="rpt_wtemplates/MasterModel.xml"
+    schemaName="cancelfaasreason">
+    
+    <invokers>
+        <invoker type="cancelfaasreason:create" 
+                 caption="Cancellation Reason" 
+                 action="create" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="cancelfaasreason.create" />
+        
+        <invoker type="cancelfaasreason:open" 
+                 caption="Cancellation Reason" 
+                 action="open" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="cancelfaasreason.read"/>
+    </invokers>
+</workunit>

@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="miscitem" 
+          windowTitle="Miscellaneous Items"
+          cols="code,name,state" 
+          orderBy="code" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Miscellaneous Items"  index="10" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Miscellaneous Items"  index="10" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/miscitems.png"/-->
+        
+        <invoker type="quick_launcher" code="MI00" caption="Miscellaneous Items"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

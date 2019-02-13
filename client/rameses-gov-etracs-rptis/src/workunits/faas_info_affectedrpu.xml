@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faas:info" action="init" caption="Affected Improvements" index="20" visibleWhen="#{entity.txntype.objid=='RV' &amp;&amp; entity.rpu.rputype=='land'}"/>
+        
+        <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="TAXMAPPER"/>
+        <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode != 'read'}" />
+   </invokers>
+   <code class="com.rameses.gov.etracs.rptis.models.FAASAffectedRPUModel">
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rptis.views.FAASAffectedRPUPage"/>
+    </pages>
+</workunit>
+
+

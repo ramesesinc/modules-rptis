@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingModel.xml">
+    <invokers>
+        <invoker type="bldgrysetting:create" 
+                 action="create" 
+                 caption="Building Revision Setting" 
+                 target="window" 
+                 entityName="bldgrysetting" 
+                 serviceName="BldgRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+        <invoker type="bldgrysetting:open" 
+                 action="open" 
+                 caption="Edit Building Revision Setting" 
+                 target="window" 
+                 entityName="bldgrysetting" 
+                 serviceName="BldgRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+    </invokers>
+</workunit>

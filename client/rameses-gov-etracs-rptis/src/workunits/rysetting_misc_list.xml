@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingListModel.xml" formName="miscrysetting:list">
+    <invokers>
+        <invoker folderid="/explorer/setting/rpt" 
+                 caption="Miscellaneous Revision Settings" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="miscrysetting"
+                 serviceName="MiscRYSettingService"
+                 index="5"/>
+        
+        <!--invoker folderid="/home/rpt/setting"
+                 caption="Miscellaneous" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="miscrysetting"
+                 serviceName="MiscRYSettingService"
+                 icon="home/icons/settingmisc.png"
+                 index="5"/-->        
+    </invokers>
+</workunit>

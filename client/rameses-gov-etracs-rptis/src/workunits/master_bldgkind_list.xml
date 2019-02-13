@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="bldgkind" 
+          windowTitle="Kind of Buildings"
+          cols="code,name,state" 
+          orderBy="code" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Kind of Buildings"  index="5" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!-- invoker folderid="/home/rpt/master" caption="Kind of Buildings"  index="5" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/bldgkinds.png"/-->
+        
+        <invoker type="quick_launcher" code="BK00" caption="Kind of Buildings"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

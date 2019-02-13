@@ -1,0 +1,39 @@
+"entity.*" [true == true]{
+    visible:true;
+    enabled:true;
+    required:true;
+}   
+
+"entity.claimno" [true == true]{
+    required:false;
+}   
+
+
+"entity.(pintype|provcity|munidistrict|barangay|isection|iparcel|claimno|useoldpin)" [faas && faas.rputype != null && faas.rputype != 'land']{
+    visible:false;
+}   
+
+"landfaas" [faas == null || faas.rputype == 'land']{
+    visible:false;
+}
+
+"landfaas" [faas &&  faas.rputype != 'land']{
+    visible:true;
+    required:true;
+}
+
+"entity.suffix" [faas && faas.rputype != null && faas.rputype == 'land']{
+    visible:false;
+}
+
+"entity.useoldpin"[entity.pintype == 'new']{
+    visible:false;
+}
+
+"faas" [!externalCall] {
+    enabled:true;
+}
+
+"faas" [externalCall] {
+    enabled:false;
+}

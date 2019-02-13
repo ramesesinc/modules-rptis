@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingListModel.xml" formName="machrysetting:list">
+    <invokers>
+        <invoker folderid="/explorer/setting/rpt" 
+                 caption="Machinery Revision Settings" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="machrysetting"
+                 serviceName="MachRYSettingService"
+                 index="3"/>
+        
+        <!--invoker folderid="/home/rpt/setting"
+                 caption="Machinery" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="machrysetting"
+                 serviceName="MachRYSettingService"
+                 icon="home/icons/settingmach.png"
+                 index="3"/-->
+    </invokers>
+</workunit>

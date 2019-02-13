@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="structure" 
+          windowTitle="Structures"
+          cols="code,name,indexno,showinfaas,state" 
+          orderBy="indexno" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Structures"  index="7" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Structures"  index="7" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/structures.png"/-->
+        
+        <invoker type="quick_launcher" code="ST00" caption="Structures"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

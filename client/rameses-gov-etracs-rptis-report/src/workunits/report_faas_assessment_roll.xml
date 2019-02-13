@@ -1,0 +1,95 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" 
+            action="init" 
+            caption="Assessment Roll" 
+            target="window" 
+            role="ASSESSOR_REPORT,REPORT" />
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+
+class AssessmentRollController extends com.rameses.gov.etracs.rpt.report.AsyncReportController
+{
+    @Service('RPTReportAssessmentRollService') 
+    def svc 
+    
+    String title = 'Assessment Roll';
+    
+    String reportPath = 'com/rameses/gov/etracs/rpt/report/';
+    
+        
+    def initReport(){
+        entity.ry = svc.getCurrentRy()
+        return 'default'
+    }
+    
+    
+    String getReportName(){
+        if (entity.reporttype.type == 'standard'){
+            if (entity.taxability == 'TAXABLE')
+                return reportPath + 'assessmentrolltaxable.jasper';
+            return reportPath + 'assessmentrollexempt.jasper';
+        }
+        else if (entity.reporttype.type == 'continuous'){
+            if (entity.taxability == 'TAXABLE')
+                return reportPath + 'assessmentrollcontinuous.jasper';
+            return reportPath + 'assessmentrollcontinuousexempt.jasper';
+        }
+    }
+    
+    void buildReportData(entity, asyncHandler){
+        if (!entity.reporttype)
+            throw new Exception('Report Type is required.');
+            
+        if (entity.reporttype.type == 'standard'){
+            if (entity.taxability == 'TAXABLE')
+                svc.generateAssessmentRollTaxable( entity, asyncHandler )
+            else
+                svc.generateAssessmentRollExempt( entity, asyncHandler )
+        }
+        else {
+            if (entity.taxability == 'TAXABLE')
+                svc.generateContinuousAssessmentRoll(entity, asyncHandler);
+            else
+                svc.generateContinuousAssessmentRollExempt(entity, asyncHandler);
+        }
+    }
+    
+    def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "combo", [caption:'Report Type', name:'entity.reporttype', required:true, items:'reportTypes', expression:'#{item.caption}', allowNull:false, captionWidth:100]),
+                new FormControl( "combo", [caption:'LGU', name:'entity.lgu', required:true, items:'lgus', expression:'#{item.name}', captionWidth:100]),
+                new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', required:true, items:'barangays', expression:'#{item.name}', depends:'entity.(reporttype|lgu)', dynamic:true, captionWidth:100]),
+                new FormControl( "integer", [caption:'Year', name:'entity.ry', required:true, preferredSize:'50,21', captionWidth:100]),            
+                new FormControl( "combo", [caption:'Taxability', name:'entity.taxability', items:'taxabilities', required:true, immediate:true, depends:'entity.reporttype', captionWidth:100]),
+                new FormControl( "text", [caption:'Section', name:'entity.section', preferredSize:'50,19', depends:'entity.reporttype', visibleWhen:'#{entity.reporttype.type=="standard"}', captionWidth:100]),
+            ]    
+        },
+   ] as FormPanelModel;
+   
+    
+    def getTaxabilities(){
+        return ['TAXABLE', 'EXEMPT']
+    }
+    
+    def getReportTypes(){
+        return [
+            [type:'standard', caption:'STANDARD'],
+            [type:'continuous', caption:'CONTINUOUS'],
+        ]
+    }
+}
+
+]]>        
+        
+    </code>
+</workunit>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingModel.xml">
+    <invokers>
+        <invoker type="miscrysetting:create" 
+                 action="create" 
+                 caption="Miscellaneous Revision Setting" 
+                 target="window" 
+                 entityName="miscrysetting" 
+                 serviceName="MiscRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+        <invoker type="miscrysetting:open" 
+                 action="open" 
+                 caption="Edit Miscellaneous Revision Setting" 
+                 target="window" 
+                 entityName="miscrysetting" 
+                 serviceName="MiscRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+    </invokers>
+</workunit>

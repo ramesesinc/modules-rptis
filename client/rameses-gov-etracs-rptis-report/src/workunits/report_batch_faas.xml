@@ -1,0 +1,38 @@
+<workunit  extends="rpt_wtemplates/BatchReportController.xml">
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" 
+                 action="init" 
+                 caption="FAAS Batch Printing" 
+                 target="window" 
+                role="ASSESSOR_REPORT,REPORT" />
+    </invokers>
+    <code >
+    <![CDATA[
+    
+import com.rameses.rcp.common.*;
+ import com.rameses.rcp.annotations.*;
+ 
+ class FAASBatchReportController extends com.rameses.gov.etracs.rpt.report.AbstractBatchReportController
+ {
+     @Service('FAASReportService')
+     def svc;
+
+     def title='FAAS Batch Printing'
+
+
+    public def getItems(params){
+        return svc.getFaasIds(params);
+    }
+
+    public def getReportData(entity){
+        return [entity:entity];
+    }
+
+    public def getReportInvokerName(){
+        return 'faas:report';
+    }    
+}
+
+    ]]>    
+    </code>
+</workunit>

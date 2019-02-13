@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faas:info" action="init" caption="Requirements" index="5" />
+        <invoker type="subdivision:info" action="init" caption="Requirements" index="5" />
+        <invoker type="subdivisionfromcs:info" action="init" caption="Requirements" index="5" />
+        <invoker type="consolidation:info" action="init" caption="Requirements" index="5" />
+        <invoker type="resection:info" action="init" caption="Requirements" index="5" />
+        <invoker type="mcsettlement:info" action="init" caption="Requirements" index="5" />
+        <invoker type="cancelledfaas:info" action="init" caption="Requirements" index="5" />
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        <invoker type="formActions" action="openViewer" caption="Open Viewer" visibleWhen="#{showViewer==true}" />
+   </invokers>
+   <code class="com.rameses.gov.etracs.rptis.models.FAASRequirementsModel">
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.requirement.ui.RequirementInfoPage"/>
+    </pages>
+</workunit>
+
+

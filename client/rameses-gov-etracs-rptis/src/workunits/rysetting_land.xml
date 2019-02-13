@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingModel.xml">
+    <invokers>
+        <invoker type="landrysetting:create" 
+                 action="create" 
+                 caption="Land Revision Setting" 
+                 target="window" 
+                 entityName="landrysetting" 
+                 serviceName="LandRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+        <invoker type="landrysetting:open" 
+                 action="open" 
+                 caption="Edit Land Revision Setting" 
+                 target="window" 
+                 entityName="landrysetting" 
+                 serviceName="LandRYSettingService"
+                 role="ASSESSOR_DATAMGMT,MASTER" />
+        
+    </invokers>
+</workunit>

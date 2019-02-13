@@ -1,0 +1,42 @@
+"entity.or.*" [officialuse == true]{
+    enabled:false;
+    required:false;
+}
+
+"entity.or.*" [officialuse != true]{
+    enabled:true;
+    required:true;
+}
+
+
+"entity.(tdno|taxpayer.*)|taxpayers"[true == true]{
+    visible:false;
+}
+
+"entity.tdno|entity.(taxpayername|taxpayeraddress)" [entity.certtype && entity.certtype.type == 'byfaas']{
+    visible:true;
+}
+
+"entity.taxpayer|entity.taxpayeraddress" [entity.certtype && entity.certtype.type == 'bytaxpayer']{
+    visible:true;
+}
+
+"taxpayers" [entity.certtype && entity.certtype.type == 'bytaxpayers']{
+    visible:true;
+    required:false;
+}
+
+
+"entity.certtype"[certificationTypes.size() == 1]{
+    visible:false;
+}
+
+"entity.asofyear" [showasofyear == true]{
+    visible:true;
+    required:true;
+}
+
+"entity.asofyear" [showasofyear == false]{
+    visible:false;
+    required:false;
+}

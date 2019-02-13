@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpuplanttree:info" action="init" caption="Appraisal" index="1" mnemonic="A"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.RPUPlantTreeInfoAppraisalModel">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.RPUPlantTreeInfoAppraisalPage"/>
+    </pages>
+</workunit>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="sketch:rp" action="initNew" caption="Sketch (old)" index="6" />
+        <invoker type="formActions" action="convertToDrawing" caption="Convert To Drawing" role="APPRAISER,TAXMAPPER"/>
+   </invokers>
+   <code class="com.rameses.gov.etracs.rpt.faas.ui.FaasSketchRealPropertyController">
+  </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.util.SketchPage"/>
+    </pages>
+</workunit>

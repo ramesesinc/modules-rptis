@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASInitTxnModel.xml">
+    <invokers>
+        <invoker type="quick_launcher" code="TR01" action="init" caption="Transfer of Ownership" 
+                 txntype="TR" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="1"  />
+        <invoker type="faas:transaction" action="init" caption="Transfer of Ownership" 
+                 txntype="TR" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="1"  />
+            
+        <invoker type="quick_launcher" code="TR02" action="init" caption="Transfer with Reassessment" 
+                 txntype="TRE" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="2"  />
+        <invoker type="faas:transaction" action="init" caption="Transfer with Reassessment" 
+                 txntype="TRE" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="2"  />
+        
+            
+            
+        <invoker type="quick_launcher" code="TR03" action="init" caption="Transfer with Correction" 
+                 txntype="TRC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="3"  />
+        <invoker type="faas:transaction" action="init" caption="Transfer with Correction" 
+                 txntype="TRC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createTransfer" index="3"  />
+                    
+            
+        <invoker type="quick_launcher" code="CE01" action="init" caption="Correction of Entry" 
+                 txntype="CE" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createCorrection" index="80"  />
+        <invoker type="faas:transaction" action="init" caption="Correction of Entry" 
+                 txntype="CE" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createCorrection" index="80"  />
+            
+            
+        <invoker type="quick_launcher" code="CC01" action="init" caption="Change Classification" 
+                 txntype="CC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createChangeClassification" index="40"  />
+        <invoker type="faas:transaction" action="init" caption="Change Classification" 
+                 txntype="CC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createChangeClassification" index="40"  />
+            
+            
+        <invoker type="quick_launcher" code="CT01" action="init" caption="Change Taxability" 
+                 txntype="CT" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createChangeTaxability" index="60"  />
+        <invoker type="faas:transaction" action="init" caption="Change Taxability" 
+                 txntype="CT" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createChangeTaxability" index="60"  />
+            
+            
+        <invoker type="quick_launcher" code="CD01" action="init" caption="Change Depreciation" 
+                 txntype="CD" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createChangeDepreciation" index="50"  />
+        <invoker type="faas:transaction" action="init" caption="Change Depreciation" 
+                 txntype="CD" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createChangeDepreciation" index="50"  />
+        
+            
+        <invoker type="quick_launcher" code="RE01" action="init" caption="Re-Assessment" 
+                 txntype="RE" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createReassessment" index="130"  />
+        <invoker type="faas:transaction" action="init" caption="Re-Assessment" 
+                 txntype="RE" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createReassessment" index="130"  />
+        
+        <invoker type="quick_launcher" code="CA01" action="init" caption="Change Administrator" 
+                 txntype="CA" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createReassessment" index="30"  />
+        <invoker type="faas:transaction" action="init" caption="Change Administrator" 
+                 txntype="CA" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createReassessment" index="30"  />
+        
+        <invoker type="faas:transaction" action="init" caption="Destruction of Property" 
+                 txntype="DT" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createPropertyDestruction" index="90"  />
+
+        
+        <invoker type="faas:transaction" action="init" caption="Physical Obsolescence" 
+                 txntype="PC" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createPhysicalObsolescence" index="120"  />
+
+      
+        <invoker type="faas:transaction" action="init" caption="Unknown to Known" 
+                 txntype="UK" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createUnknownToKnown" index="190"  />
+    </invokers>
+</workunit>
+
+

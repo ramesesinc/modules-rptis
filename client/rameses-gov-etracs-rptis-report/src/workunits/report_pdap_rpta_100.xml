@@ -1,0 +1,11 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" 
+            action="init" 
+            caption="PDAP-RPTA 100 Report" target="window" 
+            role="ASSESSOR_REPORT,REPORT" />
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.report.models.PdapRpta100ReportModel">
+
+    </code>
+</workunit>

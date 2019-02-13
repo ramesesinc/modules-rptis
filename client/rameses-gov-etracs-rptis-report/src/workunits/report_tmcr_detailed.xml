@@ -1,0 +1,59 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" 
+            action="init" 
+            caption="Tax Mapping Control Roll (Detailed)" target="window" 
+            role="ASSESSOR_REPORT,REPORT" />
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+
+class TMCRDetailedController extends com.rameses.gov.etracs.rpt.report.AsyncReportController
+{
+    @Service('RPTReportTMCRService') 
+    def svc 
+    
+    String title = 'Tax Mapping Control Roll Report'
+    
+    String reportName = 'com/rameses/gov/etracs/rpt/report/tmcr_detailed.jasper';
+    
+    def initReport(){
+        entity.ry = svc.getCurrentRy();
+        return 'default'
+    }
+    
+    void buildReportData(entity, asyncHandler){
+        svc.generateTMCRDetailed(entity, asyncHandler);
+    }
+    
+    def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "combo", [captionWidth:110, caption:'LGU', name:'entity.lgu', required:true, allowNull:false, items:'lgus', expression:'#{item.name}']),
+                new FormControl( "combo", [captionWidth:110,caption:'Barangay', name:'entity.barangay', required:true, allowNull:false, items:'barangays', expression:'#{item.name}', depends:'entity.lgu', dynamic:true]),
+                new FormControl( "integer", [captionWidth:110,caption:'Revision Year', name:'entity.ry', required:true, preferredSize:'50,21']),            
+                new FormControl( "text", [captionWidth:110,caption:'Section', name:'entity.section', preferredSize:'50,19', required:true]),
+                new FormControl( "separator", [showCaption:false, preferredSize:'0,19']),
+                new FormControl( "checkbox", [captionWidth:130, caption:'Exclude Improvements?', name:'entity.excludeimprov', preferredSize:'0,19', required:true, cellPadding:'20,0,0,0']),
+            ]    
+        },
+   ] as FormPanelModel;
+   
+    Map getParameters(){
+        return [SECTION:entity.section]
+    }
+    
+   
+}
+
+]]>        
+        
+    </code>
+</workunit>

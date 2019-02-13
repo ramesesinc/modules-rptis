@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingListModel.xml" formName="landrysetting:list">
+    <invokers>
+        <invoker folderid="/explorer/setting/rpt" 
+                 caption="Land Revision Settings" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="landrysetting"
+                 serviceName="LandRYSettingService"
+                 index="1"/>
+        
+        <!--invoker folderid="/home/rpt/setting"
+                 caption="Land" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="landrysetting"
+                 serviceName="LandRYSettingService"
+                 icon="home/icons/settingland.png"
+                 index="1"/-->
+    </invokers>
+</workunit>

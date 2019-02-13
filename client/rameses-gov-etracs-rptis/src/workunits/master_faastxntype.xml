@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/MasterModel.xml"
+    schemaName="faastxntype">
+    
+    <invokers>
+        <invoker type="faastxntype:open" 
+                 caption="Transaction Type" 
+                 action="open" 
+                 target="popup" 
+                 role="MASTER"
+                 permission="faastxntype.read"/>
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.master.models.TxnTypeModel"/>
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.master.views.TxnTypePage"/>
+    </pages>
+</workunit>

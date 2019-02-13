@@ -1,0 +1,37 @@
+"entity.*" [ mode=='processing' ] {
+    enabled: false; 
+} 
+"entity.*" [ !(mode=='processing') ] {
+    enabled: true; 
+} 
+"entity.year" [ !(entity.period?.code=='AS_OF_YEAR' || entity.period?.code=='FOR_THE_YEAR') ] {
+    visible: false; 
+} 
+"entity.year" [ entity.period?.code=='AS_OF_YEAR' || entity.period?.code=='FOR_THE_YEAR' ] {
+    visible: true; 
+} 
+
+"entity.(fromyear|toyear)"[true==true]{
+    visible:false;
+}
+
+"entity.(fromyear|toyear)"[entity.period?.code=='YEAR_RANGE']{
+    visible:true;
+    required:true;
+}
+
+"entity.period"[true == true]{
+    visible:true;
+}
+
+"entity.period"[entity.format.type == 'format2']{
+    visible:false;
+}
+
+"entity.classification"[entity.format.type != 'format3']{
+    visible:false;
+}
+
+"entity.classification"[entity.format.type == 'format3']{
+    visible:true;
+}

@@ -1,0 +1,50 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" 
+            action="init" 
+            caption="List of Titled Properties" 
+            target="window" 
+            role="REPORT" permission="faas-titled-report.viewreport"/>
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+class TitledFaasListingController extends com.rameses.gov.etracs.rpt.report.AsyncReportController
+{
+    @Service('RPTReportFaasTitledListingService') 
+    def svc 
+    
+    String title = 'List of Titled Properties'
+    String path = 'com/rameses/gov/etracs/rptis/reports/';
+    
+    String getReportName(){
+        if (entity.taxpayer)
+            return path + 'faas_titled_listing_bytaxpayer.jasper';
+        return path + 'faas_titled_listing.jasper';
+    }
+    
+    void buildReportData(entity, asyncHandler){
+        svc.buildReport(entity, asyncHandler)
+    }
+    
+   def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "combo", [caption:'LGU', name:'entity.lgu', items:'lgus', expression:'#{item.name}', allowNull:false]),
+                new FormControl( "combo", [caption:'Barangay', name:'entity.barangay', items:'barangays', expression:'#{item.name}', depends:'entity.lgu', dynamic:true, emptyText:'ALL']),
+                new FormControl( "text", [caption:'Section', name:'entity.section', depends:'entity.barangay',  visibleWhen:'#{entity.barangay != null}']),
+                new FormControl( "lookup", [caption:'Taxpayer', name:'entity.taxpayer', preferredSize:'[0,21]', handler:'entity:lookup', expression:'#{item.name}']),
+            ]    
+        },
+   ] as FormPanelModel;
+}
+]]>        
+        
+    </code>
+</workunit>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/FAASInitTxnModel.xml">
+    <invokers>       
+        <invoker type="quick_launcher" code="GR01" action="init" caption="General Revision" 
+            txntype="GR" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createGeneralRevision" index="100"  />
+            
+        <invoker type="faas:transaction" action="init" caption="General Revision" 
+            txntype="GR" role="APPRAISER,EXAMINER,RECEIVER" permission="faas.createGeneralRevision" index="100"  />
+        
+            
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.models.FAASInitGeneralRevisionModel">
+    </code>
+</workunit>
+
+

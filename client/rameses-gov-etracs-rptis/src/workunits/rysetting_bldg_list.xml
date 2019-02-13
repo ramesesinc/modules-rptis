@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="rpt_wtemplates/RYSettingListModel.xml" formName="bldgrysetting:list">
+    <invokers>
+        <invoker folderid="/explorer/setting/rpt" 
+                 caption="Building Revision Settings" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="bldgrysetting"
+                 serviceName="BldgRYSettingService"
+                 index="2"/>
+        
+        <!--invoker folderid="/home/rpt/setting" 
+                 caption="Building" 
+                 target="window" 
+                 role="ASSESSOR_DATAMGMT,MASTER" 
+                 entityName="bldgrysetting"
+                 serviceName="BldgRYSettingService"
+                 icon="home/icons/settingbldg.png"
+                 index="2"/-->
+    </invokers>
+</workunit>

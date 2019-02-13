@@ -1,0 +1,34 @@
+<workunit>
+    <invokers>
+        <invoker type="rptis_master:export" 
+                 caption="Export Master Files" 
+                 action="init" 
+                 target="popup" />
+        
+        <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" visibleWhen="#{mode != 'processing'}"/>
+        <invoker type="formActions" action="cancel" caption="Cancel" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" visibleWhen="#{mode == 'processing'}"/>
+        <invoker type="formActions" action="export" caption="Export" mnemonic="e" visibleWhen="#{mode == 'init'}" role="MASTER"/> 
+    </invokers>
+    <code>
+        <![CDATA[
+        
+        import com.rameses.rcp.annotations.*;
+        import com.rameses.rcp.common.*;
+        
+        class MasterExportModel extends com.rameses.gov.etracs.rptis.models.ExportModel
+        {
+            @Service('RPTISMasterExportService')
+            def svc; 
+            
+            void getData(asyncHandler){
+                svc.exportData(entity, asyncHandler)
+            }
+        }
+
+        ]]>
+                
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.util.ExportImportPage"/>
+    </pages>
+</workunit>

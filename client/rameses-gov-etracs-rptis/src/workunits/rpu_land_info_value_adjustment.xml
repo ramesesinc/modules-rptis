@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="rpuland:info" action="init" caption="Value Adjustment" index="3" mnemonic="v"/>
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.RPULandInfoValueAdjustmentModel">
+    </code>
+    
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.RPULandInfoValueAdjustmentPage"/>
+    </pages>
+</workunit>

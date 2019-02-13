@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="cancelfaasreason" 
+          windowTitle="Cancellation Reasons"
+          cols="code,name,state" 
+          orderBy="code" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Cancellation Reasons"  index="4" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Cancellation Reasons"  index="4" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/canceldoc.png"/-->
+        
+        <invoker type="quick_launcher" code="CFR00" caption="Cancellation Reasons"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

@@ -1,0 +1,23 @@
+<workunit extends="rpt_wtemplates/MasterListModel.xml" 
+          schemaName="machine" 
+          windowTitle="Machines"
+          cols="code,name,state" 
+          orderBy="code" >
+    <invokers>
+        <invoker folderid="/explorer/master/rpt" caption="Machines"  index="8" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+        
+        <!--invoker folderid="/home/rpt/master" caption="Machines"  index="8" 
+                 action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist"
+                 icon="home/icons/machines.png"/-->
+        
+        <invoker type="quick_launcher" code="MACH00" caption="Machines"  
+                action="init" 
+                 role="MASTER" 
+                 permission="master.viewlist" />
+    </invokers>
+</workunit>

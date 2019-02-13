@@ -1,0 +1,40 @@
+"entity.*" [mode == 'processing'] {
+    enabled: false; 
+} 
+"entity.*" [mode != 'processing'] {
+    enabled: true; 
+} 
+
+
+
+"entity.(year|qtr|month|asofdate|basicrate|sefrate)" [true == true]{
+    visible:false;
+    required:false;
+}   
+
+"entity.(year|qtr)" [entity.reporttype.type == 'period']{
+    visible:true;
+    required:true;
+}   
+
+"entity.month" [entity.reporttype.type == 'period']{
+    visible:true;
+}   
+
+"entity.asofdate" [entity.reporttype.type != 'period']{
+    visible:true;
+    required:true;
+}   
+
+"entity.classification"[true==true]{
+    visible:false;
+}
+
+"entity.classification"[showClassification==true || showClassification == null]{
+    visible:true;
+}
+
+
+"entity.(basicrate|sefrate)"[showRate == true]{
+    visible:true;
+}

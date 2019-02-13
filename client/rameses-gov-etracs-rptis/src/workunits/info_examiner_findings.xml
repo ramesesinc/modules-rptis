@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit>
+    <invokers>
+        <invoker type="faas:info" action="init" doctype="faas" caption="Examination Findings" index="10" />
+        <invoker type="subdivision:info" action="init" doctype="subdivision" caption="Examination Findings" index="10" />
+        <invoker type="subdivisionfromcs:info" action="init" doctype="subdivision" caption="Examination Findings" index="10" />
+        <invoker type="consolidation:info" action="init" doctype="consolidation" caption="Examination Findings" index="10" />
+        <invoker type="resection:info" action="init" doctype="resection" caption="Examination Findings" index="10" />
+        <invoker type="mcsettlement:info" action="init" doctype="mcsettlement" caption="Examination Findings" index="10" />
+        <invoker type="cancelledfaas:info" action="init" doctype="cancelledfaas" caption="Examination Findings" index="10" />
+        
+        <invoker type="formActions" action="refresh" caption="Refresh" mnemonic="r" />
+        
+        <invoker type="formActions" action="create" caption="New" mnemonic="n" visibleWhen="#{showActions == true}" role="EXAMINER" />
+        <invoker type="formActions" action="viewFinding" caption="Open" mnemonic="o" role="EXAMINER" visibleWhen="#{showActions == true &amp;&amp; selectedFinding != null}" depends="selectedFinding"/>
+        <invoker type="formActions" action="delete" caption="Delete" mnemonic="r" role="EXAMINER" visibleWhen="#{showActions == true &amp;&amp; selectedFinding != null  &amp;&amp; allowEdit==true}" depends="selectedFinding"/>
+        <invoker type="formActions" action="preview" caption="Preview" mnemonic="v" visibleWhen="#{selectedFinding != null}" depends="selectedFinding"/>        
+   </invokers>
+   <code>
+
+<![CDATA[
+
+        
+import com.rameses.rcp.annotations.* 
+import com.rameses.rcp.common.* 
+import com.rameses.osiris2.client.*
+import com.rameses.osiris2.common.*
+
+class ExaminationFindingsInfoController
+{
+    @Binding
+    def binding;
+    
+    @Service('ExaminationService')
+    def examinationSvc;
+
+    @Invoker 
+    def invoker 
+    
+    def svc;
+    
+    
+    def entity;
+    def findings;
+    def mode;
+    def selectedFinding;
+    
+    def MODE_READ = 'read';
+    def MODE_EDIT = 'edit';
+    
+    String title = 'Examination Findings'
+    
+    void init(){
+        findings = examinationSvc.getFindings(entity.objid)
+        listHandler?.load();
+        mode = MODE_READ;
+    }
+    
+    void refresh(){
+        init();
+    }
+       
+    def listHandler = [
+        fetchList : { return findings }
+    ] as BasicListModel
+    
+       
+    boolean getAllowEdit(){
+        if (entity.state.matches('CURRENT|CANCELLED|APPROVED'))
+            return false;
+        if (mode != MODE_READ) 
+            return false;
+        return true;
+    }
+       
+       
+    def create(){
+        entity.doctype = invoker.properties.doctype 
+        return InvokerUtil.lookupOpener('examinerfinding:create', [
+            entity : entity,
+            
+            onadd  : {
+                init();
+            },
+
+            ondelete : ondelete,
+        ])
+    }
+       
+    def viewFinding(){
+       return InvokerUtil.lookupOpener('examinerfinding:open', [
+            entity : entity,
+            allowEdit : getAllowEdit(),
+            finding : selectedFinding,
+            showActions: showActions,
+            
+            onupdate : {
+                init();
+            },
+
+            ondelete : ondelete,
+        ])
+    }
+
+    def ondelete = {
+
+        findings.remove(it);
+        listHandler.load();
+    }
+       
+    def delete(){
+        if ( !selectedFinding ) 
+            return;
+            
+        if ( MsgBox.confirm('Remove selected item?') ){
+            examinationSvc.removeFinding(selectedFinding);
+            findings.remove(selectedFinding);
+            listHandler.load();
+        }
+    }
+       
+       
+    def preview(){
+        if (!selectedFinding) return;
+        
+       return InvokerUtil.lookupOpener('ocularinspection:preview', [
+            entity : selectedFinding,
+        ])
+    }
+    
+    
+    boolean getShowActions(){
+        if (entity.state.matches('CURRENT')) return true;
+        if (entity.state.matches('CANCELLED')) return false;
+        if (entity.taskstate && entity.taskstate.matches('assign.*')) return false;
+        if (entity.taskstate && !entity.taskstate.matches('examiner')) return false;
+        if (OsirisContext.env.USERID != entity.assignee.objid) return false;
+        return true;
+    }    
+}
+       
+       
+]]>
+
+   </code>
+    
+    <pages> 
+        <page template="com.rameses.gov.etracs.rpt.examination.ui.ExaminationListPage"/>
+    </pages>
+</workunit>
+
+

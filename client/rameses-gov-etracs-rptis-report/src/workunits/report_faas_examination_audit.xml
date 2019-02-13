@@ -1,0 +1,60 @@
+<workunit extends="rpt_wtemplates/ReportController.xml" >
+    <invokers>
+        <invoker folderid="/explorer/report/rpt" action="init" 
+                caption="Property Examination and Audit Report" 
+                target="window" 
+                role="ASSESSOR_REPORT,REPORT" />
+    </invokers>
+    <code>
+
+<![CDATA[
+
+import com.rameses.rcp.common.*;
+import com.rameses.rcp.annotations.*;
+import com.rameses.osiris2.client.*;
+import com.rameses.osiris2.reports.*;
+
+class ExaminationAuditReportController extends com.rameses.gov.etracs.rpt.report.AsyncReportController
+{
+    @Service('RPTReportExaminationService') 
+    def svc 
+    
+    @Binding 
+    def binding;
+    
+    String title = 'Property Examination and Audit Report'
+    boolean showClassification = false;
+    
+    String reportName = 'com/rameses/gov/etracs/rpt/report/property_examination_audit.jasper';
+    
+    void buildReportData(entity, asyncHandler){
+        svc.generateReport(entity, asyncHandler); 
+    }
+    
+    Map getParameters(){
+        data.parameters.LOGOLGU = getInputStream('lgu-logo.png');
+        return data.parameters;
+    }
+    
+    def formControl = [
+        getFormControls: {
+            return [
+                new FormControl( "integer", [caption:'Year', name:'entity.year', required:true, preferredSize:'100,19']),
+                new FormControl( "combo", [caption:'Quarter', name:'entity.qtr', items:'quarters', required:true, immediate:true, preferredSize:'100,19']),
+                new FormControl( "combo", [caption:'Month', name:'entity.month', items:'months', depends:'entity.qtr', expression:'#{item.name}', dynamic:true, preferredSize:'100,19', allowNull:false, required:true]),
+                new FormControl( "combo", [caption:'Day', name:'entity.day', items:'days', dynamic:true, depends:['entity.month'] as String[], immediate:true, preferredSize:'100,19', emptyText:'ALL']),
+                new FormControl( "combo", [caption:'User', name:'entity.user', items:'users', dynamic:true, expression:'#{item.name}', preferredSize:'250,19']),
+            ]    
+        },
+   ] as FormPanelModel;
+   
+   
+   def getUsers(){
+        return svc.getUsers();
+   }
+   
+}
+]]>        
+        
+    </code>
+</workunit>
