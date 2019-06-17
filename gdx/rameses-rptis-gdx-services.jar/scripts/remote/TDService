@@ -4,6 +4,7 @@ import com.rameses.common.*
 import com.rameses.services.extended.*
 
 class TDService  {
+
     @Service(value="TDOnlineService", connection="local-etracs")
     def svc;
 
@@ -11,4 +12,6 @@ class TDService  {
     public def verifyTaxDec( def params ) {
         return svc.verifyTaxDec(params)
     }
+
+    
 }

@@ -1,0 +1,94 @@
+<% 
+    def dtsvc = SERVICE.lookup("DateService", "default"); 
+    def curyear = dtsvc.getServerYear(); 
+%>
+  <script>
+     \$put( "payoptions", new function() {
+        this.qtr;
+        this.callbackHandler;
+        this.fromyear;
+        this.fromqtr;
+        this.toyear = ${curyear + 3};
+        this.toqtr = 4;
+        
+        this.years = []; 
+        this.qtrs = [];
+
+        this.year = ${curyear};
+        this.qtr = this.toqtr;
+
+        var _self = this;
+
+        this.buildQtrs = function(){
+            let endqtr = 1;
+            
+            if (this.year == this.fromyear){
+                endqtr = this.fromqtr;                
+            }
+
+            this.qtrs = [];
+            for(let qtr = 4; qtr >= endqtr; qtr--){
+                this.qtrs.push(qtr);
+            }
+        }
+
+        this.onload = function(){
+            for( let yr = this.toyear; yr >= this.fromyear; yr--){
+                this.years.push(yr);
+            }
+            this.buildQtrs();
+        }
+
+        this.propertyChange = function(name, value){
+            if (name == "year" && this.year == this.fromyear){
+                _self.buildQtrs();
+                _self._controller.refresh("qtr");
+            }
+        }
+
+        this.doSelect = function() {
+            this.callbackHandler( {year: this.year,  qtr: this.qtr} );
+            return "_close";
+        }
+
+        this.doCancel = function() {
+            return "_close";
+        }
+         
+     });
+  </script>
+
+
+
+       
+                
+                  <div class="qtr-popUp" style="height:170px;"> 
+
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label class="pull-left">Year to Pay:</label>
+                        <select r:context="payoptions" r:name="year" r:items="years" class="form-control form-control-lg"></select>
+                    
+                        <label class="pull-left"> Quarter to Pay:</label>
+                        <select r:context="payoptions" r:name="qtr" r:items="qtrs" class="form-control form-control-lg"></select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <br>
+                  <div class="row">
+                      <div class="col-md-6 col-xs-6">
+                        <button r:context="payoptions" r:name="doSelect" class=" btn-response btn thumbnail btn-primary ">Submit</button>  
+                      </div>
+                      <div class="col-md-6 col-xs-6">
+                        <button r:context="payoptions" r:name="doCancel" class="btn-response btn thumbnail btn btn-danger">Cancel</button>  
+                      </div>
+                    </div>
+                  
+     
+         
+            
+  
+
+
+
