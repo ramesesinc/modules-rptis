@@ -96,7 +96,7 @@
           }
           else {
             var refno = o.result.objid;
-            WindowUtil.load( "/partners/${PARAMS.name}/paymentorder", {refno: refno});          
+            WindowUtil.load( "/epayment/paymentorder", {refno: refno});          
           }  
       });
     }

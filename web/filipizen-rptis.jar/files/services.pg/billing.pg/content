@@ -1,55 +1,189 @@
+<style type="text/css">
+.fade.in {
+    background: #00000030;
+}
+.close {
+    line-height: .6;
+}
+#barcode {
+    float: right;
+    height:80px;
+}
+
+@media print {
+  .navbar-inverse{display:none}
+  .footer{display:none}
+  .no-print{display:none}
+  .print{margin:30px}
+  .left{float:left}
+  .right{right}
+  #blackbar{display:none}
+  #Header, #Footer { display: none ! important; }
+  @page {size: auto;margin: 0mm;}
+}
+@media screen{
+  #barcode{display:none;}
+}
+.caption-class {width:200px;}
+</style>
 
 <script>
-	\$register( {id:'askrefno', page:"${PAGE.path}/askrefno", context: 'askrefno' } );
-	\$register( {id:'viewbill', page:"${PAGE.path}/viewbill", context: 'viewbill' } );
-
 	\$put( "billing", new function() {
 
 		var self = this;
 		this.error;
-		this.orgcode = "${PARAMS.info.id}";
+		this.mode;
 		this.bill;
+		this.refno;
+		this.year;
+		this.qtr;
+		this.barcode;
 		this.payorderdetails;
+		this.show_owner_name = true;
+    	this.show_owner_address = true;
+		this.orgcode = "${PARAMS.info.id}";    	
 		this.lgu = {title:"${PARAMS.info.title}", group: "${PARAMS.info.group.title}"};
+		this.years;
+		this.qtrs;
+		this.hasparam = false;
+		this.txntype = "rptcol";
 
+		var svc;
 
-		var hash = window.location.hash;
-		if( !hash ) {
-			window.location.hash = "askrefno";
-		}
+		this.loadBill = function() {
+			if(!svc) svc = Service.lookup(self.orgcode + ":EPaymentService");
 
-		var _service;
-		this.getBillingService = function() {
-			if( !_service ) {
-				_service = Service.lookup(this.orgcode + ":RPTBillingService");
-			}
-			return _service;
-		}
-
-		this.loadBill = function( params, handler ) {
-			self.getBillingService().getBilling( params, function(o,s) {
+			var params = {refno : this.refno, txntype: this.txntype };
+			if(this.qtr) params.qtr = this.qtr;
+		    if(this.year) params.year = this.year;
+			svc.getBilling( params, function(o,s) {
 				if( s == "error" ) {
 					self.error = o.result;
 					self._controller.refresh();
 				}
 				else {
 					self.error = null;
-					self._controller.refresh();	
+					self.mode = "viewbill";
+					console.log( o.result );
 					self.payorderdetails = o.result;
 					self.bill = o.result.info;
 					self.bill.amount = o.result.amount;
-					console.log( o.result );
-					handler();
+					self.barcode = "56001:"+self.bill.billno; 					
+					self._controller.refresh();	
 				}
 			});
 		}
 
+		this.viewInitial = function() {
+			self.mode = "initial";
+		}
+
+		this.recomputeBill = function() {
+			this.loadBill();
+			\$('#payOption').modal('hide');
+		}
+
+		this.closeOption = function() {
+			\$('#payOption').modal('hide');
+		}
+
+		this.showPayOption = function() {
+			\$('#payOption').modal('show');
+		}
+
+		this.onload = function() {
+			this.refno = WindowUtil.getParameter("refno");
+			this.qtr = WindowUtil.getParameter("qtr");
+    		this.year = WindowUtil.getParameter("year");
+			this.qtrs = [4,3,2,1];
+			this.years = [2001,2002]; 
+			if(this.refno) {
+				this.hasparam = true;
+				this.loadBill(); 
+			}
+			else {
+				this.mode = "initial";
+			}	
+		}
+
+		this.printBill = function() {
+			window.print();	
+		}
+
+		this.createPaymentOrder = function() {
+		    var pp = {};
+		    pp.refno = this.refno;
+		    pp.orgcode = self.orgcode;
+		    pp.origin = "filipizen";
+		    pp.txntype = this.txntype;
+		    if(this.qtr) pp.qtr = this.qtr;
+		    if(this.year) pp.year = this.year;
+		    svc.createPaymentOrder( pp, function(o,s) {
+		        if( s == "error" ) {
+		          alert("error " + o.result );
+		        }
+		        else {
+		          var refno = o.result.objid;
+		          WindowUtil.load( "/epayment/paymentorder", {refno: refno});          
+		        }  
+		    });
+		}
+
 	})
 </script>
+<script src="/res/partner/JsBarcode.code128.min.js"></script>
 
-<h1>Real Property Online Billing</h1>
+
 <div r:context="billing" r:visibleWhen="#{error!=null}">
   <label r:context="billing" style="color:red;">#{error}</label>
 </div>
 
-<div id="content"></div>
+<div r:context="billing" r:visibleWhen="#{mode == 'initial'}" style="display:none;">
+	<div class="form">
+	  @wx:text(caption:'Specify Tax Decalartion No', context:'billing', name:'refno')
+	</div>
+	@wx:button( caption:'Submit', context:'billing', name:'loadBill')
+</div>
+
+
+<div r:context="billing" r:visibleWhen="#{mode == 'viewbill'}" style="display:none;">
+	<div class="print">
+		<div class="form">
+			@wx:label( caption:'Bill No', context:'billing', expr:'#{bill.billno}' )	
+			@wx:label( caption:'Bill Date', context:'billing', expr:'#{bill.billdate}' )	
+			@wx:label( caption:'TD No', context:'billing', expr:'#{bill.tdno}' )	
+			@wx:label( caption:'Full PIN', context:'billing', expr:'#{bill.fullpin}' )	
+			@wx:label( caption:'Owner', context:'billing', expr:'#{bill.taxpayer.name }' )	
+			@wx:label( caption:'Owner Address', context:'billing', expr:'#{bill.taxpayer.address }', visibleWhen:'#{show_owner_address == true }' )	
+			@wx:label( caption:'Bill Period', context:'billing', expr:'#{bill.billperiod }' )	
+			@wx:label( caption:'Amt Due', context:'billing', expr:'#{bill.amount.formatDecimal&#40;&#41;}' )	
+		</div>
+	 </div>		
+	@wx:button( caption: 'Back', context:'billing', name: 'viewInitial', visibleWhen:'#{hasparam == false}' )
+	@wx:button( caption: 'Print Bill', context:'billing', name: 'printBill' )
+	@wx:button( caption: 'Pay Option', context:'billing', name: 'showPayOption' )
+	@wx:button( caption: 'Proceed for Payment', context:'billing', name: 'createPaymentOrder' )
+</div>
+
+<div class="modal fade" id="payOption" tabindex="-1" role="dialog" aria-labelledby="payOption" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+	    <div class="modal-header">
+	      Select a Period	
+	      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	        <span aria-hidden="true">&times;</span>
+	      </button>
+	    </div>
+	    <div class="modal-body">
+	    	@wx:combo(caption:'Year', context:'billing', name:'year', attrs: [items:'years'])
+	    	@wx:combo(caption:'Qtr', context:'billing', name:'qtr', attrs: [items:'qtrs'])
+	      
+	      <button r:context="billing" r:name="closeOption" class="submit">Close</button> 
+	      <button r:context="billing" r:name="recomputeBill" class="submit">OK</button> 
+	    </div>
+	  </div>
+	</div>
+</div>
+
+
+
