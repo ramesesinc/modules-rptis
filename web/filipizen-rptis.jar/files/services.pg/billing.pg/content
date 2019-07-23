@@ -1,33 +1,8 @@
-<style type="text/css">
-.fade.in {
-    background: #00000030;
-}
-.close {
-    line-height: .6;
-}
-#barcode {
-    float: right;
-    height:80px;
-}
 
-@media print {
-  .navbar-inverse{display:none}
-  .footer{display:none}
-  .no-print{display:none}
-  .print{margin:30px}
-  .left{float:left}
-  .right{right}
-  #blackbar{display:none}
-  #Header, #Footer { display: none ! important; }
-  @page {size: auto;margin: 0mm;}
-}
-@media screen{
-  #barcode{display:none;}
-}
-.caption-class {width:200px;}
-</style>
-
+<link href="/res/rptis/rptbilling.css" type="text/css" rel="stylesheet" />
 <script>
+	\$register( {id:'selectyearqtr', context:'selectyearqtr', page: '/rptis/fragments/selectyearqtr'});
+
 	\$put( "billing", new function() {
 
 		var self = this;
@@ -43,8 +18,6 @@
     	this.show_owner_address = true;
 		this.orgcode = "${PARAMS.info.id}";    	
 		this.lgu = {title:"${PARAMS.info.title}", group: "${PARAMS.info.group.title}"};
-		this.years;
-		this.qtrs;
 		this.hasparam = false;
 		this.txntype = "rptcol";
 
@@ -54,8 +27,8 @@
 			if(!svc) svc = Service.lookup(self.orgcode + ":EPaymentService");
 
 			var params = {refno : this.refno, txntype: this.txntype };
-			if(this.qtr) params.qtr = this.qtr;
-		    if(this.year) params.year = this.year;
+			if(this.qtr) params.billtoqtr = this.qtr;
+		    if(this.year) params.billtoyear = this.year;
 			svc.getBilling( params, function(o,s) {
 				if( s == "error" ) {
 					self.error = o.result;
@@ -78,25 +51,23 @@
 			self.mode = "initial";
 		}
 
-		this.recomputeBill = function() {
-			this.loadBill();
-			\$('#payOption').modal('hide');
-		}
-
-		this.closeOption = function() {
-			\$('#payOption').modal('hide');
-		}
-
 		this.showPayOption = function() {
-			\$('#payOption').modal('show');
+			var m = {};
+			m.handler = function(o) {
+				self.year = o.year;
+				self.qtr = o.qtr;
+				self.loadBill();
+			};
+			m.fromyear = self.bill.fromyear;
+			m.toyear = self.bill.toyear;
+			m.fromqtr = self.bill.fromqtr;
+			return new PopupOpener( "selectyearqtr", m , {title: 'Pay Option'})
 		}
 
 		this.onload = function() {
 			this.refno = WindowUtil.getParameter("refno");
 			this.qtr = WindowUtil.getParameter("qtr");
     		this.year = WindowUtil.getParameter("year");
-			this.qtrs = [4,3,2,1];
-			this.years = [2001,2002]; 
 			if(this.refno) {
 				this.hasparam = true;
 				this.loadBill(); 
@@ -116,8 +87,8 @@
 		    pp.orgcode = self.orgcode;
 		    pp.origin = "filipizen";
 		    pp.txntype = this.txntype;
-		    if(this.qtr) pp.qtr = this.qtr;
-		    if(this.year) pp.year = this.year;
+		    if(this.qtr) pp.billtoqtr = this.qtr;
+		    if(this.year) pp.billtoyear = this.year;
 		    svc.createPaymentOrder( pp, function(o,s) {
 		        if( s == "error" ) {
 		          alert("error " + o.result );
@@ -140,7 +111,7 @@
 
 <div r:context="billing" r:visibleWhen="#{mode == 'initial'}" style="display:none;">
 	<div class="form">
-	  @wx:text(caption:'Specify Tax Decalartion No', context:'billing', name:'refno')
+	  @wx:text(caption:'Specify Tax Decalartion No', context:'billing', name:'refno', inputClass:'searchtext')
 	</div>
 	@wx:button( caption:'Submit', context:'billing', name:'loadBill')
 </div>
@@ -160,30 +131,11 @@
 		</div>
 	 </div>		
 	@wx:button( caption: 'Back', context:'billing', name: 'viewInitial', visibleWhen:'#{hasparam == false}' )
-	@wx:button( caption: 'Print Bill', context:'billing', name: 'printBill' )
+	@wx:button( caption: 'Print Bill', context:'billing', name: 'printBill', visibleWhen:'#{ bill.amount > 0}' )
 	@wx:button( caption: 'Pay Option', context:'billing', name: 'showPayOption' )
-	@wx:button( caption: 'Proceed for Payment', context:'billing', name: 'createPaymentOrder' )
+	@wx:button( caption: 'Proceed for Payment', context:'billing', name: 'createPaymentOrder', visibleWhen:'#{ bill.amount > 0}' )
 </div>
 
-<div class="modal fade" id="payOption" tabindex="-1" role="dialog" aria-labelledby="payOption" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-	  <div class="modal-content">
-	    <div class="modal-header">
-	      Select a Period	
-	      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	        <span aria-hidden="true">&times;</span>
-	      </button>
-	    </div>
-	    <div class="modal-body">
-	    	@wx:combo(caption:'Year', context:'billing', name:'year', attrs: [items:'years'])
-	    	@wx:combo(caption:'Qtr', context:'billing', name:'qtr', attrs: [items:'qtrs'])
-	      
-	      <button r:context="billing" r:name="closeOption" class="submit">Close</button> 
-	      <button r:context="billing" r:name="recomputeBill" class="submit">OK</button> 
-	    </div>
-	  </div>
-	</div>
-</div>
 
 
 
