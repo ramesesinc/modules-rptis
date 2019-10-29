@@ -12,13 +12,13 @@
 
 	this.search = function() {
 		var svc = Service.lookup( orgcode + ":TDService");
-		svc.verifyTaxDec( {refno: this.refno}, function(o,s) {
-			if( s == "error" ) {
-				self.error = o.result;
+		return svc.verifyTaxDec( {refno: this.refno}, function(s,o) {
+			if( s.status == "ERROR" ) {
+				self.error = s.msg;
 			}
 			else {
 				self.error = null;
-				self.info = o.result;	
+				self.info = o;	
 				self.mode = "viewinfo"
 			}
 			self._controller.refresh();

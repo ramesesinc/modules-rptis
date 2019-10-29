@@ -29,21 +29,19 @@
 			var params = {refno : this.refno, txntype: this.txntype };
 			if(this.qtr) params.billtoqtr = this.qtr;
 		    if(this.year) params.billtoyear = this.year;
-			svc.getBilling( params, function(o,s) {
-				if( s == "error" ) {
-					self.error = o.result;
-					self._controller.refresh();
+			return svc.getBilling( params, function(s,o) {
+				if( s.status == "ERROR" ) {
+					self.error = s.msg;
 				}
 				else {
 					self.error = null;
 					self.mode = "viewbill";
-					console.log( o.result );
-					self.payorderdetails = o.result;
-					self.bill = o.result.info;
-					self.bill.amount = o.result.amount;
+					self.payorderdetails = o;
+					self.bill = o.info;
+					self.bill.amount = o.amount;
 					self.barcode = "56001:"+self.bill.billno; 					
-					self._controller.refresh();	
 				}
+				self._controller.refresh();					
 			});
 		}
 
@@ -89,12 +87,12 @@
 		    pp.txntype = this.txntype;
 		    if(this.qtr) pp.billtoqtr = this.qtr;
 		    if(this.year) pp.billtoyear = this.year;
-		    svc.createPaymentOrder( pp, function(o,s) {
-		        if( s == "error" ) {
-		          alert("error " + o.result );
+		    return svc.createPaymentOrder( pp, function(s,o) {
+		        if( s.status == "ERROR" ) {
+		          alert("error " + s.msg );
 		        }
 		        else {
-		          var refno = o.result.objid;
+		          var refno = o.objid;
 		          WindowUtil.load( "/epayment/paymentorder", {refno: refno});          
 		        }  
 		    });

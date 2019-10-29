@@ -20,19 +20,17 @@
 		this.loadInfo = function() {
 			var svc = Service.lookup(this.orgcode + ":TDService");
 			var params = {refno : this.refno };
-			svc.verifyTaxDec( params, function(o,s) {
-				if( s == "error" ) {
-					self.error = o.result;
-					self._controller.refresh();
+			return svc.verifyTaxDec( params, function(s,o) {
+				if( s.status == "ERROR" ) {
+					self.error = s.msg;
 				}
 				else {
 					self.error = null;
 					self.mode = "viewinfo";
-					self.payorderdetails = o.result;
-					console.log( o.result );
-					self.info = o.result;
-					self._controller.refresh();	
+					self.payorderdetails = o;
+					self.info = o;
 				}
+				self._controller.refresh();				
 			});
 		}
 
@@ -57,12 +55,12 @@
 		    pp.orgcode = self.orgcode;
 		    pp.origin = "filipizen";
 		    pp.txntype = "rptclearance";
-		    svc.createPaymentOrder( pp, function(o,s) {
-		        if( s == "error" ) {
-		          alert("error " + o.result );
+		    return svc.createPaymentOrder( pp, function(s,o) {
+		        if( s.status == "ERROR" ) {
+		          alert("error " + s.msg );
 		        }
 		        else {
-		          var refno = o.result.objid;
+		          var refno = o.objid;
 		          WindowUtil.load( "/epayment/paymentorder", {refno: refno});          
 		        }  
 		    });
