@@ -1,5 +1,14 @@
 
 <link href="/res/rptis/rptbilling.css" type="text/css" rel="stylesheet" />
+<style>
+	.year {
+		padding-top:10px;width:80px;height:25px;padding:0px;cellpadding-right:5px;
+	}
+	.tdno {
+		font-size:1.5rem;
+		font-weight:bold;
+	}
+</style>
 <script>
 	\$register( {id:'selectyearqtr', context:'selectyearqtr', page: '/rptis/fragments/selectyearqtr'});
 
@@ -31,7 +40,14 @@
 		    if(this.year) params.billtoyear = this.year;
 			return svc.getBilling( params, function(s,o) {
 				if( s.status == "ERROR" ) {
-					self.error = s.msg;
+					var fullypaid = false;
+					fullypaid = s.msg.match(/fully|unpaid/) != null;
+					if (fullypaid) {
+						self.mode = "initial-advance";
+						self.error = null;
+					} else {
+						self.error = s.msg;
+					}
 				}
 				else {
 					self.error = null;
@@ -110,6 +126,20 @@
 <div r:context="billing" r:visibleWhen="#{mode == 'initial'}" style="display:none;">
 	<div class="form">
 	  @wx:text(caption:'Specify Tax Decalartion No', context:'billing', name:'refno', inputClass:'searchtext')
+	</div>
+	@wx:button( caption:'Submit', context:'billing', name:'loadBill')
+</div>
+
+<div r:context="billing" r:visibleWhen="#{mode == 'initial-advance'}" style="display:none;">
+	<div class="form">
+	  <div style="font-size:1.5rem;padding-bottom:15px;">
+	  The associated ledger is fully paid for the current year.<br/> 
+	  To pay in advance, specify the Year to pay and click on Submit.
+	  </div>
+	  <div>
+	  	@wx:label(caption:'Tax Declaration No.', context:'billing', expr:'#{refno}', inputClass:'tdno')
+	  	@wx:integer(caption:'Year to Pay', context:'billing', name:'year', inputClass:'year')
+	  </div>
 	</div>
 	@wx:button( caption:'Submit', context:'billing', name:'loadBill')
 </div>

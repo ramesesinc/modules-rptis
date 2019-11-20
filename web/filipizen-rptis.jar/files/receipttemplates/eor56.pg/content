@@ -13,12 +13,19 @@
 \$put("eor56", new function() {
 	var self = this;
 	var root = \$get("eor").code; 
+
 	this.agency = root.agency;
 	this.receipt = root.receipt;
 
 	this.onload = function() {
 		if(self.receipt == null ) {
 			root.loadReceipt(function(v) {
+				if ((typeof v.reportparams) == 'object') {
+					v.treasurername = (v.reportparams.TREASURERNAME || '');
+					v.parentlguname = (v.reportparams.PARENTLGUFORMALNAME || ''); 
+					v.lguname = (v.reportparams.LGUFORMALNAME || ''); 
+				}
+
 				self.receipt = v;
 				self.receipt.lines = v._items;
 				self._controller.refresh();	
@@ -110,7 +117,9 @@
 	</div>
 
 	<div style="float:right;margin-top:20px;">
-		<p style="width:300px;border-bottom:1px solid #000;text-align:center">.</p>
+		<p style="width:300px;border-bottom:1px solid #000;text-align:center">
+			<label r:context="eor56"><b>#{receipt.treasurername}</b></label>
+		</p>
 		<p style="text-align:center">Provincial or City Treasurer</p>
 		<br>
 		<p style="width:300px;border-bottom:1px solid #000;text-align:center">.</p>
