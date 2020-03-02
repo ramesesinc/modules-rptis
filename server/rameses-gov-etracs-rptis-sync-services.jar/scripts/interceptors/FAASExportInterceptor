@@ -1,0 +1,112 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+
+class FAASExportInterceptor
+{
+    @Env
+    def env
+
+    @Service('RPTCommonDataExporterService')
+    def commonSvc 
+
+    @Service('FAASService')
+    def faasSvc 
+
+
+    @After(pattern="SyncDataService.export", eval="#{result.syncdata.action.matches('FAAS.*')}") 
+    public void exportFaas( evt ) {
+        def writer = evt.result.writer
+        def syncdata = evt.result.syncdata
+        export(writer, syncdata)
+    }   
+
+
+    // @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'approver' && args[0].action == 'approve'}", index=50000) 
+    // public void scheduleOnlineApprovedFAAS( evt ) {
+    //     def faas = evt.args[0].data 
+    //     faas.putAll(faasSvc.approveFaas(faas))
+    //     faasSync.scheduleOnlineApprovedFAAS(faas)
+    // }   
+
+    // @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'recommender' && args[0].action == 'submit_to_province'}", index=50000) 
+    // public void scheduleProvinceApproval( evt ) {
+    //     def faas = evt.args[0].data 
+    //     faasSync.scheduleProvinceApproval(faas)
+    // }       
+
+    // @After(pattern="FAASService.deleteFaas") 
+    // public void scheduleDeleteFaas( evt ) {
+    //     def faas = evt.args[0]
+    //     if (faas) {
+    //         faasSync.scheduleDeleteFaas(faas)
+    //     }
+    // }
+
+    // @After(pattern="FAASService.revertToInterim") 
+    // public void scheduleRevertToInterim( evt ) {
+    //     def faas = evt.result
+    //     faasSync.scheduleRevertToInterim(faas)
+    // }
+
+    // @After(pattern="CancelledFAASService.approveFaasCancellation") 
+    // public void scheduleCancelledFaas( evt ) {
+    //     def cancelledfaas = evt.result
+    //     faasSync.scheduleCancelledFaas(cancelledfaas)
+    // }
+
+
+
+    // /*---------------------------------------------------------
+    // *
+    // * SEND/RECEIVE HANDLERS
+    // *
+    // ---------------------------------------------------------*/
+    // @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.reftype == 'faas' && result.action.matches('FAAS-.*')}") 
+    // public void sendData( evt ) {
+    //     def syncdata = evt.result 
+    //     faasSync.send(syncdata)
+    // }   
+
+    // @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'faas' && args[0].action.matches('FAAS-.*')}") 
+    // public void receiveData(evt){
+    //     def syncdata = evt.args[0]
+    //     faasSync.receive(syncdata)
+    //     evt.result.status = 'OK'
+    // }
+
+
+    void export(writer, syncdata) {
+        writer.writeObject([filetype: 'syncdata', data: syncdata])
+        exportFaas(writer, syncdata.refid)
+    }
+
+    void exportFaas(writer, faasid) {
+        def faas = faasSvc.openFaas([objid: faasid])
+        writer.writeObject([filetype: 'faas', data: faas])
+        exportCommonData(writer, faas)
+
+        if (faas.affectedrpus) {
+            faas.affectedrpus.each{
+                if (it.newfaasid) {
+                    def newfaas = faasSvc.openFaas([objid: it.newfaasid])
+                    exportFaas(writer, newfaas)
+                }
+            }
+            writer.writeObject([filetype: 'affectedrpus', data: faas.affectedrpus])
+        }
+
+        if (faas.parentfaasid) {
+            def parentfaas = faasSvc.openFaas([objid: it.parentfaasid])
+            exportFaas(writer, parentfaas)
+        }
+    }
+
+    void exportCommonData(writer, faas) {
+        commonSvc.exportExaminations(writer, faas.objid)
+        commonSvc.exportRequirements(writer, faas.objid)
+        commonSvc.exportImages(writer, faas.objid)
+    }
+}
+

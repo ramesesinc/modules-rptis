@@ -1,0 +1,21 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+
+class SyncDataInterceptor
+{
+    @Service('SyncDataService')
+    def syncSvc
+
+    @After(pattern="SyncDataService.export", index=10000000) 
+    public void exportFaas( evt ) {
+        def writer = evt.result.writer
+        def syncdata = evt.result.syncdata
+        writer.zip()
+        writer.close()
+        syncSvc.send(syncdata)
+    }   
+
+}
+

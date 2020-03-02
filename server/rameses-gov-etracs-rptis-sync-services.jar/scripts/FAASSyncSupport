@@ -1,0 +1,50 @@
+import com.rameses.annotations.*
+import com.rameses.util.*
+import com.rameses.services.extended.*
+
+class FAASSyncSupport
+{
+	@Env
+	def env 
+
+	@Service('FAASService')
+	def faasSvc
+
+	@Service('EntityService')
+	def entitySvc
+
+	@ProxyMethod
+	public def findFaasById( faas ) {
+		return em.findFaasById(faas)
+	}
+
+	@ProxyMethod
+	public void saveFaas(faas) {
+		saveEntity(faas)
+
+		if (faasSvc.faasExist(faas)) {
+			faasSvc.updateFaas(faas)
+		} else {
+			faasSvc.createFaas(faas)
+		}
+
+		faasSvc.saveSignatory(faas.signatory)
+		faasSvc.saveSketch(faas.drawing)
+	}
+
+	void saveEntity(faas){
+		def addr = faas.taxpayer.address
+		if (!addr) {
+			addr = [parentid:faas.taxpayer.objid, type:'local', text:'.']
+			faas.taxpayer.address = addr;
+		}
+		else if (addr instanceof String) {
+			def s = addr; 
+			addr = [parentid:faas.taxpayer.objid, type:'local', text:s]
+			faas.taxpayer.address = addr;
+		}
+		if (!faas.taxpayer.state) faas.taxpayer.state = 'ACTIVE'
+		entitySvc.save(faas.taxpayer)
+		faas.taxpayer.address = faas.taxpayer?.address?.text 
+	}
+}

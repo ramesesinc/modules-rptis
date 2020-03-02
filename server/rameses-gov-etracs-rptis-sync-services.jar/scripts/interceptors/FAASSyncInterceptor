@@ -1,0 +1,23 @@
+import com.rameses.annotations.*
+import com.rameses.common.*
+import com.rameses.services.extended.*
+
+
+class FAASSyncInterceptor
+{
+    @Env
+    def env
+
+    @Service('FAASSyncSupport')
+    def svc
+
+
+    @After(pattern="SyncDataService.sync", eval="#{result.filetype == 'faas' && result.action == 'FAAS-DATACAPTURE'}") 
+    public void syncFaas( evt ) {
+        def faas = evt.result.data
+        svc.saveFaas(faas)
+        println 'Data capture FAAS successfully posted.'
+    }   
+
+}
+
