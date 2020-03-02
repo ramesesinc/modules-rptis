@@ -32,6 +32,7 @@ public class FAASAnnotationController extends PageFlowController
     def faas;
     def mode;
     def entity;
+    def selectedFaas;
     def images;
     
     String entityName = 'faasannotation';
@@ -44,7 +45,8 @@ public class FAASAnnotationController extends PageFlowController
     
     
     def open(){
-        entity = svc.openAnnotation(entity.objid)
+        entity = svc.open(entity)
+        faasListHandler.reload();
         loadImages();
         mode = MODE_READ;
         return super.signal('open');
@@ -67,8 +69,11 @@ public class FAASAnnotationController extends PageFlowController
         return false;
         return true 
     }
-    
-    
+
+    def faasListHandler = [ 
+        fetchList : { return entity.items }
+    ] as BasicListModel
+
 
     /*-----------------------------------------------------
      * 
@@ -93,15 +98,15 @@ public class FAASAnnotationController extends PageFlowController
     
     void save(){
         if (mode == MODE_CREATE)
-        entity = svc.createAnnotation(entity)
+        entity = svc.create(entity)
         else 
-        entity = svc.updateAnnotation(entity)
+        entity = svc.update(entity)
         mode = MODE_READ;
     }    
    
     
     void delete(){
-        svc.deleteAnnotation(entity)
+        svc.delete(entity)
     }
     
     
@@ -112,22 +117,22 @@ public class FAASAnnotationController extends PageFlowController
      *
      *----------------------------------------------------*/
     void initAnnotation(){
-        entity = svc.initAnnotation(faas);
+        entity = svc.init(faas);
     }
     
     
     void submitAnnotationForApproval(){
-        entity = svc.submitAnnotationForApproval(entity);
+        entity = svc.submitForApproval(entity);
     }
     
     
     void disapproveAnnotation(){
-        entity = svc.disapproveAnnotation(entity)
+        entity = svc.disapprove(entity)
     }
     
     
     void approveAnnotation() {
-        entity = svc.approveAnnotation(entity);
+        entity = svc.approve(entity);
     }
 
     
@@ -138,7 +143,7 @@ public class FAASAnnotationController extends PageFlowController
      * SUPPORT DOCUMENTS
      *
      *----------------------------------------------------*/
-    def selectedItem;
+    def selectedImage;
     
     void loadImages(){
         images = [];
@@ -146,14 +151,13 @@ public class FAASAnnotationController extends PageFlowController
             images = DBImageUtil.getInstance().getImages(entity?.objid);    
         }
         catch(e){
-            println 'Load Images error ============';
             e.printStackTrace();
         }
-        listHandler?.load();
+        imageListHandler?.load();
     }
     
                 
-    def listHandler = [
+    def imageListHandler = [
         fetchList : { return images },
     ] as BasicListModel
     
@@ -161,7 +165,7 @@ public class FAASAnnotationController extends PageFlowController
     def addImage(){
         return InvokerUtil.lookupOpener('upload:image', [
                 entity : entity,
-                    
+                parentid : entity.objid,
                 afterupload: {
                     loadImages();
                 }
@@ -169,18 +173,18 @@ public class FAASAnnotationController extends PageFlowController
     }
             
     void deleteImage(){
-        if (!selectedItem) return;
+        if (!selectedImage) return;
         if (MsgBox.confirm('Delete selected image?')){
-            DBImageUtil.getInstance().deleteImage(selectedItem.objid);
+            DBImageUtil.getInstance().deleteImage(selectedImage.objid);
             loadImages();
         }
     }
             
             
     def viewImage(){
-        if (!selectedItem) return null;
+        if (!selectedImage) return null;
         return InvokerUtil.lookupOpener('image:view', [
-                entity : selectedItem,
+                entity : selectedImage,
             ]);
     }
     

@@ -31,6 +31,7 @@ public class FAASModel
     
     def taskstate;
     def assignee; 
+    def assistant;
     
     //callbacks
     def afterCreate = {};
@@ -156,6 +157,7 @@ public class FAASModel
     
     
     def save(){
+        getEntity().assistant = assistant;
         if (mode == MODE_CREATE){
             getEntity().putAll(service.createFaas(getEntity()));
             if (afterCreate) afterCreate(getEntity());
@@ -217,7 +219,7 @@ public class FAASModel
     
     def popupChangeInfo(def inv) {
         getEntity()._showOldSketch = getShowOldSketch()
-        getEntity()._showNewSketch= getShowNewSketch()
+        getEntity()._showNewSketch= !getEntity()._showOldSketch
         def popupMenu = new PopupMenuOpener();
         def list = InvokerUtil.lookupOpeners( inv.properties.category, [entity:getEntity()] ).findAll{
             def vw = it.properties.visibleWhen;
@@ -230,21 +232,13 @@ public class FAASModel
     }
     
     def getShowOldSketch() {
-        def show = false; 
-        if (service.isOldSketch([objid:entity.objid])) {
-            show = true;
-        }
-        return show;
+        return service.isOldSketch([objid:entity.objid]) 
     }
 
     def getShowNewSketch() {
-        def show = false;
-        if (!service.isOldSketch([objid:entity.objid])) {
-            show = true;
-        }
-        return show;
+        return !service.isOldSketch([objid:entity.objid]) 
     }
-    
+
     /*===============================================
      *
      * EDITABILITY SUPPORT
@@ -252,6 +246,7 @@ public class FAASModel
      *===============================================*/
         
     boolean getAllowEdit(){
+        if ( getEntity()._modify_ == true) return true;
         if ( getEntity().state == 'CURRENT' ) return false;
         if ( getEntity().state == 'CANCELLED' ) return false;
         if (getEntity().originlguid != getOrgid()) return false;
@@ -304,9 +299,16 @@ public class FAASModel
             if (taskstate && !taskstate.matches('receiver|appraiser|provappraiser|taxmapper|provtaxmapper|recommender')) 
                 return false;
         }
-        if (OsirisContext.env.USERID != getEntity().assignee.objid) return false;
+        if (!isAssignee()) return false;
         if (mode != MODE_READ) return false;
         return true;
+    }
+
+    def isAssignee() {
+        if (OsirisContext.env.USERID == getEntity().assignee.objid || assistant) {
+            return true;
+        }
+        return false;
     }
         
     /*===============================================
@@ -338,15 +340,15 @@ public class FAASModel
     def getFaasType(){
         def t = '';
         if (getEntity().rpu.rputype == 'land')
-            t += 'Land FAAS: ';
+            t += 'Land: ';
         else if (getEntity().rpu.rputype == 'bldg')
-            t += 'Building FAAS: ';
+            t += 'Building: ';
         else if (getEntity().rpu.rputype == 'mach')
-            t += 'Machine FAAS: ';
+            t += 'Machine: ';
         else if (getEntity().rpu.rputype == 'planttree')
-            t += 'Plant/Tree FAAS: ';
+            t += 'Plant/Tree: ';
         else
-            t += 'Miscellaneous FAAS: ';
+            t += 'Miscellaneous: ';
         t += ' ' + getEntity().fullpin;
         return t;
     }
@@ -404,6 +406,20 @@ public class FAASModel
     
     void loadExemption(){
         entity.rpu.exemptiontype = exemptions.find{it.objid == entity.rpu.exemptiontype?.objid}
+    }
+
+
+    def popupActions(def inv) {
+        def popupMenu = new PopupMenuOpener();
+        def list = Inv.lookupOpeners( inv.properties.category, [entity: entity] ).findAll{
+            def vw = it.properties.visibleWhen;
+            return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean(vw, [mode:mode, entity: entity]));
+        }
+        list.sort{a,b -> a.caption <=> b.caption }
+        list.each{
+            popupMenu.add( it );
+        }
+        return popupMenu;
     }
 
 }

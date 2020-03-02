@@ -20,7 +20,7 @@ class ProvinceSyncMachSettingInterceptor
 
 
 
-    @After(pattern="SyncService.receive", eval="#{args[0].reftype == 'rysetting_mach' && 'SYNC-REVISION-SETTING'.equalsIgnoreCase(args[0].action)}") 
+    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'rysetting_mach' && 'SYNC-REVISION-SETTING'.equalsIgnoreCase(args[0].action)}") 
     public void syncSetting(evt){
     	def params = evt.args[0]
         def result = evt.result 
@@ -44,6 +44,9 @@ class ProvinceSyncMachSettingInterceptor
 		def settings = []
 
 		def lgusettings = em_setting_lgu.find([lguid:params.orgid, settingtype:'mach']).list()
+		if (!lgusettings) {
+			lgusettings = em_setting_lgu.find([lguid:params.orgid.replaceAll('-', ''), settingtype:'mach']).list()
+		}
 		lgusettings.each{
 			def sdata = em_mach.find([objid:it.rysettingid, ry:params.ry]).first()
 			if (sdata) {
@@ -60,6 +63,9 @@ class ProvinceSyncMachSettingInterceptor
 
 	void checkValidOrg(params) {
 		def org = em_org.find([objid: params.orgid]).first()
+		if (!org) {
+			org = em_org.find([objid: params.orgid.replaceAll('-', '')]).first()
+		}
 		if (!org){
 			throw new Exception('Organization ' + params.orgcode + ' is not defined.')
 		}

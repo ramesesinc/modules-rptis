@@ -7,17 +7,16 @@ import com.rameses.services.extended.*
 class FAASWorkflowService extends ActiveWorkflowService
 {
 	@ActiveDB('faas_task')
-	def taskDB;
+	def taskDB
+
+	@DataContext('faas_task')
+	def em_task
 
 	@Service('NotificationService')
 	def notificationService
 
 	@Service('FAASService')
 	def faasSvc 
-
-
-	@Service('RPTTrackingService')
-	def trackingSvc;
 
 	@ActiveDB('faas_list')
 	def faaslistEm
@@ -30,8 +29,25 @@ class FAASWorkflowService extends ActiveWorkflowService
 		return taskDB.findReturnToInfo(param)	
 	}
 
+	public void beforeSignal(param) {
+		if (param.action?.matches('send.*')) {
+			def task = em_task.select('returnedby').find([objid: param.taskid]).first()
+			if (!task) throw new Exception('Task ' + param.taskid + ' does not exist or has been deleted.')
+			env.task = [returnedby: task.returnedby]
+		}
+	}
+
 	public void beforeCreateTask(task) {
 		def assignee = [objid:env.USERID, name:env.FULLNAME, title:env.JOBTITLE]
+		if (task.assignee) {
+			assignee = task.assignee
+			env.target = [
+				assignee: assignee,
+				refid: task.refid,
+				sender: task.assignee
+			] 
+		}
+
 		if ( env.action?.matches('return.*')){
 			def returnto = findReturnToInfo(task)
 			if (!returnto) 
@@ -39,6 +55,7 @@ class FAASWorkflowService extends ActiveWorkflowService
 
 			env.returnto = returnto.assignee
 			task.assignee = assignee
+			task.returnedby = env.prevtask.state
 		}
 		else if ( ! task.state.toLowerCase().matches('assign.*')){
 			task.assignee = assignee
@@ -52,15 +69,31 @@ class FAASWorkflowService extends ActiveWorkflowService
 		else
 			msg = 'FAAS is currently for ' + task.title + ' by ' + task.assignee.name + '.'
 		faaslistEm.updateFaasList(env.data)
+
+		if (env.target) {
+			env.target.taskid = task.objid 
+			env.target.tdno = (env.data.tdno ? env.data.tdno  : env.data.utdno)
+		}
 	}
 	
 
 	public void afterOpenTask(task) {
-		if (task.state.matches('assign.*'))
+		if (task.state.matches('assign.*')){
 			task.owner = true 
+		}
 
 		task.data = faasSvc.openFaas([objid:task.refid])
 		removeUserNotification(task)
+		env.task = task 
+	}
+
+	public void afterLoadTask(Object newTask) {
+		newTask.transitions.findAll{ it.action.toString().matches('submit.*|send.*')}.each{t ->
+			if (t.properties?.targetrole) {
+				def params = [role: t.properties.targetrole]
+				t.assignees = taskDB.getTargetAssignees(params)
+			}
+		}
 	}
 
 	public void afterSignal(Object result) {
@@ -118,6 +151,9 @@ class FAASWorkflowService extends ActiveWorkflowService
 		else if (env.prevtask?.state.matches('assign.*')){
 			removeNotification(task)
 		}
+		else if (env.target) {
+			return notifyTargetAssignee()	
+		}
 	}
 
 
@@ -164,5 +200,18 @@ class FAASWorkflowService extends ActiveWorkflowService
         ]
 	}
 
+	def notifyTargetAssignee() {
+		def target = env.target 
+        return [
+            objid     : target.refid,
+            recipientid : target.assignee?.objid,
+            recipienttype : 'user',
+            senderid  : env.prevtask?.actor?.objid,
+            sender    : env.prevtask?.actor?.name,
+            message   : 'FAAS No. ' + target.tdno + '   was submitted by ' + env.prevtask?.actor?.name,
+            filetype  : 'faas',
+            data 	  : [taskid: target.taskid],
+        ]
+	}
 }
 

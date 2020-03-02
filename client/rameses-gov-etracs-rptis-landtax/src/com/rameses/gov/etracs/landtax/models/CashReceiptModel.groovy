@@ -9,7 +9,7 @@ import com.rameses.osiris2.reports.*;
 import com.rameses.gov.etracs.rptis.util.*;
 
 
-class CashReceiptModel extends com.rameses.enterprise.treasury.cashreceipt.AbstractCashReceipt implements ViewHandler
+class CashReceiptModel extends com.rameses.enterprise.treasury.models.AbstractCashReceipt implements ViewHandler
 {
     @Binding
     def binding;
@@ -43,7 +43,10 @@ class CashReceiptModel extends com.rameses.enterprise.treasury.cashreceipt.Abstr
     def barcodeprocessing = false;
     def processing = false;
     def msg;
+    def ledger;
     def billedLedgers = [];
+    def hasErrors = false;
+    def errors = [];
 
                 
     
@@ -66,23 +69,117 @@ class CashReceiptModel extends com.rameses.enterprise.treasury.cashreceipt.Abstr
      * INIT PAGE SUPPORT
      *
      -----------------------------------------------------------------*/
-    
-    def process(){
-        RPTUtil.required("Payer", entity.payer);
+     @PropertyChangeListener
+     def listener = [
+        'bill.(billtoyear|billtoqtr)' : {
+            loadItemsForSelection();
+        }
+     ]
+
+    def itemsforselection = [];
+    def selectedLedger;
+    def ledgertopay;
+
+    public def payerChanged( o ) {
+        loadItemsForSelection();
+    }
+
+    def getLookupLedgerInit() {
+        return InvokerUtil.lookupOpener('rptledger:lookup',[
+            onselect : {ledger ->
+                if (ledger.state != 'APPROVED') {
+                    throw new Exception('Only approve ledger is allowed.')
+                }
+                if (itemsforselection.find{it.objid == ledger.objid}) {
+                    return 
+                }
+                def b = [:];
+                b.putAll(bill);
+                b.taxpayer = null;
+                b.rptledgerid = ledger.objid;
+                def ledgers = svc.getLedgersForPayment(b);    
+                if (!ledgers) {
+                    throw new Exception('Ledger does not exist or has already been fully paid for the billing period specified.')
+                }
+                if (!itemsforselection) {
+                    itemsforselection = [];
+                }
+                itemsforselection += ledgers;
+                selectionListHandler.reloadAll();
+                selectAllInit();
+                binding?.focus('ledgertopay');
+                binding?.refresh('selectionCount|selectedCount');
+            },
+        ])
+    }
+
+    void loadItemsForSelection() {
         bill.taxpayer = entity.payer;
         bill.payoption = payoption;
         bill._forpayment = true;
         entity.billid = bill.objid; 
-        billedLedgers = [];
-        if (payoption != PAY_OPTION_BYLEDGER){
-            loadItemsForPaymentAsync()
-            return 'default';
-        } else {
-            listHandler?.load();
-            mode = MODE_CREATE;
-            return 'main'
+        itemsforselection = svc.getLedgersForPayment(bill);    
+        selectionListHandler.reload();
+        selectionListHandler.selectAll();
+        binding.refresh('selectAllInit|deselectAllInit|selectionCount|selectedCount');
+    }
+
+     def selectionListHandler = [
+        fetchList: { itemsforselection },
+        afterSelectionChange: {o-> binding.refresh('selectedCount')},
+        isMultiSelect: { true }
+     ] as EditorListModel 
+    
+    def process(){
+        billedLedgers = selectionListHandler.selectedValue 
+        if (!billedLedgers) {
+            throw new Exception ('At least one property for payment is selected.')
         }
+        loadItemsForPaymentAsync();
+        mode = MODE_CREATE;
+        return 'default';
     }    
+
+    def payByLedger() {
+        itemsforselection = [];
+        itemsforpayment = [];   
+        payoption = PAY_OPTION_BYLEDGER;
+        bill.payoption = payoption;
+        mode = MODE_CREATE;
+        return 'main';
+    }
+
+    void selectAllInit() {
+        selectionListHandler.selectAll();
+    }
+
+    void deselectAllInit() {
+        selectionListHandler.deselectAll();
+    }
+
+    void clearItems() {
+        if (itemsforselection && MsgBox.confirm('Clear all items for payment?')) {
+            itemsforselection = [];
+            selectionListHandler.reloadAll();
+        }
+    }
+
+    void reloadItems() {
+        if (MsgBox.confirm('Reload ledgers for this payer?')) {
+            loadItemsForSelection();
+        }
+    }
+
+    def getSelectionCount() {
+        if (itemsforselection) {
+            return itemsforselection.size();
+        }
+        return 0;
+    }
+
+    def getSelectedCount() {
+        selectionListHandler.selectedValue?.size();
+    }
 
     /*===================================
     *
@@ -98,17 +195,32 @@ class CashReceiptModel extends com.rameses.enterprise.treasury.cashreceipt.Abstr
         binding.fireNavigation('main');
     }
 
+    def viewErrors() {
+        return Inv.lookupOpener('errors:open', [errors: errors]);
+    }
 
     def loadLedgerTask = {
         run: {
-            if (!billedLedgers) {
-                billedLedgers = svc.getLedgersForPayment(bill);    
+            hasErrors = false;
+            errors = [];
+            if (payoption == 'bycount') {
+                if (!bill.itemcount) bill.itemcount = 5; 
+                if (billedLedgers.size() > bill.itemcount) {
+                    def items = [];
+                    for (int i = 0; i < bill.itemcount; i++) {
+                        items << billedLedgers[i];
+                    }
+                    billedLedgers = items;
+                }
             }
+
             billedLedgers.each {
                 try {
-                    msg = 'Processing ledger ' + (it.rptledger ? it.rptledger.tdno : '...');
+                    msg = 'Processing ledger ' + it.tdno;
                     loadItemByLedger(it)
                 } catch(Exception ex) {
+                    hasErrors = true;
+                    errors << [tdno: it.tdno, error: ex.message];
                     ex.printStackTrace();
                 }
             }
@@ -391,7 +503,7 @@ class CashReceiptModel extends com.rameses.enterprise.treasury.cashreceipt.Abstr
     }
     
     void afterRefresh(binding, pagename){
-        binding.requestFocus('ledger');
+        binding.focus('ledger');
     }
     
     def getRpuCount() {

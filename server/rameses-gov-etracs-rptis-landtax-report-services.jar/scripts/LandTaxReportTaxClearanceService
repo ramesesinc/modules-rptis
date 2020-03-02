@@ -25,6 +25,15 @@ class LandTaxReportTaxClearanceService
     @Service('ReportParameterService')
     def paramSvc 
 
+    @Service()
+    def self
+
+    @DataContext('cashreceipt')
+    def em_cashreceipt
+
+    @DataContext('sys_org')
+    def em_org
+
 
     @ProxyMethod
     public def getReportTypes() {
@@ -57,19 +66,40 @@ class LandTaxReportTaxClearanceService
         ]
     }
 
+    @ProxyMethod
+    public void checkDuplicateReceipt(entity) {
+        def onlinePaymentRequired = util.toBoolean(var.landtax_clearance_online_payment_required, false)
+        if (onlinePaymentRequired) {
+            def rct = em_cashreceipt.select('objid,void.objid,void.reason')
+                                    .find([receiptno: entity.orno, formno:'51'])
+                                    .first();
+            if (!rct) {
+                throw new Exception('O.R. No. ' + entity.orno + ' does not exist.')
+            } else if (rct.void?.objid) {
+                throw new Exception('O.R. No. ' + entity.orno + ' has already been voided.')
+            }
+            
+            def dup = em.findPaidClearance(entity)
+            if (dup) {
+                throw new Exception('O.R. No. ' + entity.orno + ' is already referenced by Clearance No. ' + dup.txnno + '.')
+            }
+        }
+
+
+    }
+
 
     @ProxyMethod
     public def createClearance( cert ) {
         validate(cert)
-        def year = dtSvc.serverYear
-        cert.txnno = year + seqSvc.getNextFormattedSeries('RPTTAXCLEARANCE-' + year )
+        updateCertificationNo(cert)
         certSvc.createCertification(cert)
         cert.items.each{
             certSvc.createItem(it)
         }
         cert.reporttypename = cert.reporttype.name 
         em.insertTaxClearance(cert)
-        return openClearance(cert.objid)
+        return self.openClearance(cert.objid)
     }
 
     
@@ -87,6 +117,11 @@ class LandTaxReportTaxClearanceService
         return cert 
     }
 
+    @ProxyMethod
+    public def update(entity) {
+        return certSvc.update(entity)
+    }
+
 
     @ProxyMethod
     public def getClearedLedgers(cert) {
@@ -97,12 +132,19 @@ class LandTaxReportTaxClearanceService
         return em.getClearedLedgers(cert)
     }
 
+    @ProxyMethod
+    public def getTaxClearancesIssued(ledger) {
+        return em.getTaxClearancesIssued(ledger)
+    }
+
     void validate(cert) {
         if (!cert.items) {
             throw new Exception('At least one property must be included.')
         }
 
-        if ('fullypaid' == cert.reporttype.name) {
+        def isSpecialCase = util.toBoolean(var.landtax_taxclearance_allow_special_case_ledger, false)
+
+        if ('fullypaid' == cert.reporttype.name && !isSpecialCase) {
             cert.items.each{
                 if (it.lastyearpaid < cert.year) 
                     throw new Exception('TD No. ' + it.tdno + ' is not cleared for the year ' + cert.year + '.')
@@ -121,6 +163,8 @@ class LandTaxReportTaxClearanceService
     }
 
     void loadPaymentInfo(cert){
+        def isSpecialCase = util.toBoolean(var.landtax_taxclearance_allow_special_case_ledger, false)
+
         cert.items.each{item ->
             item.rptledgerid = item.refid 
             def p = [
@@ -129,13 +173,37 @@ class LandTaxReportTaxClearanceService
                 year : cert.year,
                 qtr : cert.qtr,
             ]
-            item.payments = em.getPaymentInfo(p).findAll{it.rptledgerid == item.rptledgerid}
-            item.payments.each{
-                if (it.ordate){
-                    it.ordate = dtSvc.parse('yyyy-MM-dd', it.ordate)
-                }
+
+            item.payments = em.getPaymentInfo(p)
+            if (item.payments) {
+                buildItemPaymentInfo(item)
+            } else if (isSpecialCase) {
+                buildSpecialCasePaymentInfo(item)
             }
+            
         }
+    }
+
+    void buildItemPaymentInfo(item) {
+        item.payments.each{
+            if (it.ordate){
+                it.ordate = dtSvc.parse('yyyy-MM-dd', it.ordate)
+            }
+
+            if (it.minqtr == it.maxqtr) 
+                it.period = it.minqtr + 'Q, ' + it.year 
+            else if (it.minqtr == 1 && it.maxqtr == 4 || (it.minqtr == 0 || it.maxqtr == 0))
+                it.period = it.year + ''
+            else 
+                it.period = it.minqtr + 'Q,' + it.year + ' - ' + it.maxqtr + 'Q,' + it.year
+        }
+    }
+
+    void buildSpecialCasePaymentInfo(item) {
+        if (item.totalav <= 0) 
+            item.payments << [info: 'ZERO VALUE']
+        else if (util.toBoolean(item.taxable, false) == false)
+            item.payments << [info: 'EXEMPT PROPERTY']
     }
 
     void buildAdministratorInfo(cert){
@@ -155,5 +223,42 @@ class LandTaxReportTaxClearanceService
         if (cert.items){
             cert.effectivityyear = cert.items[0].effectivityyear
         }
+    }
+
+    void updateCertificationNo(cert) {
+        if (cert.txnno) return
+
+        def pdate = dtSvc.parseCurrentDate()
+
+        def org = em_org.find([root: 1]).first()
+        def key = org.code.replaceAll('-', '')  
+        def format = var.landtax_taxclearance_numbering_format
+        if (format) {
+            def param = [:]
+            param.m = pdate.month.toString().padLeft(2, '0')
+            param.y = pdate.year.toString()[2..3]
+            param.yy = pdate.year.toString()
+            param.o = org.orgcode
+            
+            def keys = evalFormat(format, param, 's')
+            def seqno = seqSvc.getNextFormattedSeriesA('RPTTAXCLEARANCE-' + keys.join(''), 3)
+
+            param.s = seqno
+            def seqnos = evalFormat(format, param, null)
+            cert.txnno = seqnos.join('-')
+        } else {
+            cert.txnno = pdate.year + seqSvc.getNextFormattedSeries('RPTTAXCLEARANCE-' + pdate.year )
+        }
+    }
+
+    def evalFormat(format, param, excludeKey) {
+        def tokens = format.toLowerCase().tokenize('-');
+        def keys = []
+        tokens.each {
+            if (it != excludeKey) {
+                keys << param[it]
+            }
+        }
+        return keys
     }
 }

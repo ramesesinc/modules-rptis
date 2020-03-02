@@ -15,6 +15,9 @@ class RPTBillingModel
     
     @Service('RPTBillingService')
     def svc;
+
+    @Service('LogService')
+    def logSvc;
     
     @Service("ReportParameterService")
     def reportSvc;
@@ -25,16 +28,28 @@ class RPTBillingModel
     def mode = 'init';
     def processing = false;
     def showBack = false;
+    def taxpayer;
     
     
-        
+    
     void init() {
         mode = 'init';
         showBack = true;
         bill = svc.initBill();
+        bill.reportformat = reportFormats[0];
     }
     
     def back() {
+        def reportformat = bill.reportformat;
+        init();
+        bill.taxpayer = taxpayer;
+        bill.reportformat = reportformat;
+        processing = false;
+        msg = null;
+        return 'default' 
+    }
+    
+    def newBill() {
         init();
         processing = false;
         msg = null;
@@ -49,17 +64,23 @@ class RPTBillingModel
      * REPORT SUPPORT 
      * 
     =============================================================*/
+    def reportFormats  = [
+        [code: 'STANDARD', title: 'STANDARD', reportname: 'rptbilling.jasper'],
+        [code: 'SUMMARY', title: 'SUMMARY', reportname: 'rptbilling_summary.jasper'],
+        [code: 'SIMPLIFIED', title: 'SIMPLIFIED', reportname: 'rptbilling_simplified.jasper'],
+    ]
     
     def reportpath = 'com/rameses/gov/etracs/landtax/reports/'
             
     def report = [
-        getReportName : { return reportpath + 'rptbilling.jasper' },
+        getReportName : { return reportpath + bill.reportformat.reportname },
         getReportData : { return bill },
         getParameters : {
             def params = reportSvc.getStandardParameter()
             params.RPUCOUNT = bill.ledgers.size() 
             return params 
         },
+        afterPrint: { logPrint() }
     ] as ReportModel
     
     
@@ -81,12 +102,16 @@ class RPTBillingModel
     def print(){
         buildBill();
         ReportUtil.print( report.report, true );
+        logPrint();
         return '_close';
     }
         
     void buildBill(){
         bill.totals = [:];
         bill.putAll(svc.generateBill(bill));
+        if (!bill.reportformat) {
+            bill.reportformat = reportFormats[0];
+        }
         report.viewReport();
     }     
     
@@ -110,6 +135,7 @@ class RPTBillingModel
         } else {
             mode = 'init';
             ReportUtil.print( report.report, true );
+            logPrint();
         }
         binding.refresh();
     }
@@ -225,6 +251,7 @@ class RPTBillingModel
     def getLookupTaxpayer(){
         return Inv.lookupOpener('entity:lookup', [
             onselect : {
+                taxpayer = it;
                 bill.taxpayer = it;
                 loadProperties();
             },
@@ -245,6 +272,7 @@ class RPTBillingModel
         if (bill.taxpayer) {
             items = svc.getOpenLedgers(bill).each{ it.bill = true }
             listHandler.reload();
+            binding.refresh('selectByTdNo');
         }
     }
     
@@ -270,8 +298,36 @@ class RPTBillingModel
     def getCount(){
         return items?.size();
     }
+
+    def getSelectedCount() {
+        return items.findAll{ it.bill == true }.size();
+    }
     
     List getBarangays(){
         return lguSvc.lookupBarangays([:])
+    }
+
+    void logPrint() {
+        logSvc.log('printbill', 'rptledger', bill.taxpayer.objid)
+    }
+
+    def selectByTdNo() {
+        def onselect = { item ->
+            items.remove(item);
+            def lastSelectedIdx = items.findAll{it.bill == true}.size();
+            items.add(lastSelectedIdx, item);
+            listHandler.reload();
+            binding.refresh('selectedCount');
+        }
+        return Inv.lookupOpener('rptbilling:selectbytdno', [
+            onselect: onselect, 
+            items: items
+        ]);
+    }
+
+    def getShowSelectByTdno() {
+        if (items && items.size() > 5) 
+            return true;
+        return false;
     }
 } 

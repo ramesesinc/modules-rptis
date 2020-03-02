@@ -10,15 +10,14 @@ class FAASInitCancelModel extends FAASInitTxnModel
 {
     @Service('CancelledFAASService')
     def cancelSvc;
-        
+
     void afterInit(){
-        entity.objid = 'CTD' + new java.rmi.server.UID();
         entity.state = 'DRAFT';
         entity.online = 1;
     }
     
     def process(){
-        def cancelledfaas = cancelSvc.initCancelledFaas( entity );
+        def cancelledfaas = cancelSvc.init( entity );
         return Inv.lookupOpener('cancelledfaas:online:open', [entity:cancelledfaas]);
     }
     

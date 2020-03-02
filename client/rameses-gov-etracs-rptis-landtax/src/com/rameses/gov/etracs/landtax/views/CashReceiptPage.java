@@ -43,6 +43,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
         formPanel6 = new com.rameses.rcp.util.FormPanel();
         xLookupField1 = new com.rameses.rcp.control.XLookupField();
         xActionTextField1 = new com.rameses.rcp.control.XActionTextField();
+        xButton5 = new com.rameses.rcp.control.XButton();
 
         setPreferredSize(new java.awt.Dimension(884, 487));
         setLayout(new java.awt.BorderLayout());
@@ -120,6 +121,8 @@ public class CashReceiptPage extends javax.swing.JPanel {
 
         jPanel8.setLayout(new java.awt.BorderLayout());
 
+        xDataTable1.setHandler("listHandler");
+        xDataTable1.setName("selectedItem"); // NOI18N
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "pay"}
@@ -131,7 +134,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
+                , new Object[]{"editableWhen", "#{item.tdno != null}"}
                 , new Object[]{"visible", true}
                 , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
@@ -207,7 +210,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
+                , new Object[]{"editableWhen", "#{item.tdno != null}"}
                 , new Object[]{"visible", true}
                 , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
@@ -223,7 +226,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
+                , new Object[]{"editableWhen", "#{item.tdno != null}"}
                 , new Object[]{"visible", true}
                 , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
@@ -245,10 +248,8 @@ public class CashReceiptPage extends javax.swing.JPanel {
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             })
         });
-        xDataTable1.setHandler("listHandler");
         xDataTable1.setImmediate(true);
         xDataTable1.setIndex(-100);
-        xDataTable1.setName("selectedItem"); // NOI18N
         jPanel8.add(xDataTable1, java.awt.BorderLayout.CENTER);
 
         jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
@@ -256,7 +257,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
 
         formPanel6.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         formPanel6.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        formPanel6.setPreferredSize(new java.awt.Dimension(600, 35));
+        formPanel6.setPreferredSize(new java.awt.Dimension(700, 35));
 
         xLookupField1.setCaption("Search Ledger");
         xLookupField1.setExpression("#{''}");
@@ -265,7 +266,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
         xLookupField1.setCaptionMnemonic('l');
         xLookupField1.setCaptionWidth(100);
         xLookupField1.setCellPadding(new java.awt.Insets(10, 5, 0, 0));
-        xLookupField1.setIndex(-500);
+        xLookupField1.setIndex(-1000);
         xLookupField1.setNullWhenEmpty(false);
         xLookupField1.setPreferredSize(new java.awt.Dimension(180, 19));
         formPanel6.add(xLookupField1);
@@ -277,6 +278,13 @@ public class CashReceiptPage extends javax.swing.JPanel {
         xActionTextField1.setCellPadding(new java.awt.Insets(10, 10, 0, 0));
         xActionTextField1.setPreferredSize(new java.awt.Dimension(200, 20));
         formPanel6.add(xActionTextField1);
+
+        xButton5.setName("viewErrors"); // NOI18N
+        xButton5.setVisibleWhen("#{hasErrors}");
+        xButton5.setCellPadding(new java.awt.Insets(8, 10, 0, 0));
+        xButton5.setShowCaption(false);
+        xButton5.setText("View Errors");
+        formPanel6.add(xButton5);
 
         jPanel9.add(formPanel6, java.awt.BorderLayout.WEST);
 
@@ -305,6 +313,7 @@ public class CashReceiptPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XButton xButton3;
     private com.rameses.rcp.control.XButton xButton4;
+    private com.rameses.rcp.control.XButton xButton5;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;

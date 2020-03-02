@@ -1,0 +1,15 @@
+<workunit extends="com/rameses/gov/etracs/landtax/report/templates/statement_of_shares.xml">
+    <invokers>
+        <invoker type="statementofshare:report" action="init" 
+                 caption="Barangay Share - Advance" 
+                 reportTitle = "Statement of Share Report - Barangay (Advance)"
+                 reportName="statement_of_share_brgy_advance" 
+                 tag="statement_of_share_brgy_advance"
+                 role="REPORT" />
+    </invokers>
+    <code class="com.rameses.gov.etracs.landtax.report.models.StatementOfShareBarangayAdvanceModel">
+    </code>
+    <pages>
+        <page template="com.rameses.gov.etracs.landtax.report.views.BarangayShareAdvanceInitPage"/>
+    </pages>    
+</workunit>

@@ -48,14 +48,29 @@ class RPTUtil
     public static def toDecimal(value){
         if (value instanceof BigDecimal ) 
         return value;
-        return new BigDecimal(value.toString())
+
+        def val = 0;
+        try {
+            val = new BigDecimal(value.toString());
+        } catch( e) {
+            e.printStackTrace();
+        }
+        return val;
     }
     
     public static def toInteger(value){
-        if (value instanceof Integer)
-        return value;
-        def bd = new BigDecimal(value.toString())
-        return bd.intValue();
+        if (value instanceof Integer) {
+            return value;
+        }
+
+        def val = 0;
+        try {
+            def bd = new BigDecimal(value.toString());
+            val = bd.intValue();
+        } catch (e) {
+            e.printStackTrace();
+        }
+        return val;
     }
     
      
@@ -79,6 +94,7 @@ class RPTUtil
             newpin += entity.barangay?.pin + '-';
         }
         else if( entity.barangay && entity.pintype == 'old') {
+            entity.useoldpin = true;
             if (entity.useoldpin){
                 newpin += entity.barangay?.oldpin + '-';
             }
@@ -95,11 +111,6 @@ class RPTUtil
 
         def sectionlen = getSectionLength(varSvc?.get('pin_section_length'), entity.pintype)
         def parcellen = getParcelLength(varSvc?.get('pin_parcel_length'), entity.pintype)
-        
-        if (entity.pintype == 'old'){
-            sectionlen = 2;
-            parcellen = 3;
-        }
         
         if( entity.isection > 0 ) {
             ssection = entity.isection.toString();
@@ -168,5 +179,14 @@ class RPTUtil
             len = 3;
         }
         return len;
+    }
+
+    public static def formalizeNumber( num ) {
+        def snum = format('#0', num )
+        if (snum.matches('11|12|13')) return snum + 'TH'
+        else if (snum[-1] == '1') return snum + 'ST'
+        else if (snum[-1] == '2') return snum + 'ND'
+        else if (snum[-1] == '3') return snum + 'RD'
+        else return snum + 'TH'
     }
 }
