@@ -919,15 +919,20 @@ class FAASService
 	public void cancelPreviousFaases(faas){
 		def pdate = dtSvc.parseDate(faas.approver.dtsigned, null)
 		em_faas_previous.where('faasid = :faasid and prevfaasid is not null', [faasid:faas.objid]).list().each{
-			def params = [
-				objid  				: it.prevfaasid,
-				rpuid 				: it.prevrpuid, 
-				txntype 			: faas.txntype,
-				cancelreason		: faas.txntype.displaycode,
-				canceldate			: faas.approver.dtsigned,
-				cancelledbytdnos	: faas.tdno,
-			]
-			cancelFaas(params)
+			if (!it.prevfaasid) {
+				it.prevfaasid = em_faas.select('objid').find([tdno: it.prevtdno]).first()?.objid 
+			}
+			if (it.prevfaasid) {
+				def params = [
+					objid  				: it.prevfaasid,
+					rpuid 				: it.prevrpuid, 
+					txntype 			: faas.txntype,
+					cancelreason		: faas.txntype.displaycode,
+					canceldate			: faas.approver.dtsigned,
+					cancelledbytdnos	: faas.tdno,
+				]
+				cancelFaas(params)
+			}
 		}
 
 		if (faas.backtaxes){
