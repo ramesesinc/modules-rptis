@@ -17,3 +17,7 @@ Thumbs.db
 /**/.terminal
 /**/Thumbs.db
 _build
+/client/rameses-gov-etracs-rptis-report/dist/
+/client/rameses-gov-etracs-rptis-landtax/dist/
+/client/rameses-gov-etracs-rptis-landtax-report/dist/
+/client/rameses-gov-etracs-rptis-municipality/dist/
