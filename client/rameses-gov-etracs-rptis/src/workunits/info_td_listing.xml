@@ -102,6 +102,7 @@
                     def faas = faases[i];
                     def o = InvokerUtil.lookupOpener('td:report:print', [entity:faas]);
                     if (o){
+                        o.handle.initPreview();
                         o.handle.report.viewReport();
                         ReportUtil.print(o.handle.report.report, false);
                     }

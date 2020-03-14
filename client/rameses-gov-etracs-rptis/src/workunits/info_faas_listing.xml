@@ -100,7 +100,7 @@
                         break;
                         
                     def faas = faases[i];
-                    def o = InvokerUtil.lookupOpener('faas:report:print', [entity:faas]);
+                    def o = InvokerUtil.lookupOpener('faas:report', [entity:faas]);
                     if (o){
                         o.handle.report.viewReport();
                         ReportUtil.print(o.handle.report.report, false);

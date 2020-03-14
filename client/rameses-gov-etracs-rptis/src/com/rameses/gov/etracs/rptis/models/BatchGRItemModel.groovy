@@ -55,14 +55,13 @@ public class BatchGRItemModel
         if (entity.state != 'DRAFT') return false;
         if (!entity.taskstate.matches('provtaxmapper|taxmapper')) return false;
         if (entity.assignee?.objid != OsirisContext.env.USERID) return false;
-        if (items && items.find{it.state == 'FORREVISION'} == null) return false;
         return true;
     }
 
     def getShowExclude() {
         if (processing) return false;
         if (entity.state != 'DRAFT') return false;
-        if (!entity.taskstate.matches('provtaxmapper|taxmapper|appraiser|provappraiser')) return false;
+        if (!entity.taskstate.matches('receiver|provtaxmapper|taxmapper|appraiser|provappraiser')) return false;
         if (entity.assignee?.objid != OsirisContext.env.USERID) return false;
         return true;
     }
