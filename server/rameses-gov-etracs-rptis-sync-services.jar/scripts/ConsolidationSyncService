@@ -28,6 +28,10 @@ class ConsolidationSyncService
 	@Service('ConsolidationWorkflowService')
 	def workflowSvc
 
+	@Service('FAASSyncService')
+	def faasSyncSvc
+
+
     @DataContext('consolidation')
     def em_consolidation
 
@@ -50,11 +54,20 @@ class ConsolidationSyncService
         def remoteOrg = rptSync.getRemoteOrg(consolidation)
         def idx = 1
 
+        def params = [:]
+    	params.parentid = consolidation.objid
+    	params.dtfiled = dtfiled
+    	params.remoteOrg = remoteOrg
+
         //consolidated faas
-        syncSvc.schedule(consolidation.objid, consolidation.newfaasid, 'faas', 'FAAS-DATA', dtfiled, idx++, remoteOrg)
+        params.faas = [objid: consolidation.newfaasid]
+    	params.idx = idx++
+    	faasSyncSvc.scheduleFaasData(params)
 
 		svc.getAffectedRpus(consolidation.objid).each {
-        	syncSvc.schedule(consolidation.objid, it.newfaasid, 'faas', 'FAAS-DATA', dtfiled, idx++, remoteOrg)
+			params.faas = [objid: it.newfaasid]
+        	params.idx = idx++
+        	faasSyncSvc.scheduleFaasData(params)
         }
 
         //consolidation

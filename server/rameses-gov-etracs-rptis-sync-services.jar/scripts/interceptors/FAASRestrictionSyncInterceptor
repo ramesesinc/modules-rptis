@@ -15,6 +15,9 @@ class FAASRestrictionSyncInterceptor
     @Service('FAASRestrictionSyncService')
     def syncSvc 
 
+    @DataContext('faas')
+    def em_faas
+
 
     /*---------------------------------------------------------
     *
@@ -24,6 +27,7 @@ class FAASRestrictionSyncInterceptor
     @After(pattern="FAASRestrictionService.approve", index=50000) 
     public void schedulePostRestriction( evt ) {
         def restriction = evt.result
+        restriction.lguid = restriction.parent?.lguid
         syncSvc.schedulePostRestriction(restriction)
     }
 

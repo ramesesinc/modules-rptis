@@ -30,7 +30,9 @@ class RPTLedgerModel
     def onComplete = {
         msg = 'Loading newly created ledger...';
         binding.refresh('msg');
-        caller.refresh();
+        if (hasCallerMethod('refresh', caller)) {
+            caller.refresh();
+        }
         
         def inv = Inv.lookupOpener('rptledger:open', [entity:entity]);
         binding.fireNavigation(inv);
@@ -109,5 +111,10 @@ class RPTLedgerModel
     public def getSelectedItem(){
         return entity;
     }
+
+    boolean hasCallerMethod( property, bean ) {
+        if ( bean == null ) return false; 
+        return bean.metaClass.respondsTo(bean, property ); 
+    }   
     
 }

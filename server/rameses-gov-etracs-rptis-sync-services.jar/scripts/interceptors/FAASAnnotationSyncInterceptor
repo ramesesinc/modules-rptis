@@ -24,12 +24,15 @@ class FAASAnnotationSyncInterceptor
     @After(pattern="FAASAnnotationService.approve") 
     public void schedulePostAnnotation( evt ) {
         def annotation = evt.result
+        println 'annotation.faas?.lguid => ' + annotation.faas?.lguid
+        annotation.lguid = annotation.faas?.lguid
         syncSvc.schedulePostAnnotation(annotation)
     }
 
     @After(pattern="CancelAnnotationService.approve") 
     public void scheduleCancelledAnnotation( evt ) {
         def cancelannotation = evt.result
+        cancelannotation.lguid = cancelannotation.annotation.faas.lguid
         syncSvc.scheduleCancelledAnnotation(cancelannotation)
     }
 

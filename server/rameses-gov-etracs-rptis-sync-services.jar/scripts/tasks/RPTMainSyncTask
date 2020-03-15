@@ -1,12 +1,12 @@
 import com.rameses.annotations.*
 import com.rameses.common.*
 
-class AsyncSyncTask {
+class RPTMainSyncTask {
 
 	@Service('RPTMainSyncService')
 	def svc 
 
-	@Schedule(interval=2)
+	@Schedule(interval=1)
 	public void processPending(task) {
 		svc.getForProcessItems().each {syncdata ->
 			svc.sendAsyncData(syncdata)

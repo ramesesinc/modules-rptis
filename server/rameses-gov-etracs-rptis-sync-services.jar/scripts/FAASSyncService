@@ -103,6 +103,18 @@ class FAASSyncService
 	}
 
 	@ProxyMethod
+	public void scheduleFaasData(params) {
+		def parentid = params.parentid
+		def faas = params.faas
+		def dtfiled = params.dtfiled
+        def remoteOrg = params.remoteOrg
+        def idx = params.idx
+
+        syncSvc.schedule(parentid, faas.objid, 'faas', 'FAAS-DATA', dtfiled, idx, remoteOrg)
+        scheduleSharedData(faas, dtfiled, remoteOrg, idx)
+	}
+
+	@ProxyMethod
 	public void scheduleOnlineApprovedFAAS(faas){
 		def dtfiled = dtSvc.serverDate
         def remoteOrg = rptSync.getRemoteOrg(faas)

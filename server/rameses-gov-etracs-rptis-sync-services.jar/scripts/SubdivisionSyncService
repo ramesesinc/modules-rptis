@@ -28,6 +28,9 @@ class SubdivisionSyncService
 	@Service('SubdivisionWorkflowService')
 	def workflowSvc
 
+	@Service('FAASSyncService')
+	def faasSyncSvc
+
     @DataContext('subdivision')
     def em_subdivision
 
@@ -59,13 +62,22 @@ class SubdivisionSyncService
         def remoteOrg = rptSync.getRemoteOrg(subdivision)
         def idx = 1
 
+        def params = [:]
+    	params.parentid = subdivision.objid
+    	params.dtfiled = dtfiled
+    	params.remoteOrg = remoteOrg
+
         //subdivision faases
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
-        	syncSvc.schedule(subdivision.objid, it.newfaasid, 'faas', 'FAAS-DATA', dtfiled, idx++, remoteOrg)
+        	params.faas = [objid: it.newfaasid]
+        	params.idx = idx++
+        	faasSyncSvc.scheduleFaasData(params)
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
-        	syncSvc.schedule(subdivision.objid, it.newfaasid, 'faas', 'FAAS-DATA', dtfiled, idx++, remoteOrg)
+        	params.faas = [objid: it.newfaasid]
+        	params.idx = idx++
+        	faasSyncSvc.scheduleFaasData(params)
         }
 
         //subdivision
