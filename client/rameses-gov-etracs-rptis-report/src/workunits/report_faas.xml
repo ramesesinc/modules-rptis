@@ -4,6 +4,7 @@
         <invoker type="faaslist:formActions" action="initPreview" caption="FAAS Report" visibleWhen="#{selectedEntity != null}" depends="listHandler.selectedEntity" index="30" icon="images/toolbars/preview.png"/>
         <invoker type="faas:list:formActions" action="initPreview" caption="FAAS Report" visibleWhen="#{selectedEntity != null}"/>
         <invoker type="faas:report" action="initPreview" caption="FAAS" />
+        <invoker type="faas:report:print" action="print" caption="FAAS" />
         <invoker type="formActions" action="_close" caption="Close" mnemonic="c" immediate="true" icon="images/toolbars/cancel.png" />
     </invokers>
     <code >
@@ -38,6 +39,11 @@
                 reportdata = svc.getReportData( entity)
                 saveSignatures(reportdata)
                 report.viewReport();
+            }
+
+            void print() {
+                initPreview();
+                ReportUtil.print(report.report, false);
             }
             
             void saveSignatures(reportdata){

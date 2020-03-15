@@ -201,7 +201,7 @@ public class ModifyPinModel
     }
     
     List getBarangayList() {
-        return lguSvc.lookupBarangaysByParentid(entity.munidistrict?.objid);
+        return lguSvc.lookupBarangaysByRootId(entity.munidistrict?.objid);
     }
     
 }
