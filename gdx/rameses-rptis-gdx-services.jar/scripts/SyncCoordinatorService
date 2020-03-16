@@ -16,6 +16,12 @@ public class SyncCoordinatorService {
 		return svc.receive(syncdata)
 	}
 
+	@ProxyMethod
+	public def createSyncMeta(syncdata) {
+		def svc = dynSvc.lookup(syncdata.remote.orgcode + ':RemoteSyncService', 'gdx-node-script')
+		return svc.createSyncMeta(syncdata)	
+	}
+
 	void require(data, field, caption){
 		if (!data[field]) {
 			throw new Exception(caption + ' must be specified')

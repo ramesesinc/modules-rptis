@@ -90,8 +90,6 @@ class RPTSyncInterceptor
         if (header) {
             syncSvc.send2(syncdata, header)
         }
-        
-        println 'Image Header sent to remote.'        
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('RPT-IMAGE-HEADER')}") 
@@ -100,7 +98,6 @@ class RPTSyncInterceptor
         def header = syncdata.data 
         em_image_header.save(header)
         evt.result.status = 'OK'
-        println 'Image Header posted.'
     }
 
     /*----------------------------------------------------------
@@ -115,7 +112,6 @@ class RPTSyncInterceptor
         if (chunk) {
             Base64Cipher cipher = new Base64Cipher()
             syncSvc.send2(syncdata, cipher.encode(chunk))
-            println 'Image Chunk sent to remote.'        
         }
     }   
 
@@ -126,7 +122,6 @@ class RPTSyncInterceptor
         def chunk = cipher.decode(syncdata.data)
         em_image_chunk.save(chunk)
         evt.result.status = 'OK'
-        println 'Image Chunk posted.'
     }
 
 }

@@ -48,72 +48,85 @@ class SubdivisionSyncService
 
     @DataContext('subdivision_task')
     def em_task
-	
+
+
+    
+    def getActions(){
+		return  [
+	    	'SUBDIVISION-FORAPPROVAL': [send: getForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
+	    	'SUBDIVISION-FAAS-APPROVED': [send: getApprovedFaas, receive: postApprovedFaas, schedule: {}],
+	    	'SUBDIVISION-APPROVED': [send: getApprovedSubdivision, receive: postApprovedSubdivision, schedule: scheduleSubdivisionApproval],
+	    	'SUBDIVISION-DISAPPROVAL': [send: getDisapprovedSubdivision, receive: postDisapprovedSubdivision, schedule: scheduleSubdivisionDisapproval],
+	    ]
+	}
+
 
 	/*---------------------------------------------------------
 	*
 	* SCHEDULING SYNC SUPPORT 
 	*
 	---------------------------------------------------------*/
-	
 	@ProxyMethod
-	public void scheduleSubmitToProvince(subdivision){
-		def dtfiled = dtSvc.serverDate
-        def remoteOrg = rptSync.getRemoteOrg(subdivision)
-        def idx = 1
+	public void schedule(data) {
+		def action= getActions()[data.action]
+		if (!action) throw new Exception('Scheduler not found for action ' + data.action)
 
-        def params = [:]
-    	params.parentid = subdivision.objid
-    	params.dtfiled = dtfiled
-    	params.remoteOrg = remoteOrg
+		def subdivision = em_subdivision.find([objid: data.objid]).first()
+		data.remote = rptSync.getRemoteOrg(subdivision)
+        def syncdata = syncSvc.create(data)
 
-        //subdivision faases
+		action.schedule(syncdata, subdivision)
+	}
+
+	def createItem(item, syncdata, action) {
+		return [
+			refid: item.objid, 
+			reftype: syncdata.reftype, 
+			refno: syncdata.refno, 
+			action: (action ? action : syncdata.action)
+		]
+	}
+
+	void createSyncItem(entity, syncdata, action) {
+		def item = createItem(entity, syncdata, action)
+        syncSvc.createItem(syncdata, item)
+	}
+
+
+	def scheduleSubmitToProvince = {syncdata, subdivision ->
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
-        	params.faas = [objid: it.newfaasid]
-        	params.idx = idx++
-        	faasSyncSvc.scheduleFaasData(params)
+        	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
-        	params.faas = [objid: it.newfaasid]
-        	params.idx = idx++
-        	faasSyncSvc.scheduleFaasData(params)
+        	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
         //subdivision
-        syncSvc.schedule(subdivision.objid, subdivision.objid, 'subdivision', 'SUBDIVISION-FORAPPROVAL', dtfiled, idx++, remoteOrg)
+        createSyncItem(subdivision, syncdata, 'SUBDIVISION-FORAPPROVAL')
 
-        rptSync.scheduleExaminations(subdivision.objid, 'subdivision', dtfiled, remoteOrg, idx)
-    	rptSync.scheduleRequirements(subdivision.objid, 'subdivision', dtfiled, remoteOrg, idx)
+        rptSync.scheduleExaminations(syncdata, subdivision.objid)
+    	rptSync.scheduleRequirements(syncdata, subdivision.objid)
 	}
 
-	@ProxyMethod
-	public void scheduleSubdivisionApproval(subdivision){
-		def dtfiled = dtSvc.serverDate
-        def remoteOrg = rptSync.getRemoteOrg(subdivision)
-        def idx = 1
 
-        //subdivision faases
+	def scheduleSubdivisionApproval = {syncdata, subdivision ->
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
-        	syncSvc.schedule(subdivision.objid, it.newfaasid, 'subdivision', 'SUBDIVISION-FAAS-APPROVED', dtfiled, idx++, remoteOrg)
+        	def faas = [objid: it.newfaasid]
+        	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
-        	syncSvc.schedule(subdivision.objid, it.newfaasid, 'subdivision', 'SUBDIVISION-FAAS-APPROVED', dtfiled, idx++, remoteOrg)
+			def faas = [objid: it.newfaasid]
+        	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
         }
 
         //subdivision
-        syncSvc.schedule(subdivision.objid, subdivision.objid, 'subdivision', 'SUBDIVISION-APPROVED', dtfiled, idx++, remoteOrg)
+    	createSyncItem(subdivision, syncdata, 'SUBDIVISION-APPROVED')
 	}
 
-	@ProxyMethod
-	public void scheduleSubdivisionDisapproval(subdivision){
-		def dtfiled = dtSvc.serverDate
-        def remoteOrg = rptSync.getRemoteOrg(subdivision)
-        def idx = 1
-
-        //subdivision
-        syncSvc.schedule(subdivision.objid, subdivision.objid, 'subdivision', 'SUBDIVISION-DISAPPROVAL', dtfiled, idx++, remoteOrg)
+	def scheduleSubdivisionDisapproval = {syncdata, subdivision ->
+		createSyncItem(subdivision, syncdata, 'SUBDIVISION-DISAPPROVAL')
 	}
 
 	
@@ -130,19 +143,13 @@ class SubdivisionSyncService
 		rptSync.receive(syncdata, getActions())
 	}
 
-	def getActions(){
-		return  [
-	    	'SUBDIVISION-FORAPPROVAL': [send: getForApproval, receive: postForApproval],
-	    	'SUBDIVISION-FAAS-APPROVED': [send: getApprovedFaas, receive: postApprovedFaas],
-	    	'SUBDIVISION-APPROVED': [send: getApprovedSubdivision, receive: postApprovedSubdivision],
-	    	'SUBDIVISION-DISAPPROVAL': [send: getDisapprovedSubdivision, receive: postDisapprovedSubdivision],
-	    ]
-	}
+
 
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def getForApproval = {subdivision ->
+	def getForApproval = {syncdata ->
+		def subdivision = [objid: syncdata.refid]
 		return subdivisionSupport.getForApproval(subdivision)
 	}
 
@@ -153,7 +160,8 @@ class SubdivisionSyncService
 	}
 
 
-	def getApprovedFaas = {faas ->
+	def getApprovedFaas = {syncdata ->
+		def faas = [objid: syncdata.refid]
 		return subdivisionSupport.getApprovedFaas(faas)
 	}
 
@@ -163,7 +171,8 @@ class SubdivisionSyncService
 
 	}
 
-	def getApprovedSubdivision = {subdivision ->
+	def getApprovedSubdivision = {syncdata ->
+		def subdivision = [objid: syncdata.refid]
 		return svc.open(subdivision)
 	}
 
@@ -173,8 +182,8 @@ class SubdivisionSyncService
 
 	}
 	
-	def getDisapprovedSubdivision = {subdivision ->
-		return subdivision
+	def getDisapprovedSubdivision = {syncdata ->
+		return  [objid: syncdata.refid]
 	}
 
 	def postDisapprovedSubdivision = {syncdata ->

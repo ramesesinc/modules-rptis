@@ -12,8 +12,11 @@ class SubdivisionSyncInterceptor
     @Env
     def env
 
+    @Service('RPTMainSyncService')
+    def syncSvc    
+
     @Service('SubdivisionSyncService')
-    def syncSvc 
+    def subdivisionSync 
 
 
     /*---------------------------------------------------------
@@ -24,39 +27,59 @@ class SubdivisionSyncInterceptor
     @After(pattern="SubdivisionWorkflowService.signal", eval="#{args[0].state=='forprovsubmission' && args[0].action=='completed'}", index=10000) 
     public void scheduleSubmitToProvince( evt ) {
         def subdivision = evt.args[0].data;
-        syncSvc.scheduleSubmitToProvince(subdivision)
+        syncSvc.createDataForSync(getDataForSync(subdivision, 'SUBDIVISION-FORAPPROVAL'))
     }
 
     @After(pattern="SubdivisionWorkflowService.signal", eval="#{args[0].state.matches('approver|provapprover') && args[0].action=='completed'}", index=10000) 
     public void scheduleSubdivisionApproval( evt ) {
         def subdivision = evt.args[0].data;
-        syncSvc.scheduleSubdivisionApproval(subdivision)
+        syncSvc.createDataForSync(getDataForSync(subdivision, 'SUBDIVISION-APPROVED'))
     }
 
     @After(pattern="SubdivisionWorkflowService.signal", eval="#{args[0].action=='disapprove'}", index=10000) 
     public void scheduleSubdivisionDisapproval( evt ) {
         def subdivision = evt.args[0].data;
-        syncSvc.scheduleSubdivisionDisapproval(subdivision)
+        syncSvc.createDataForSync(getDataForSync(subdivision, 'SUBDIVISION-DISAPPROVAL'))
     }
+
+
+    /* scheduler */
+    @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('SUBDIVISION-.*')}", index=50000) 
+    public void scheduleForSync( evt ) {
+        def data = evt.result 
+        subdivisionSync.schedule(data)
+    }   
+
 
     /*---------------------------------------------------------
     *
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.reftype == 'subdivision' && result.action.matches('SUBDIVISION-.*')}") 
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('SUBDIVISION-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
-        syncSvc.send(syncdata)
+        subdivisionSync.send(syncdata)
     }   
 
-    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'subdivision' && args[0].action.matches('SUBDIVISION-.*')}") 
+    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('SUBDIVISION-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
-        syncSvc.receive(syncdata)
+        subdivisionSync.receive(syncdata)
         evt.result.status = 'OK'
     }
 
 
+
+    def getDataForSync(subdivision, action) {
+        def data = [:]
+        data.objid = subdivision.objid
+        data.reftype = 'subdivision'
+        data.refno = subdivision.txnno
+        data.orgid = env.ORGID
+        data.action = action
+        data.info = [:]
+        return data
+    }
 }
 

@@ -1,6 +1,7 @@
 <schema>
-	<element tablename="sync_data_forprocess">
+	<element tablename="syncdata_forprocess">
 		<field name="objid" primary="true" />
+		<field name="parentid" />
 	</element>
 </schema>
 

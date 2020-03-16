@@ -12,7 +12,12 @@ public class RemoteSyncService {
 
 	@ProxyMethod
 	public def receive(syncdata) {
-		return svc.receive(syncdata)
+		return svc.receiveData(syncdata)
+	}
+
+	@ProxyMethod
+	public def createSyncMeta(syncdata) {
+		return svc.createSyncMeta(syncdata)
 	}
 
 }

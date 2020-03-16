@@ -12,12 +12,14 @@ class FAASSyncInterceptor
     @Env
     def env
 
+    @Service('RPTMainSyncService')
+    def syncSvc
+
     @Service('FAASSyncService')
     def faasSync 
 
     @Service('FAASService')
     def faasSvc 
-
 
     /*---------------------------------------------------------
     *
@@ -26,45 +28,45 @@ class FAASSyncInterceptor
     ---------------------------------------------------------*/
 
     @After(pattern="FAASService.approveFaas", eval="#{result.datacapture == 1 || result.datacapture == true}", index=50000) 
-    public void scheduleDataCapturedFAAS( evt ) {
+    public void createDataCapturedFAAS( evt ) {
         def faas = evt.result 
-        faasSync.scheduleDataCapturedFAAS(faas)
+        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
     }   
 
-
     @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'approver' && args[0].action == 'approve'}", index=50000) 
-    public void scheduleOnlineApprovedFAAS( evt ) {
+    public void createOnlineApprovedFAAS( evt ) {
         def faas = evt.args[0].data 
         faas.putAll(faasSvc.approveFaas(faas))
-        faasSync.scheduleOnlineApprovedFAAS(faas)
+        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
     }   
 
     @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'recommender' && args[0].action == 'submit_to_province'}", index=50000) 
-    public void scheduleProvinceApproval( evt ) {
+    public void createProvinceApproval( evt ) {
         def faas = evt.args[0].data 
-        faasSync.scheduleProvinceApproval(faas)
+        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-PROVINCE-APPROVAL'))
     }       
 
     @After(pattern="FAASService.deleteFaas") 
-    public void scheduleDeleteFaas( evt ) {
+    public void createDeleteFaas( evt ) {
         def faas = evt.args[0]
         if (faas) {
-            faasSync.scheduleDeleteFaas(faas)
+            syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
         }
     }
 
     @After(pattern="FAASService.revertToInterim") 
-    public void scheduleRevertToInterim( evt ) {
+    public void createRevertToInterim( evt ) {
         def faas = evt.result
-        faasSync.scheduleRevertToInterim(faas)
+        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-REVERT-TO-INTERIM'))
     }
 
-    @After(pattern="CancelledFAASService.approveFaasCancellation") 
-    public void scheduleCancelledFaas( evt ) {
-        def cancelledfaas = evt.result
-        faasSync.scheduleCancelledFaas(cancelledfaas)
-    }
 
+    /* scheduler */
+    @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('FAAS-.*')}", index=50000) 
+    public void scheduleFAASForSync( evt ) {
+        def data = evt.result 
+        faasSync.schedule(data)
+    }   
 
 
     /*---------------------------------------------------------
@@ -72,13 +74,13 @@ class FAASSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.reftype == 'faas' && result.action.matches('FAAS-.*')}") 
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('FAAS-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
         faasSync.send(syncdata)
     }   
 
-    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'faas' && args[0].action.matches('FAAS-.*')}") 
+    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAAS-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
         faasSync.receive(syncdata)
@@ -86,5 +88,15 @@ class FAASSyncInterceptor
     }
 
 
+    def getDataForSync(faas, action) {
+        def data = [:]
+        data.objid = faas.objid
+        data.reftype = 'faas'
+        data.refno = (faas.tdno ? faas.tdno : faas.utdno)
+        data.orgid = env.ORGID
+        data.action = action
+        data.info = [:]
+        return data
+    }
 }
 

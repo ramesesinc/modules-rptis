@@ -6,15 +6,20 @@ class RPTMainSyncTask {
 	@Service('RPTMainSyncService')
 	def svc 
 
-	@Schedule(interval=1)
+	@Schedule(interval=2)
 	public void processPending(task) {
-		svc.getForProcessItems().each {syncdata ->
-			svc.sendAsyncData(syncdata)
+		svc.schedulePendingData()
+	}
+
+	@Schedule(interval=2)
+	public void processForSyncData(task) {
+		svc.getDataForSync().each {
+			svc.sendAsyncData(it)
 		}
 	}
 
-	@Schedule(interval=60)
+	@Schedule(interval=2)
 	public void reschedulePendingTask(task) {
-		svc.movePendingToForProcess()
+		svc.reschedulePendingData()
 	}
 }

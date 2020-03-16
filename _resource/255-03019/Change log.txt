@@ -1,0 +1,4 @@
+V255-03019
+------------------------------------------------
+Assessor
+	- Modified synchronization between prov and muni (management)

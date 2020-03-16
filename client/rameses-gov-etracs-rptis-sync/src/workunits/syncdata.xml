@@ -1,0 +1,20 @@
+<workunit extends="com/rameses/seti2/templates/CrudForm.xml"
+    schemaName="syncdata"
+    windowTitle="Data Synchronization Information"
+    allowDelete="false"
+    allowCreate="false"
+    allowEdit="false"
+>
+    <invokers>
+        <invoker type="syncdata:open"
+            action="open" 
+            caption="Data Synchronization Information"
+            role="ADMIN" permission="util.manage-data-sync" 
+            target="popup"/>
+            
+    </invokers>
+    <code class="com.rameses.rptis.sync.models.SyncDataModel" />
+    <pages>
+        <page template="com.rameses.rptis.sync.views.SyncDataPage"/>
+    </pages>
+</workunit>

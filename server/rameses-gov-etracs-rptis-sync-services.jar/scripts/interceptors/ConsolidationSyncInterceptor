@@ -12,8 +12,11 @@ class ConsolidationSyncInterceptor
     @Env
     def env
 
+    @Service('RPTMainSyncService')
+    def syncSvc    
+
     @Service('ConsolidationSyncService')
-    def syncSvc 
+    def consolidationSync 
 
 
     /*---------------------------------------------------------
@@ -24,33 +27,53 @@ class ConsolidationSyncInterceptor
     @After(pattern="ConsolidationWorkflowService.signal", eval="#{args[0].state=='forprovsubmission' && args[0].action=='completed'}", index=10000) 
     public void scheduleSubmitToProvince( evt ) {
         def consolidation = evt.args[0].data;
-        syncSvc.scheduleSubmitToProvince(consolidation)
+        syncSvc.createDataForSync(getDataForSync(consolidation, 'CONSOLIDATION-FORAPPROVAL'))
+        // consolidationSync.scheduleSubmitToProvince(consolidation)
     }
 
     @After(pattern="ConsolidationWorkflowService.signal", eval="#{args[0].state.matches('approver|provapprover') && args[0].action=='completed'}", index=10000) 
     public void scheduleConsolidationApproval( evt ) {
         def consolidation = evt.args[0].data;
-        syncSvc.scheduleConsolidationApproval(consolidation)
+        syncSvc.createDataForSync(getDataForSync(consolidation, 'CONSOLIDATION-APPROVED'))
+        // consolidationSync.scheduleConsolidationApproval(consolidation)
     }
+
+    /* scheduler */
+    @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('CONSOLIDATION-.*')}", index=50000) 
+    public void scheduleForSync( evt ) {
+        def data = evt.result 
+        consolidationSync.schedule(data)
+    }   
+
 
     /*---------------------------------------------------------
     *
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.reftype == 'consolidation' && result.action.matches('CONSOLIDATION-.*')}") 
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('CONSOLIDATION-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
-        syncSvc.send(syncdata)
+        consolidationSync.send(syncdata)
     }   
 
-    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'consolidation' && args[0].action.matches('CONSOLIDATION-.*')}") 
+    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('CONSOLIDATION-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
-        syncSvc.receive(syncdata)
+        consolidationSync.receive(syncdata)
         evt.result.status = 'OK'
     }
 
 
+    def getDataForSync(consolidation, action) {
+        def data = [:]
+        data.objid = consolidation.objid
+        data.reftype = 'consolidation'
+        data.refno = consolidation.txnno
+        data.orgid = env.ORGID
+        data.action = action
+        data.info = [:]
+        return data
+    }
 }
 

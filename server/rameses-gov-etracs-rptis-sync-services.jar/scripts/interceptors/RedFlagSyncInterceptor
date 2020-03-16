@@ -12,8 +12,11 @@ class RedFlagSyncInterceptor
     @Env
     def env
 
+    @Service('RPTMainSyncService')
+    def syncSvc
+
     @Service('RedFlagSyncService')
-    def syncSvc 
+    def redFlagSync 
 
 
     /*---------------------------------------------------------
@@ -24,39 +27,59 @@ class RedFlagSyncInterceptor
     @After(pattern="ProvinceRedFlagService.postRedFlag") 
     public void scheduleSubmitToMunicipality( evt ) {
         def redflag = evt.result
-        syncSvc.scheduleSubmitToMunicipality(redflag)
+        syncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-FOR-MUNICIPALITY'))
+        // redFlagSync.scheduleSubmitToMunicipality(redflag)
     }
 
     @After(pattern="MunicipalityRedFlagService.resolveRedFlag") 
     public void scheduleResolvedRedFlag( evt ) {
         def redflag = evt.result
-        syncSvc.scheduleResolvedRedFlag(redflag)
+        syncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-RESOLVED'))
     }
 
     @After(pattern="MunicipalityRedFlagService.resendToProvince") 
     public void scheduleResendToProvince( evt ) {
         def redflag = evt.result
-        syncSvc.scheduleResolvedRedFlag(redflag)
+        syncSvc.createDataForSync(getDataForSync(redflag, 'RPT-REDFLAG-RESOLVED'))
     }
+
+    /* scheduler */
+    @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('RPT-REDFLAG-.*')}", index=50000) 
+    public void scheduleForSync( evt ) {
+        def data = evt.result 
+        redFlagSync.schedule(data)
+    }   
+
 
     /*---------------------------------------------------------
     *
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.reftype == 'redflag' && result.action.matches('REDFLAG-.*')}") 
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('RPT-REDFLAG-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
-        syncSvc.send(syncdata)
+        redFlagSync.send(syncdata)
     }   
 
-    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'redflag' && args[0].action.matches('REDFLAG-.*')}") 
+    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('RPT-REDFLAG-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
-        syncSvc.receive(syncdata)
+        redFlagSync.receive(syncdata)
         evt.result.status = 'OK'
     }
 
 
+
+    def getDataForSync(redflag, action) {
+        def data = [:]
+        data.objid = redflag.objid
+        data.reftype = 'redflag'
+        data.refno = (redflag.caseno ? redflag.caseno : redflag.refno)
+        data.orgid = env.ORGID
+        data.action = action
+        data.info = [:]
+        return data
+    }
 }
 

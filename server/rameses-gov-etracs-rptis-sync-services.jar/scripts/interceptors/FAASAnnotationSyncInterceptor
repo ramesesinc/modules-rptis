@@ -12,8 +12,11 @@ class FAASAnnotationSyncInterceptor
     @Env
     def env
 
+    @Service('RPTMainSyncService')
+    def syncSvc
+
     @Service('FAASAnnotationSyncService')
-    def syncSvc 
+    def annotationSyncSvc
 
 
     /*---------------------------------------------------------
@@ -22,20 +25,24 @@ class FAASAnnotationSyncInterceptor
     *
     ---------------------------------------------------------*/
     @After(pattern="FAASAnnotationService.approve") 
-    public void schedulePostAnnotation( evt ) {
-        def annotation = evt.result
-        println 'annotation.faas?.lguid => ' + annotation.faas?.lguid
-        annotation.lguid = annotation.faas?.lguid
-        syncSvc.schedulePostAnnotation(annotation)
-    }
+    public void createAnnotation( evt ) {
+        def annotation = evt.result 
+        syncSvc.createDataForSync(getDataForSync(annotation, 'FAASANNOTATION-POST'))
+    }   
 
     @After(pattern="CancelAnnotationService.approve") 
-    public void scheduleCancelledAnnotation( evt ) {
-        def cancelannotation = evt.result
-        cancelannotation.lguid = cancelannotation.annotation.faas.lguid
-        syncSvc.scheduleCancelledAnnotation(cancelannotation)
-    }
+    public void createCancelAnnotation( evt ) {
+        def cancelannotation = evt.result 
+        syncSvc.createDataForSync(getDataForSync(cancelannotation, 'FAASANNOTATION-CANCELLED'))
+    }   
 
+
+    /* scheduler */    
+    @After(pattern="RPTMainSyncService.scheduleSync", eval="#{result.action.matches('FAASANNOTATION-.*')}", index=50000) 
+    public void scheduleFAASForSync( evt ) {
+        def data = evt.result 
+        annotationSyncSvc.schedule(data)
+    }   
 
 
     /*---------------------------------------------------------
@@ -43,19 +50,29 @@ class FAASAnnotationSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.reftype == 'faasannotation' && result.action.matches('FAAS-ANNOTATION-.*')}") 
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('FAASANNOTATION-.*')}") 
     public void sendData( evt ) {
         def syncdata = evt.result 
-        syncSvc.send(syncdata)
+        annotationSyncSvc.send(syncdata)
     }   
 
-    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].reftype == 'faasannotation' && args[0].action.matches('FAAS-ANNOTATION-.*')}") 
+    @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAASANNOTATION-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
-        syncSvc.receive(syncdata)
+        annotationSyncSvc.receive(syncdata)
         evt.result.status = 'OK'
     }
 
+
+    def getDataForSync(annotation, action) {
+        def data = [:]
+        data.objid = annotation.objid
+        data.reftype = 'faasannotation'
+        data.refno = annotation.txnno
+        data.orgid = env.ORGID
+        data.action = action
+        return data
+    }
 
 }
 
