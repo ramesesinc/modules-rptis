@@ -88,7 +88,7 @@ public abstract class AbstractBatchGRModel extends RPTWorkflowController
         }
         binding?.fireNavigation(res);
         binding?.refresh();
-        caller?.search();
+        // caller?.search();
     }
     
     def onerror = {
