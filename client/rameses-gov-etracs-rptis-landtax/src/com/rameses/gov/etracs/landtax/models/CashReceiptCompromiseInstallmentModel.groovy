@@ -48,12 +48,13 @@ class CashReceiptCompromiseInstallmentModel
                     entity.installments[i].pay = false;
                     entity.installments[i].amtdue = 0.0;
                 }
-                installmentListHandler.load();
-                calcReceiptAmount();
+                installmentListHandler.refreshSelectedItem();
+                // calcReceiptAmount();
             }
             if (colname == 'amtdue'){
                 item.pay = true;
                 item.partial = item.balance > item.amtdue ? 1 : 0
+                entity.items = [];
             }
         },
         
@@ -84,5 +85,8 @@ class CashReceiptCompromiseInstallmentModel
     void calcReceiptAmount(){
         entity.amount = entity.installments.sum{ it.pay == true ? it.amtdue : 0.0 }
         caller.calcReceiptAmount();
+        if (entity.amount > 0) {
+            entity.items = svc.getReceiptItems(entity)
+        }
     }
 }
