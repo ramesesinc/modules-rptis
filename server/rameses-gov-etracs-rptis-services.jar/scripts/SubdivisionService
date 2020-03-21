@@ -241,7 +241,17 @@ class SubdivisionService
 
     @ProxyMethod
     public def getSubdividedLands( subdivisionid ) {
-        return em.getSubdividedLands([subdivisionid:subdivisionid])
+        return getLands([objid: subdivisionid])
+    }
+
+    @ProxyMethod
+    public def getLands(params ) {
+        params.subdivisionid = params.objid
+        params.filter = ''
+        if (params.section) {
+            params.filter = ' AND rp.section = $P{section}'
+        }
+        return em.getSubdividedLands(params)
     }
 
     @ProxyMethod
@@ -988,6 +998,11 @@ class SubdivisionService
             println 'assistItem => ' + assistItem
             throw new Exception('Parcels assigned to ' + assistItem.parent.assignee.fullname + ' are not completed.')
         }
+    }
+
+    @ProxyMethod
+    public def getSubdividedLandSections(subdivision) {
+        return em.getSubdividedLandSections(subdivision)
     }
 }
 
