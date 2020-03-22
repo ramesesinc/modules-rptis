@@ -65,8 +65,16 @@ class FaasMachReportInterceptor
 	}
 
 	void buildMachDetails(faas) {
-		faas.machdetails = em.getMachDetails(faas.rpu).each{
-			it.brandmodel = (it.brand? it.brand : '') + (it.model ? '/' + it.model : '')
+		faas.machdetails = em.getMachDetails(faas.rpu).each{ md ->
+			md.brandmodel = (md.brand? md.brand : '') + (md.model ? '/' + md.model : '')
+			if (md.params) {
+				//deconstruct params as field - value
+				def params = md.remove('params')
+				params = em.serializer.read(params)
+				params.each {p ->
+					md[p.param.name] = p.value 
+				}
+			}
 		}
 		util.buildEmptyRows( faas.machdetails, MACH_DETAIL_ROWS )
 	}
