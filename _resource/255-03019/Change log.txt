@@ -9,3 +9,4 @@ Assessor
 	- Machinery: report: deconstruct machine smv params as fields
 	- TD: report: add prevtaxability info
 	- Report: Property Examination/Audit: add lgu and baranga filter
+	- Report: masterlist: fix title error
