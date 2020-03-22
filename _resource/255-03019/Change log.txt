@@ -11,3 +11,4 @@ Assessor
 	- Report: Property Examination/Audit: add lgu and baranga filter
 	- Report: masterlist: fix title error
 	- Rule: landassessment: add specificclassification to support mix-use assessment 
+	- Report: faas: machinery: support additional page

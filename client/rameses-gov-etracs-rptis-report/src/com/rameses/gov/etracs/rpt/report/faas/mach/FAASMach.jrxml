@@ -106,6 +106,8 @@
 	<field name="provrecommender.name" class="java.lang.String"/>
 	<field name="provrecommender.dtsigned" class="java.util.Date"/>
 	<field name="objid" class="java.lang.String"/>
+	<field name="machdetails2" class="java.lang.Object"/>
+	<field name="propertyappraisals2" class="java.lang.Object"/>
 
 
 		<group  name="Part1" isStartNewPage="true" >
@@ -2102,6 +2104,162 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{preveffectivity}]]></textFieldExpression>
 				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="PAGE3" isStartNewPage="true" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="133"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[$F{propertyappraisals2} != null]]></printWhenExpression>
+				<staticText>
+					<reportElement
+						x="0"
+						y="83"
+						width="552"
+						height="17"
+						forecolor="#FF00CC"
+						key="staticText-326"/>
+					<box></box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[REAL PROPERTY FIELD APPRAISAL AND ASSESSMENT SHEET - MACHINERY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="-2"
+						y="113"
+						width="552"
+						height="16"
+						forecolor="#FF00CC"
+						key="staticText-327"/>
+					<box leftPadding="3">					<pen lineWidth="0.0" lineColor="#FF0099"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0099"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0099"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0099"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0099"/>
+</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<text><![CDATA[ARP NO:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="39"
+						y="114"
+						width="205"
+						height="14"
+						key="textField-54"/>
+					<box></box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tdno}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="246"
+						y="114"
+						width="26"
+						height="14"
+						forecolor="#FF0099"
+						key="staticText-328"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<text><![CDATA[PIN.:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="272"
+						y="114"
+						width="280"
+						height="14"
+						key="textField-55"/>
+					<box></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rpu.fullpin}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="388"
+						y="97"
+						width="117"
+						height="15"
+						forecolor="#FF00CC"
+						key="staticText-329"/>
+					<box rightPadding="3" topPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<text><![CDATA[Transaction Code :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="505"
+						y="97"
+						width="47"
+						height="15"
+						key="textField-56"/>
+					<box topPadding="2"></box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{txntype.displaycode}]]></textFieldExpression>
+				</textField>
+				<break>
+					<reportElement
+						x="0"
+						y="4"
+						width="552"
+						height="0"
+						key="element-1"/>
+				</break>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="PAGE3DETAIL" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="34"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[$F{propertyappraisals2} != null]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="20"
+						width="552"
+						height="14"
+						key="subreport-6"
+						positionType="Float"/>
+					<dataSourceExpression><![CDATA[$F{propertyappraisals2}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["PropertyAppraisal.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="5"
+						width="552"
+						height="14"
+						key="subreport-7"
+						positionType="Float"/>
+					<dataSourceExpression><![CDATA[$F{machdetails2}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["MachDetail.jasper"]]></subreportExpression>
+				</subreport>
 			</band>
 			</groupHeader>
 			<groupFooter>
