@@ -172,3 +172,8 @@ FOREIGN KEY (objid) REFERENCES syncdata (objid)
 go
 
 
+
+/* PREVTAXABILITY */
+alter table faas_previous add prevtaxability varchar(10)
+go
+

@@ -12,6 +12,8 @@ class RPUInfoPreviousRecordModel extends SubPageModel
     def svc;
     
     def selectedItem;
+
+    def taxabilities = ['TAXABLE', 'EXEMPT'];
     
     def listHandler = [
         createItem : {

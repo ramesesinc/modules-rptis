@@ -688,6 +688,7 @@ class SubdivisionService
         pf.totalareasqm =  faas.rpu.totalareasqm
         pf.totalareaha =  faas.rpu.totalareaha
         pf.effectivityyear =  faas.effectivityyear
+        pf.taxable =  faas.rpu.taxable
 
         faas.objid = 'F' + arpu.objid 
         faas.state = STATE_PENDING

@@ -90,3 +90,11 @@ CREATE TABLE `syncdata_pending` (
   CONSTRAINT `fk_syncdata_pending_syncdata` FOREIGN KEY (`objid`) REFERENCES `syncdata` (`objid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ;
+
+
+
+
+/* PREVTAXABILITY */
+alter table faas_previous add prevtaxability varchar(10)
+;
+

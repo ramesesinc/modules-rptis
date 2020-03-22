@@ -314,6 +314,7 @@ SELECT cl.*,
 	r.totalav,
 	r.totalareaha,
 	r.totalareasqm,
+	r.taxable,
 	rp.barangayid,
 	rp.lgutype,
 	f.effectivityyear
