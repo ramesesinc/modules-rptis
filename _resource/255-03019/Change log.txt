@@ -7,3 +7,4 @@ Assessor
 	- FAAS: previous: add prevtaxability info
 	- Subdivision: cancel improvement: support modification and access to cancellation reports
 	- Machinery: report: deconstruct machine smv params as fields
+	- TD: report: add prevtaxability info
