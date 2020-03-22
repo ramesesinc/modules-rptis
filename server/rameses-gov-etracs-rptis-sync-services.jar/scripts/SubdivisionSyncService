@@ -28,8 +28,15 @@ class SubdivisionSyncService
 	@Service('SubdivisionWorkflowService')
 	def workflowSvc
 
+	@Service('FAASService')
+	def faasSvc
+
 	@Service('FAASSyncService')
 	def faasSyncSvc
+
+	@Service('CancelledFAASService')
+    def cancelFaasSvc
+
 
     @DataContext('subdivision')
     def em_subdivision
@@ -49,6 +56,12 @@ class SubdivisionSyncService
     @DataContext('subdivision_task')
     def em_task
 
+    @DataContext('cancelledfaas')
+    def em_cancelledfaas
+
+    @DataContext('cancelledfaas_signatory')
+    def em_cancelledfaas_signatory
+
 
     
     def getActions(){
@@ -57,6 +70,8 @@ class SubdivisionSyncService
 	    	'SUBDIVISION-FAAS-APPROVED': [send: getApprovedFaas, receive: postApprovedFaas, schedule: {}],
 	    	'SUBDIVISION-APPROVED': [send: getApprovedSubdivision, receive: postApprovedSubdivision, schedule: scheduleSubdivisionApproval],
 	    	'SUBDIVISION-DISAPPROVAL': [send: getDisapprovedSubdivision, receive: postDisapprovedSubdivision, schedule: scheduleSubdivisionDisapproval],
+	    	'SUBDIVISION-CANCELLED-FAAS': [send: getCancelledFaas, receive: saveCancelledFaas, schedule: {}],
+	    	'SUBDIVISION-CANCELLED-FAAS-APPROVED': [send: getApprovedCancelledFaas, receive: postApprovedCancelledFaas, schedule: {}],
 	    ]
 	}
 
@@ -102,6 +117,10 @@ class SubdivisionSyncService
         	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
+        em_cancelledimprovement.find([parentid: subdivision.objid]).list().each {
+        	createSyncItem(it, syncdata, 'SUBDIVISION-CANCELLED-FAAS')	
+        }
+
         //subdivision
         createSyncItem(subdivision, syncdata, 'SUBDIVISION-FORAPPROVAL')
 
@@ -119,6 +138,10 @@ class SubdivisionSyncService
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
 			def faas = [objid: it.newfaasid]
         	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
+        }
+
+        em_cancelledimprovement.find([parentid: subdivision.objid]).list().each {
+        	createSyncItem(it, syncdata, 'SUBDIVISION-CANCELLED-FAAS-APPROVED')	
         }
 
         //subdivision
@@ -190,6 +213,38 @@ class SubdivisionSyncService
 		def subdivision = syncdata.data 
 		subdivisionSupport.postDisapprovedSubdivision(subdivision)
 
+	}
+
+	def getCancelledFaas = {syncdata ->
+		def cancelledfaas = em_cancelledfaas.read([objid: syncdata.refid])
+		if (cancelledfaas) {
+			cancelledfaas.signatories = em_cancelledfaas_signatory.read(cancelledfaas)
+		} else {
+			cancelledfaas = [:]
+		}
+		return cancelledfaas 
+	}
+
+	def saveCancelledFaas = {syncdata ->
+		def cancelledfaas = syncdata.data 
+		em_cancelledfaas.save(cancelledfaas)
+		em_cancelledfaas_signatory.save(cancelledfaas.signatories)
+	}
+
+	def getApprovedCancelledFaas = {syncdata ->
+		def cancelledfaas = getCancelledFaas(syncdata)
+		cancelledfaas.faas = getApprovedFaas([refid: cancelledfaas.faasid])
+		return cancelledfaas 
+	}
+
+	def postApprovedCancelledFaas = {syncdata ->
+		def cancelledfaas = syncdata.data 
+		em_cancelledfaas.save(cancelledfaas)
+		em_cancelledfaas_signatory.save(cancelledfaas.signatories)
+		if (cancelledfaas.faas) {
+			faasSvc.updateFaas(cancelledfaas.faas)
+		}
+		cancelFaasSvc.postLedgerCancellation(cancelledfaas)
 	}
 
 

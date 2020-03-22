@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="cancelledfaas:formActions"  action="preview" caption="Preview" />        
+        <invoker type="cancelledfaas:formActions"  
+            action="preview" 
+            caption="Preview"  
+            visibleWhen="#{mode == 'read'}"
+            />        
+
+        <invoker type="cancelledimprovement:formActions"  
+            action="preview" 
+            caption="Notice of Cancellation"  
+            visibleWhen="#{mode == 'read'}"
+            index="105" />        
         <invoker type="formActions" action="_close" caption="Back" mnemonic="b" immediate="true"/>
    </invokers>
    <code>       

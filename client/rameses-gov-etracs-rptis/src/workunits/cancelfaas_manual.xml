@@ -195,6 +195,7 @@ public class CancelledFAASController extends PageFlowController
             <transition to="default" cond="#{entity.state == 'DRAFT'}"/>
             <transition to="forapproval" cond="#{entity.state == 'FORAPPROVAL'}"/>
             <transition to="approved" cond="#{entity.state == 'APPROVED'}"/>
+            <transition to="pending" cond="#{entity.state == 'PENDING'}"/>
         </process>
         
         <page name="init" title="FAAS Cancellation (Draft)">
@@ -209,6 +210,12 @@ public class CancelledFAASController extends PageFlowController
             <transition caption="Save"   to="back-to-default" action="save" name="save" mnemonic="s" shortcut="ctrl S" icon="images/toolbars/save.png"  visibleWhen="#{mode != 'read'}" />
             <transition caption="Delete" to="delete"  action="delete" confirm="Delete record?"    mnemonic="d" icon="images/toolbars/trash.png"  visibleWhen="#{mode == 'read'}" role="RECORD,APPRAISER"/>
             <transition caption="Submit" to="forapproval" action="submitForApproval"  mnemonic="m"  visibleWhen="#{mode == 'read'}" confirm="Submit for approval?" role="RECORD,APPRAISER"/>
+        </page>
+
+        <page name="pending" title="FAAS Cancellation (Pending)">
+            <transition caption="Close"  to="end"      
+                mnemoni="c" icon="images/toolbars/cancel.png" 
+                visibleWhen="#{mode == 'read'}"/>
         </page>
         
         <process name="back-to-default">
@@ -246,6 +253,7 @@ public class CancelledFAASController extends PageFlowController
         <page name="default" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
         <page name="forapproval" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
         <page name="approved" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
+        <page name="pending" template="com.rameses.gov.etracs.rpt.cancelledfaas.ui.CancelledFAASPage"/>
     </pages>
 </workunit>
 

@@ -7,8 +7,14 @@
         <invoker type="formActions" action="edit" caption="Edit" mnemonic="e" visibleWhen="#{showActions == true}" role="TAXMAPPER"/>
         <invoker type="formActions" action="save" caption="Save" mnemonic="s" visibleWhen="#{mode != 'read'}" />
         
+        <invoker type="formActions" action="modifyCancel" 
+                 caption="Modify Cancellation" 
+                 mnemonic="m" 
+                 visibleWhen="#{mode != 'read' &amp;&amp; selectedItem != null}" 
+                 role="TAXMAPPER"/>
+
         <invoker type="formActions" action="undoCancel" 
-                 caption="Undo Cancel Improvement" 
+                 caption="Undo Cancellation" 
                  mnemonic="u" 
                  visibleWhen="#{mode != 'read' &amp;&amp; selectedItem != null}" 
                  role="TAXMAPPER"/>
@@ -19,6 +25,7 @@
     
     <pages> 
         <page template="com.rameses.gov.etracs.rptis.views.SubdivisionCancelledImprovementPage"/>
+        <page name="cancelinfo" template="com.rameses.gov.etracs.rptis.views.CancelledImprovementInfoPage"/>
     </pages>
 </workunit>
 

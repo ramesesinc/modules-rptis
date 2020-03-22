@@ -102,7 +102,7 @@ class FAASSyncService
 		]
 	}
 
-	void createSyncItem(entity, syncdata, action) {
+	def createSyncItem(entity, syncdata, action) {
 		def item = createItem(entity, syncdata, action)
         syncSvc.createItem(syncdata, item)
 	}
@@ -141,8 +141,7 @@ class FAASSyncService
 	}
 
 	def scheduleFaas = {syncdata, faas ->
-        def item = createSyncItem(faas, syncdata, 'FAAS-DATA')
-        syncSvc.createItem(syncdata, item)
+        createSyncItem(faas, syncdata, 'FAAS-DATA')
         scheduleSharedData(syncdata, faas)
 	}
 

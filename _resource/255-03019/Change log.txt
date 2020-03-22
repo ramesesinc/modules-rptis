@@ -5,3 +5,4 @@ Assessor
 	- Subdivision: support filter by section in subdivided lands
 	- FAAS: bldg: add bldgfloorarea info
 	- FAAS: previous: add prevtaxability info
+	- Subdivision: cancel improvement: support modification and access to cancellation reports
