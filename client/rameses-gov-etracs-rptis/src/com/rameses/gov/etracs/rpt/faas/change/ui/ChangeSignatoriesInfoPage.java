@@ -38,9 +38,19 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
         formPanel5 = new com.rameses.rcp.util.FormPanel();
         xLookupField2 = new com.rameses.rcp.control.XLookupField();
         xDateField4 = new com.rameses.rcp.control.XDateField();
+        formPanel10 = new com.rameses.rcp.util.FormPanel();
+        xLookupField7 = new com.rameses.rcp.control.XLookupField();
+        xDateField9 = new com.rameses.rcp.control.XDateField();
+        formPanel11 = new com.rameses.rcp.util.FormPanel();
+        xLookupField8 = new com.rameses.rcp.control.XLookupField();
+        xDateField10 = new com.rameses.rcp.control.XDateField();
+        xSeparator1 = new com.rameses.rcp.control.XSeparator();
         formPanel7 = new com.rameses.rcp.util.FormPanel();
         xLookupField4 = new com.rameses.rcp.control.XLookupField();
         xDateField6 = new com.rameses.rcp.control.XDateField();
+        formPanel8 = new com.rameses.rcp.util.FormPanel();
+        xLookupField5 = new com.rameses.rcp.control.XLookupField();
+        xDateField7 = new com.rameses.rcp.control.XDateField();
 
         xFormPanel11.setCellspacing(1);
         xFormPanel11.setPadding(new java.awt.Insets(0, 0, 0, 0));
@@ -51,10 +61,10 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
         formPanel4.setShowCaption(false);
 
         xLookupField1.setCaption("Appraiser");
-        xLookupField1.setCaptionWidth(90);
         xLookupField1.setExpression("#{entity.appraiser.name}");
         xLookupField1.setHandler("lookupAppraiser");
         xLookupField1.setName("entity.appraiser"); // NOI18N
+        xLookupField1.setCaptionWidth(130);
         xLookupField1.setPreferredSize(new java.awt.Dimension(300, 20));
         xLookupField1.setRequired(true);
         formPanel4.add(xLookupField1);
@@ -76,10 +86,10 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
         formPanel6.setShowCaption(false);
 
         xLookupField3.setCaption("Taxmapper");
-        xLookupField3.setCaptionWidth(90);
         xLookupField3.setExpression("#{entity.taxmapper.name}");
         xLookupField3.setHandler("lookupTaxmapper");
         xLookupField3.setName("entity.taxmapper"); // NOI18N
+        xLookupField3.setCaptionWidth(130);
         xLookupField3.setPreferredSize(new java.awt.Dimension(300, 20));
         formPanel6.add(xLookupField3);
 
@@ -98,10 +108,10 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
         formPanel5.setShowCaption(false);
 
         xLookupField2.setCaption("Recommender");
-        xLookupField2.setCaptionWidth(90);
         xLookupField2.setExpression("#{entity.recommender.name}");
         xLookupField2.setHandler("lookupRecommender");
         xLookupField2.setName("entity.recommender"); // NOI18N
+        xLookupField2.setCaptionWidth(130);
         xLookupField2.setPreferredSize(new java.awt.Dimension(300, 20));
         formPanel5.add(xLookupField2);
 
@@ -114,30 +124,123 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
 
         xFormPanel11.add(formPanel5);
 
+        formPanel10.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel10.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel10.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel10.setShowCaption(false);
+
+        xLookupField7.setCaption("Approver");
+        xLookupField7.setExpression("#{entity.approver.name}");
+        xLookupField7.setHandler("lookupApprover");
+        xLookupField7.setName("entity.approver"); // NOI18N
+        xLookupField7.setCaptionWidth(130);
+        xLookupField7.setPreferredSize(new java.awt.Dimension(300, 20));
+        xLookupField7.setRequired(true);
+        formPanel10.add(xLookupField7);
+
+        xDateField9.setCaption("Date Signed");
+        xDateField9.setCaptionWidth(90);
+        xDateField9.setCellPadding(new java.awt.Insets(0, 5, 0, 0));
+        xDateField9.setHint("Date Approved");
+        xDateField9.setName("entity.approver.dtsigned"); // NOI18N
+        xDateField9.setPreferredSize(new java.awt.Dimension(91, 20));
+        xDateField9.setRequired(true);
+        formPanel10.add(xDateField9);
+
+        formPanel11.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel11.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel11.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel11.setShowCaption(false);
+
+        xLookupField8.setCaption("Approver");
+        xLookupField8.setCaptionWidth(90);
+        xLookupField8.setExpression("#{entity.approver.name}");
+        xLookupField8.setHandler("lookupApprover");
+        xLookupField8.setName("entity.approver"); // NOI18N
+        xLookupField8.setPreferredSize(new java.awt.Dimension(300, 20));
+        xLookupField8.setRequired(true);
+        formPanel11.add(xLookupField8);
+
+        xDateField10.setCaption("Date Signed");
+        xDateField10.setCaptionWidth(90);
+        xDateField10.setCellPadding(new java.awt.Insets(0, 5, 0, 0));
+        xDateField10.setHint("Date Approved");
+        xDateField10.setName("entity.approver.dtsigned"); // NOI18N
+        xDateField10.setPreferredSize(new java.awt.Dimension(91, 20));
+        xDateField10.setRequired(true);
+        formPanel11.add(xDateField10);
+
+        formPanel10.add(formPanel11);
+
+        xFormPanel11.add(formPanel10);
+
+        xSeparator1.setVisibleWhen("#{orgclass != 'city'}");
+        xSeparator1.setPreferredSize(new java.awt.Dimension(0, 20));
+
+        javax.swing.GroupLayout xSeparator1Layout = new javax.swing.GroupLayout(xSeparator1);
+        xSeparator1.setLayout(xSeparator1Layout);
+        xSeparator1Layout.setHorizontalGroup(
+            xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 637, Short.MAX_VALUE)
+        );
+        xSeparator1Layout.setVerticalGroup(
+            xSeparator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        xFormPanel11.add(xSeparator1);
+
         formPanel7.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         formPanel7.setPadding(new java.awt.Insets(0, 0, 0, 0));
         formPanel7.setPreferredSize(new java.awt.Dimension(0, 22));
         formPanel7.setShowCaption(false);
+        formPanel7.setVisibleWhen("#{orgclass != 'city'}");
 
-        xLookupField4.setCaption("Approver");
-        xLookupField4.setCaptionWidth(90);
-        xLookupField4.setExpression("#{entity.approver.name}");
-        xLookupField4.setHandler("lookupApprover");
-        xLookupField4.setName("entity.approver"); // NOI18N
+        xLookupField4.setCaption("Province Taxmapper");
+        xLookupField4.setExpression("#{entity.provtaxmapper.name}");
+        xLookupField4.setHandler("lookupProvinceTaxmapper");
+        xLookupField4.setName("entity.provtaxmapper"); // NOI18N
+        xLookupField4.setCaptionWidth(130);
         xLookupField4.setPreferredSize(new java.awt.Dimension(300, 20));
-        xLookupField4.setRequired(true);
+        xLookupField4.setStretchWidth(70);
         formPanel7.add(xLookupField4);
 
         xDateField6.setCaption("Date Signed");
+        xDateField6.setName("entity.provtaxmapper.dtsigned"); // NOI18N
         xDateField6.setCaptionWidth(90);
         xDateField6.setCellPadding(new java.awt.Insets(0, 5, 0, 0));
         xDateField6.setHint("Date Approved");
-        xDateField6.setName("entity.approver.dtsigned"); // NOI18N
         xDateField6.setPreferredSize(new java.awt.Dimension(91, 20));
         xDateField6.setRequired(true);
+        xDateField6.setStretchWidth(30);
         formPanel7.add(xDateField6);
 
         xFormPanel11.add(formPanel7);
+
+        formPanel8.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
+        formPanel8.setPadding(new java.awt.Insets(0, 0, 0, 0));
+        formPanel8.setPreferredSize(new java.awt.Dimension(0, 22));
+        formPanel8.setShowCaption(false);
+        formPanel8.setVisibleWhen("#{orgclass != 'city'}");
+
+        xLookupField5.setCaption("Province Appraiser");
+        xLookupField5.setExpression("#{entity.provappraiser.name}");
+        xLookupField5.setHandler("lookupProvinceAppraiser");
+        xLookupField5.setName("entity.provappraiser"); // NOI18N
+        xLookupField5.setCaptionWidth(130);
+        xLookupField5.setPreferredSize(new java.awt.Dimension(300, 20));
+        formPanel8.add(xLookupField5);
+
+        xDateField7.setCaption("Date Signed");
+        xDateField7.setName("entity.provappraiser.dtsigned"); // NOI18N
+        xDateField7.setCaptionWidth(90);
+        xDateField7.setCellPadding(new java.awt.Insets(0, 5, 0, 0));
+        xDateField7.setHint("Date Approved");
+        xDateField7.setPreferredSize(new java.awt.Dimension(91, 20));
+        xDateField7.setRequired(true);
+        formPanel8.add(xDateField7);
+
+        xFormPanel11.add(formPanel8);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -145,7 +248,7 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 585, Short.MAX_VALUE)
+                .addComponent(xFormPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -164,32 +267,42 @@ public class ChangeSignatoriesInfoPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.rameses.rcp.util.FormPanel formPanel10;
+    private com.rameses.rcp.util.FormPanel formPanel11;
     private com.rameses.rcp.util.FormPanel formPanel4;
     private com.rameses.rcp.util.FormPanel formPanel5;
     private com.rameses.rcp.util.FormPanel formPanel6;
     private com.rameses.rcp.util.FormPanel formPanel7;
+    private com.rameses.rcp.util.FormPanel formPanel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private com.rameses.rcp.control.XDateField xDateField10;
     private com.rameses.rcp.control.XDateField xDateField3;
     private com.rameses.rcp.control.XDateField xDateField4;
     private com.rameses.rcp.control.XDateField xDateField5;
     private com.rameses.rcp.control.XDateField xDateField6;
+    private com.rameses.rcp.control.XDateField xDateField7;
+    private com.rameses.rcp.control.XDateField xDateField9;
     private com.rameses.rcp.control.XFormPanel xFormPanel11;
     private com.rameses.rcp.control.XLookupField xLookupField1;
     private com.rameses.rcp.control.XLookupField xLookupField2;
     private com.rameses.rcp.control.XLookupField xLookupField3;
     private com.rameses.rcp.control.XLookupField xLookupField4;
+    private com.rameses.rcp.control.XLookupField xLookupField5;
+    private com.rameses.rcp.control.XLookupField xLookupField7;
+    private com.rameses.rcp.control.XLookupField xLookupField8;
+    private com.rameses.rcp.control.XSeparator xSeparator1;
     // End of variables declaration//GEN-END:variables
 }

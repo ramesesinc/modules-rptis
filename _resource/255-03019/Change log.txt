@@ -12,3 +12,4 @@ Assessor
 	- Report: masterlist: fix title error
 	- Rule: landassessment: add specificclassification to support mix-use assessment 
 	- Report: faas: machinery: support additional page
+	- FAAS: signatory: add support to modify prov appraiser and taxmapper
