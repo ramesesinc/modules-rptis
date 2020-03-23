@@ -1,6 +1,6 @@
 V255-03019
 ------------------------------------------------
-Assessor
+ASSESSOR:
 	- Modified synchronization between prov and muni (management)
 	- Subdivision: support filter by section in subdivided lands
 	- FAAS: bldg: add bldgfloorarea info
@@ -13,3 +13,7 @@ Assessor
 	- Rule: landassessment: add specificclassification to support mix-use assessment 
 	- Report: faas: machinery: support additional page
 	- FAAS: signatory: add support to modify prov appraiser and taxmapper
+
+LANDTAX:
+	- RPTLedger: sync: support prov and muni sync
+	- RPTLedger: subledger: validate total area, mv and av
