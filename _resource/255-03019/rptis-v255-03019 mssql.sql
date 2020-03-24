@@ -177,3 +177,12 @@ go
 alter table faas_previous add prevtaxability varchar(10)
 go
 
+
+update pf set 
+  pf.prevtaxability = case when r.taxable = 1 then 'TAXABLE' else 'EXEMPT' end 
+from faas_previous pf, faas f, rpu r
+where pf.prevfaasid = f.objid
+and f.rpuid = r.objid 
+and pf.prevtaxability is null 
+go 
+

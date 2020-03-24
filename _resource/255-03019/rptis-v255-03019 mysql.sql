@@ -98,3 +98,11 @@ CREATE TABLE `syncdata_pending` (
 alter table faas_previous add prevtaxability varchar(10)
 ;
 
+
+update faas_previous pf, faas f, rpu r set 
+  pf.prevtaxability = case when r.taxable = 1 then 'TAXABLE' else 'EXEMPT' end 
+where pf.prevfaasid = f.objid
+and f.rpuid = r.objid 
+and pf.prevtaxability is null 
+;
+
