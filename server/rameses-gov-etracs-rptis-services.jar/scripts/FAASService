@@ -1060,6 +1060,7 @@ class FAASService
 				rpuSvc.createRpu(faas.rpu)
 			}
 			catch(e){
+				e.printStackTrace()
 				rpuSvc.updateRpu(faas.rpu)	
 			}
 		}
@@ -1343,6 +1344,7 @@ class FAASService
         if (newfaas) {
 	        currTask.objid = params.taskid + newfaas.utdno
 	        currTask.refid = params.faasid
+        	em_faas_task.find([objid: currTask.objid]).delete()
 	        em_faas_task.create(currTask)
         }
     }

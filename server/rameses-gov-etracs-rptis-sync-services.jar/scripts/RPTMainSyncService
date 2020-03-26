@@ -227,6 +227,7 @@ class RPTMainSyncService {
 		def params = [parentid: syncdata.objid, state: 'FORSYNC']
 		return em_sync_item.where('parentid = :parentid AND state = :state', params)
 				.orderBy('idx')
+				.limit(10)
 				.list()
 	}
 
