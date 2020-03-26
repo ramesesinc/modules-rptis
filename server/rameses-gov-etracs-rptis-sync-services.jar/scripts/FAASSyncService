@@ -93,17 +93,23 @@ class FAASSyncService
 		action.schedule(syncdata, faas)
 	}
 
-	def createItem(item, syncdata, action) {
+	def createItem(item, syncdata, action, async) {
 		return [
 			refid: item.objid, 
 			reftype: syncdata.reftype, 
 			refno: syncdata.refno, 
-			action: (action ? action : syncdata.action)
+			async: (async == null ? syncdata.async : async),
+			action: (action ? action : syncdata.action),
+			info: [:]
 		]
 	}
 
 	def createSyncItem(entity, syncdata, action) {
-		def item = createItem(entity, syncdata, action)
+		return createSyncItem(entity, syncdata, action, null) 
+	}
+
+	def createSyncItem(entity, syncdata, action, async) {
+		def item = createItem(entity, syncdata, action, async)
         syncSvc.createItem(syncdata, item)
 	}
 
@@ -468,7 +474,4 @@ class FAASSyncService
 
 		support.notifyRecommender(param)
 	}
-
-	
 }
- 

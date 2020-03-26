@@ -9,6 +9,8 @@
 		<field name="action" required="true" caption="Action" />
 		<field name="idx" required="true" type="integer" />
 		<field name="error" />
+		<field name="async" type="boolean" />
+		<field name="dependedaction" />
 		<complex name="info" serializer="default" required="false" />
 	</element>
 </schema>

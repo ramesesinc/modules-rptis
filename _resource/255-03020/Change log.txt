@@ -1,0 +1,4 @@
+V255-03020
+------------------------------------------------
+ASSESSOR:
+	- Sync: support parallel processing

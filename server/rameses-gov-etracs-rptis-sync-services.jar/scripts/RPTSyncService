@@ -158,6 +158,7 @@ class RPTSyncService
 				refid: exam.objid, 
 				reftype: syncdata.reftype, 
 				refno: syncdata.refno, 
+				async: true,
 				action: 'RPT-EXAMINATION'
 			]
         	syncSvc.createItem(syncdata, item)
@@ -172,6 +173,7 @@ class RPTSyncService
 				refid: req.objid, 
 				reftype: syncdata.reftype, 
 				refno: syncdata.refno, 
+				async: true,
 				action: 'RPT-REQUIREMENT'
 			]
         	syncSvc.createItem(syncdata, item)
@@ -198,6 +200,7 @@ class RPTSyncService
 			refid: header.objid, 
 			reftype: syncdata.reftype, 
 			refno: syncdata.refno, 
+			async: false,
 			action: 'RPT-IMAGE-HEADER'
 		]
     	syncSvc.createItem(syncdata, item)
@@ -207,6 +210,7 @@ class RPTSyncService
 				refid: chunk.objid, 
 				reftype: syncdata.reftype, 
 				refno: syncdata.refno, 
+				async: true,
 				action: 'RPT-IMAGE-CHUNK'
 			]
         	syncSvc.createItem(syncdata, item)

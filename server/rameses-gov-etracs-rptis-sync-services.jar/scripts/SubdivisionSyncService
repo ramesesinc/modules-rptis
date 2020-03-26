@@ -93,36 +93,48 @@ class SubdivisionSyncService
 		action.schedule(syncdata, subdivision)
 	}
 
-	def createItem(item, syncdata, action) {
+	def createItem(item, syncdata, action, async) {
 		return [
 			refid: item.objid, 
 			reftype: syncdata.reftype, 
 			refno: syncdata.refno, 
-			action: (action ? action : syncdata.action)
+			async: (async == null ? syncdata.async : async),
+			action: (action ? action : syncdata.action),
+			dependedaction: syncdata.dependedaction
 		]
 	}
 
 	void createSyncItem(entity, syncdata, action) {
-		def item = createItem(entity, syncdata, action)
+		createSyncItem(entity, syncdata, action, null)
+	}
+
+	void createSyncItem(entity, syncdata, action, async) {
+		def item = createItem(entity, syncdata, action, async)
         syncSvc.createItem(syncdata, item)
 	}
 
 
 	def scheduleSubmitToProvince = {syncdata, subdivision ->
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
+        	syncdata.async = true
         	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
+			syncdata.async = true
         	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
+        syncdata.async = true
         em_cancelledimprovement.find([parentid: subdivision.objid]).list().each {
         	createSyncItem(it, syncdata, 'SUBDIVISION-CANCELLED-FAAS')	
         }
 
         //subdivision
+        syncdata.async = false
+        syncdata.dependedaction = 'FAAS-DATA'
         createSyncItem(subdivision, syncdata, 'SUBDIVISION-FORAPPROVAL')
+        syncdata.dependedaction = null
 
         rptSync.scheduleExaminations(syncdata, subdivision.objid)
     	rptSync.scheduleRequirements(syncdata, subdivision.objid)
@@ -131,21 +143,29 @@ class SubdivisionSyncService
 
 	def scheduleSubdivisionApproval = {syncdata, subdivision ->
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
+        	syncdata.async = true
         	def faas = [objid: it.newfaasid]
         	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
+			syncdata.async = true
 			def faas = [objid: it.newfaasid]
         	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
         }
 
+		syncdata.async = false
         em_cancelledimprovement.find([parentid: subdivision.objid]).list().each {
         	createSyncItem(it, syncdata, 'SUBDIVISION-CANCELLED-FAAS-APPROVED')	
         }
 
-        //subdivision
-    	createSyncItem(subdivision, syncdata, 'SUBDIVISION-APPROVED')
+    	//subdivision
+        syncdata.async = false
+        syncdata.dependedaction = 'SUBDIVISION-FAAS-APPROVED'
+        createSyncItem(subdivision, syncdata, 'SUBDIVISION-APPROVED')
+        syncdata.dependedaction = null
+
+        rptSync.scheduleExaminations(syncdata, subdivision.objid)
 	}
 
 	def scheduleSubdivisionDisapproval = {syncdata, subdivision ->

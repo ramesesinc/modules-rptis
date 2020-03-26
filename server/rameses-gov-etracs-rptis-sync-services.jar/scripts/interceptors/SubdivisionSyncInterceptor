@@ -36,11 +36,11 @@ class SubdivisionSyncInterceptor
         syncSvc.createDataForSync(getDataForSync(subdivision, 'SUBDIVISION-APPROVED'))
     }
 
-    @After(pattern="SubdivisionWorkflowService.signal", eval="#{args[0].action=='disapprove'}", index=10000) 
-    public void scheduleSubdivisionDisapproval( evt ) {
-        def subdivision = evt.args[0].data;
-        syncSvc.createDataForSync(getDataForSync(subdivision, 'SUBDIVISION-DISAPPROVAL'))
-    }
+    // @After(pattern="SubdivisionWorkflowService.signal", eval="#{args[0].action=='disapprove'}", index=10000) 
+    // public void scheduleSubdivisionDisapproval( evt ) {
+    //     def subdivision = evt.args[0].data;
+    //     syncSvc.createDataForSync(getDataForSync(subdivision, 'SUBDIVISION-DISAPPROVAL'))
+    // }
 
 
     /* scheduler */

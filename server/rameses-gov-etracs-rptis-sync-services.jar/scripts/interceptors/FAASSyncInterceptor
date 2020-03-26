@@ -46,13 +46,13 @@ class FAASSyncInterceptor
         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-PROVINCE-APPROVAL'))
     }       
 
-    @After(pattern="FAASService.deleteFaas") 
-    public void createDeleteFaas( evt ) {
-        def faas = evt.args[0]
-        if (faas) {
-            syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
-        }
-    }
+    // @After(pattern="FAASService.deleteFaas") 
+    // public void createDeleteFaas( evt ) {
+    //     def faas = evt.args[0]
+    //     if (faas) {
+    //         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
+    //     }
+    // }
 
     @After(pattern="FAASService.revertToInterim") 
     public void createRevertToInterim( evt ) {

@@ -68,18 +68,24 @@ class ConsolidationSyncService
 		action.schedule(syncdata, consolidation)
 	}
 
-	def createItem(item, syncdata, action) {
+	def createItem(item, syncdata, action, async) {
 		return [
 			refid: item.objid, 
 			reftype: syncdata.reftype, 
 			refno: syncdata.refno, 
+			async: (async == null ? syncdata.async : async),
 			action: (action ? action : syncdata.action),
+			dependedaction: syncdata.dependedaction,
 			info: [:]
 		]
 	}
 
 	void createSyncItem(entity, syncdata, action) {
-		def item = createItem(entity, syncdata, action)
+		createSyncItem(entity, syncdata, action, null)
+	}
+
+	void createSyncItem(entity, syncdata, action, async) {
+		def item = createItem(entity, syncdata, action, async)
         syncSvc.createItem(syncdata, item)
 	}
 
@@ -89,10 +95,15 @@ class ConsolidationSyncService
     	faasSyncSvc.scheduleFaasData(syncdata, consolidatedfaas)
 
 		svc.getAffectedRpus(consolidation.objid).each {
+			syncdata.async = true
 			faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
+        syncdata.async = false
+        syncdata.dependedaction = 'FAAS-DATA'
         createSyncItem(consolidation, syncdata, 'CONSOLIDATION-FORAPPROVAL')
+        syncdata.dependedaction = null
+
         rptSync.scheduleExaminations(syncdata, consolidation.objid)
     	rptSync.scheduleRequirements(syncdata, consolidation.objid)
 	}
@@ -102,10 +113,14 @@ class ConsolidationSyncService
     	createSyncItem(faas, syncdata, 'CONSOLIDATION-FAAS-APPROVED')
 		
 		svc.getAffectedRpus(consolidation.objid).each {
+			syncdata.async = true
         	createSyncItem(faas, syncdata, 'CONSOLIDATION-FAAS-APPROVED')
         }
 
+		syncdata.async = false
+		syncdata.dependedaction = 'CONSOLIDATION-FAAS-APPROVED'
         createSyncItem(consolidation, syncdata, 'CONSOLIDATION-APPROVED')
+        syncdata.dependedaction = null
 	}
 
 

@@ -22,6 +22,10 @@
 		<complex name="pending" ref="syncdata_pending" jointype="many-to-one" required="false">
 			<key field="objid" target="objid" />
 		</complex>
+
+		<complex name="offline" ref="syncdata_offline_org" jointype="many-to-one" required="false">
+			<key field="remote_orgid" target="orgid" />
+		</complex>
 	</element>
 </schema>
 

@@ -97,6 +97,7 @@ class RPTSyncInterceptor
         def syncdata = evt.args[0]
         def header = syncdata.data 
         em_image_header.save(header)
+        em_image_chunk.find([parentid: header.objid]).delete()
         evt.result.status = 'OK'
     }
 
