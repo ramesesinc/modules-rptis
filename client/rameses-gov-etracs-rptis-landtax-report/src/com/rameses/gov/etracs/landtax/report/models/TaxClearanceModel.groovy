@@ -161,6 +161,7 @@ class TaxClearanceModel
     
     def createClearance(items) {
         entity.objid = 'RPTC' + new java.rmi.server.UID();
+        entity.txnno = null;
         items.each{
             it.rptcertificationid = entity.objid;
         }
