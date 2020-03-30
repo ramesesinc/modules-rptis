@@ -75,14 +75,14 @@ class RPTMainSyncService {
 			items.each { item ->
 				try {
 					mergeSyncDataInfo(item, syncdata)
-					if (util.isTrue(item.async)) {
-						self.sendSyncData(item)
-						println 'Sync [Async-SENT] ' + item.action + ': ' + item.refno
-					} else if (isDependedActionCompleted(item)) {
+					// if (util.isTrue(item.async)) {
+					// 	self.sendSyncData(item)
+					// 	println 'Sync [Async-SENT] ' + item.action + ': ' + item.refno
+					// } else if (isDependedActionCompleted(item)) {
 						self.asyncSend(item)
 						logItemSent(item)
 						println 'Sync [SENT] ' + item.action + ': ' + item.refno
-					}
+					// }
 				} catch (err) {
 					logItemError(item, err)
 				}
