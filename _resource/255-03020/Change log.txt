@@ -2,3 +2,4 @@ V255-03020
 ------------------------------------------------
 ASSESSOR:
 	- Sync: support parallel processing
+	- Bldg: update additional/adjustment ui entry 

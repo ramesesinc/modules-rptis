@@ -13,12 +13,13 @@ class RPUBldgInfoAppraisalModel extends SubPageModel
 
     void calculateAssessment(){
         super.calculateAssessment();
-        floor = getFloors()?.find{it.objid == floor?.objid}
-        structuralTypeListHandler.load()
-        bldgUseListHandler.load()
-        floorHandler.load();
-        additionalItemHandler.load();
-        paramListHandler.load();
+        floor = getFloors().find{it.objid == floor?.objid}
+        structuralTypeListHandler.reload()
+        bldgUseListHandler.reload()
+        floorHandler.reload();
+        floorListHandler.reload();
+        additionalItemHandler.reload();
+        paramListHandler.reload();
         binding.refresh('.*');
     }
     
@@ -164,7 +165,7 @@ class RPUBldgInfoAppraisalModel extends SubPageModel
         onAddItem  : { item -> 
             item.objid = RPTUtil.generateId('BU')
             selectedStructuralType.bldguses.add( item ) 
-            binding.refresh('floorHandler ')
+            binding.refresh('floorHandler|floor')
         },
                 
         onCommitItem : {item -> 
@@ -234,6 +235,7 @@ class RPUBldgInfoAppraisalModel extends SubPageModel
             
         onAddItem : { floor -> 
             selectedBldgUse.floors.add(floor) 
+            floorListHandler.reload();
         },
                 
         validate : { li -> 
@@ -332,6 +334,13 @@ class RPUBldgInfoAppraisalModel extends SubPageModel
         if( items) throw new Exception('Duplicate item is not allowed.')    
     }
     
+
+    def floorListHandler = [
+        getRows: { return floors.size() },
+        fetchList: { floors }
+    ] as BasicListModel
+
+
     def getFloors(){
         def list = [];
         entity.rpu.structuraltypes.each{stt ->
@@ -341,6 +350,7 @@ class RPUBldgInfoAppraisalModel extends SubPageModel
                     bf.actualusename = bu.actualuse.name;
                     bf.bldgtypecode = stt.bldgtype.code;
                     bf.bldgkindname = stt.bldgkindbucc.bldgkind.name;
+                    bf.info = bf.bldgtypecode + ' - ' + bf.actualusename + ' - ' + bf.bldgkindname;
                 }
                 list += bu.floors;
             }
