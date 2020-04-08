@@ -12,14 +12,14 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
 	@ActiveDB('consolidation_task')
 	def taskDB;
 
+	@DataContext('consolidation_task')
+	def em_task
+
 	@Service('NotificationService')
 	def notificationService
 
 	String processname = 'consolidation'
 
-
-	@Service('RPTTrackingService')
-	def trackingSvc;
 
 	@Service('ConsolidationService')
 	def consolidationSvc 
@@ -30,10 +30,26 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
 		return taskDB.findReturnToInfo(param)	
 	}
 
+	public void beforeSignal(param) {
+		if (param.action?.matches('send.*')) {
+			def task = em_task.select('returnedby').find([objid: param.taskid]).first()
+			if (!task) throw new Exception('Task ' + param.taskid + ' does not exist or has been deleted.')
+			env.task = [returnedby: task.returnedby]
+		}
+	}
 
 	
 	public void beforeCreateTask(task) {
 		def assignee = [objid:env.USERID, name:env.FULLNAME, title:env.JOBTITLE]
+		if (task.assignee) {
+			assignee = task.assignee
+			env.target = [
+				assignee: assignee,
+				refid: task.refid,
+				sender: task.assignee
+			] 
+		}
+
 		if ( env.action?.matches('return.*')){
 			def returnto = findReturnToInfo(task)
 			if (!returnto) 
@@ -41,6 +57,7 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
 
 			env.returnto = returnto.assignee
 			task.assignee = assignee
+			task.returnedby = env.prevtask.state
 		}
 		else if ( ! task.state.toLowerCase().matches('assign.*')){
 			task.assignee = assignee
@@ -53,7 +70,11 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
 			msg = 'Consolidation is already submitted ' + task.title + '.'
 		else
 			msg = 'Consolidation is currently for ' + task.title + ' by ' + task.assignee.name + '.'
-		trackingSvc.updateMessage([objid : task.refid, msg:msg])
+
+		if (env.target) {
+			env.target.taskid = task.objid 
+			env.target.txnno = env.data.txnno
+		}
 	}
 
 	public void afterOpenTask(task) {
@@ -63,14 +84,25 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
 		removeUserNotification(task)
 	}
 
+	public void afterLoadTask(Object newTask) {
+		newTask.transitions.findAll{ it.action.toString().matches('submit.*|send.*')}.each{t ->
+			if (t.properties?.targetrole) {
+				def params = [role: t.properties.targetrole]
+				t.assignees = taskDB.getTargetAssignees(params)
+			}
+		}
+	}
+
 	public void beforeCloseTask(task) {
 		if (env.data.manualapprover){
+			task.enddate = env.data.manualapprover.dtsigned
 			task.actor = env.data.manualapprover
 		}
 	}	
 
 	public void afterCloseTask(task) {
 		if (!task.state.matches('assign.*')){
+			env.data._taskid = task.objid
         	consolidationSvc.insertFaasSignatories(env.data)
 		}
 		consolidationSvc.updateSignatories(task)
@@ -88,17 +120,22 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
 
 
 	def getNotificationMessage(task){
-		if (task?.state?.matches('assign.*'))
+		if (task?.state?.matches('assign.*')){
 			return notifyGroup(task)
-		else if (env.action?.matches('return.*'))
+		}
+		else if (env.action?.matches('return.*')){
 			return notifyAssignee(task)
-		else if (env.prevtask?.state.matches('assign.*'))
+		}
+		else if (env.prevtask?.state.matches('assign.*')){
 			removeNotification(task)
+		}
+		else if (env.target) {
+			return notifyTargetAssignee()	
+		}
 	}
 
 
 	def notifyGroup(task){
-		println 'ConsolidationWorkflowService... notifyGroup...'
 		def consolidation = env.data 
         return [
             objid     		: task.refid,
@@ -133,5 +170,18 @@ class ConsolidationWorkflowService extends ActiveWorkflowService
         ]
 	}
 
+	def notifyTargetAssignee() {
+		def target = env.target 
+        return [
+            objid     : target.refid,
+            recipientid : target.assignee?.objid,
+            recipienttype : 'user',
+            senderid  : env.prevtask?.actor?.objid,
+            sender    : env.prevtask?.actor?.name,
+            message   : 'Consolidation No. ' + target.txnno + '   was submitted by ' + env.prevtask?.actor?.name,
+            filetype  : 'consolidation',
+            data 	  : [taskid: target.taskid],
+        ]
+	}
 }
 

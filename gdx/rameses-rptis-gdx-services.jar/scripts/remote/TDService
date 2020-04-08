@@ -13,5 +13,10 @@ class TDService  {
         return svc.verifyTaxDec(params)
     }
 
+    @ProxyMethod
+    public def verifyTaxDecForTxn( def params ) {
+        return svc.verifyTaxDecForTxn(params)
+    }
+
     
 }

@@ -9,6 +9,9 @@ import javax.imageio.ImageIO;
 
 class FAASReportService
 {
+	@Env 
+	def env 
+
 	@ActiveDB('faasreport')
 	def em
 	
@@ -98,10 +101,11 @@ class FAASReportService
 
 	
 	@ProxyMethod
-	public def getReportData( faas ) {
-		faas = em.findFaasById(faas)
-		if( !faas ) 
-			throw new Exception('Cannot open FAAS with ID No. ' + faas.objid + '.')
+	public def getReportData( param ) {
+		def faas = em.findFaasById(param)
+		if( !faas ) {
+			throw new Exception('Cannot open FAAS with ID No. ' + param.objid + '.')
+		}
 
 		faas.rpu = em.findRpuById(faas.rpu)
 		faas.rp = em.findRealPropertyById(faas.rp)
@@ -169,7 +173,12 @@ class FAASReportService
 		// then the municipal assessor is authorized 
 		// by the provincial assessor to approve the faas record 
 		if (isRecommenderAuthorized(faas)){
-			faas.byauthority = 'By Authority of the Provincial Assessor.'
+			faas.authorized = true
+			if ('MUNICIPALITY'.equalsIgnoreCase(env.ORGCLASS)) {
+				faas.byauthority = 'By Authority of the Provincial Assessor.'
+			} else if ('CITY'.equalsIgnoreCase(env.ORGCLASS)) {
+				faas.byauthority = 'By Authority of the City Assessor.'
+			}
 		}
 
 		faas.signatories = [:]
@@ -188,8 +197,7 @@ class FAASReportService
 			return true 
 		}
 
-		// check the if approver has MUNICIPAL_ASSESSOR role 
-		if (faas.approver && userHasRole(faas.approver.objid, 'MUNICIPAL_ASSESSOR')){
+		if (faas.approver && userHasRole(faas.approver.objid, 'RECOMMENDER')){
 			return true 
 		}
 

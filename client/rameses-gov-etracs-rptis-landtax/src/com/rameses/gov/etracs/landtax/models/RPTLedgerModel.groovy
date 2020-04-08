@@ -1,5 +1,6 @@
 package com.rameses.gov.etracs.landtax.models;
 
+import com.rameses.common.*;
 import com.rameses.rcp.common.*;
 import com.rameses.rcp.annotations.*;
 import com.rameses.osiris2.common.*;
@@ -14,10 +15,15 @@ class RPTLedgerModel extends CrudFormModel
     
     boolean showConfirm = false;
 
-    @FormTitle
     @FormId
+    @FormTitle
     public String getFormId(){
         return 'Realty Tax Ledger : ' + entity.tdno 
+    }
+
+
+    public String getTitle(){
+        return 'Realty Tax Ledger (' + entity.state + ')'
     }
     
     void approve(){
@@ -38,6 +44,20 @@ class RPTLedgerModel extends CrudFormModel
         super.reloadEntity();
         refreshSections();
     }
+
+
+    def popupActions(def inv) {
+        def popupMenu = new PopupMenuOpener();
+        def list = InvokerUtil.lookupOpeners( inv.properties.category, [entity: entity] ).findAll{
+            def vw = it.properties.visibleWhen;
+            return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean(vw, [entity: entity]));
+        }
+        list.each{
+            popupMenu.add( it );
+        }
+        return popupMenu;
+    }
+
     
     /*--------------------------------------------------------------
     *
@@ -105,4 +125,20 @@ class RPTLedgerModel extends CrudFormModel
         }
         return inv;
     }    
+
+    def getMessagelist() {
+        return entity._messagelist
+    }
+
+    def getShowManualNotice() {
+        if (entity.state != 'APPROVED') {
+            return false;
+        }
+        
+        def auctionModel = OsirisContext.class.getClassLoader().getResource("com/rameses/gov/etracs/landtax/models/AuctionModel.groovy");
+        if (auctionModel) {
+            return false;
+        }
+        return true;
+    }
 }

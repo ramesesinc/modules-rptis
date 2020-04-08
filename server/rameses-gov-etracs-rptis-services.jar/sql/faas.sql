@@ -179,8 +179,8 @@ ORDER BY f.tdno
 SELECT * 
 FROM vw_faas_lookup
 where 1=1  
-${filters}
 ${fixfilters}
+${filters}
 ${orderby}
 
 
@@ -381,7 +381,7 @@ WHERE f.rpuid = x.landrpuid
 
 
 [findLandFaasUnderTransaction]
-SELECT f.objid, tdno, utdno 
+SELECT f.objid, f.state, tdno, utdno 
 FROM faas f
 	inner join rpu r on f.rpuid = r.objid 
 where f.fullpin = $P{pin}
@@ -634,7 +634,9 @@ select
 	fa.memoranda,
 	fat.type
 from faas f 
-	inner join faasannotation fa on f.objid = fa.faasid 
+	inner join faasannotation_faas faf on f.objid = faf.faas_objid
+	inner join faasannotation fa on faf.parent_objid = fa.objid 
 	inner join faasannotationtype fat on fa.annotationtype_objid = fat.objid 
-where f.objid = $P{faasid}
+where faf.faas_objid = $P{faasid}
 order by fa.txnno desc 
+

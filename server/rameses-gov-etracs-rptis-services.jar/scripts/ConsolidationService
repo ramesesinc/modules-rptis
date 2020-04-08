@@ -9,6 +9,9 @@ class ConsolidationService
 	@ActiveDB('consolidation')
    def em
 
+   @DataContext('consolidation')
+   def em_consolidation
+
 	@Env
 	def env
 	
@@ -54,6 +57,15 @@ class ConsolidationService
     @DataContext('faas_previous')
     def em_faas_previous 
 
+    @DataContext('consolidation_task')
+    def em_task
+
+    @DataContext('faas_task')
+    def em_faas_task
+
+    @DataContext('consolidation_affectedrpu')
+    def em_affectedrpu
+
     def SCHEMA_CONSOLIDATION 		= 'consolidation'
     def SCHEMA_CONSOLIDATED_LAND 	= 'consolidatedland'
     def SCHEMA_AFFECTED_RPU 		= 'affectedrpu'
@@ -64,6 +76,7 @@ class ConsolidationService
     def STATE_INTERIM               = 'INTERIM'
     
     def TXNTYPE_CS = 'CS'
+    def TXNTYPE_DP = 'DP'
 
 	@ProxyMethod
     public def getList( params ) {
@@ -92,7 +105,7 @@ class ConsolidationService
    	*
    	-----------------------------------------------------------------*/
    	@ProxyMethod
-    public Map initConsolidation() {
+    public Map init() {
         def ry =  util.toInteger2(var.current_ry, dtSvc.serverYear)
         return  [
             objid           : util.generateId('CS'),
@@ -113,31 +126,32 @@ class ConsolidationService
 
 
     @ProxyMethod
-    public def createConsolidation( consolidation ) {
+    public def create( consolidation ) {
         def pdate = dtSvc.parseCurrentDate()
         if (!consolidation.txnno)
             consolidation.txnno = util.getNextSequence('CONSOLIDATION')
         if (!consolidation.lguid)
             consolidation.lguid = env.ORGID 
+        consolidation.state = STATE_DRAFT
         consolidation.originlguid = (consolidation.originlguid ? consolidation.originlguid : env.ORGID )
         consolidation.txndate = pdate.date 
         consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
-        createConsolidatedFaas(consolidation)
+        consolidation.ry = util.toInteger(var.current_ry)
         em.create(consolidation)
         return consolidation            
     }    
 
 
     @ProxyMethod
-    public def updateConsolidation( consolidation ) {
+    public def update( consolidation ) {
         em.update(consolidation)
         return consolidation            
     }
 
 
     @ProxyMethod
-    public def openConsolidation( objid ) {
-        def consolidation = em.findById([objid:objid])
+    public def open(consolidation) {
+        consolidation = em.findById(consolidation)
         if (! consolidation) throw new Exception('Consolidation does not exist or has already been deleted.')
         consolidation.txntype = faasSvc.getTxnType(TXNTYPE_CS)
         consolidation.autonumber = util.toBoolean(var.td_autonumber, false)
@@ -146,7 +160,7 @@ class ConsolidationService
 
 
     @ProxyMethod
-    public void deleteConsolidation( consolidation ) {
+    public void delete( consolidation ) {
         def rpu = null 
         getAffectedRpus(consolidation.objid).each{arpu ->
             em.delete(arpu, SCHEMA_AFFECTED_RPU)
@@ -223,7 +237,7 @@ class ConsolidationService
         em.save(consolidatedland, SCHEMA_CONSOLIDATED_LAND) 
         txnRef.insertRef(consolidatedland.landfaasid, consolidatedland.consolidationid, 'FAAS is currently referenced by Consolidation No. ' + consolidatedland.txnno + '.')
         createAffectedRpusByConsolidatedLand(consolidatedland)
-        updateConsolidatedFaasPreviousInfo(openConsolidation(consolidatedland.consolidationid))
+        updateConsolidatedFaasPreviousInfo(open([objid:consolidatedland.consolidationid]))
         return consolidatedland
     }    
 
@@ -244,7 +258,7 @@ class ConsolidationService
         }
         txnRef.deleteByObjid(consolidatedland.consolidationid, consolidatedland.landfaasid)
         em.delete(consolidatedland, SCHEMA_CONSOLIDATED_LAND)
-        updateConsolidatedFaasPreviousInfo(openConsolidation(consolidatedland.consolidationid))
+        updateConsolidatedFaasPreviousInfo(open([objid: consolidatedland.consolidationid]))
     }    
 
     @ProxyMethod
@@ -316,7 +330,7 @@ class ConsolidationService
     ============================================================================*/    
 
     @ProxyMethod
-    public def initApproveConsolidation(consolidation) {
+    public void initApprove(consolidation) {
         em.deleteConsolidatedPreviousFaas(consolidation)
         em.insertConsolidatedPreviousFaas(consolidation)
     }
@@ -347,7 +361,7 @@ class ConsolidationService
 
     @ProxyMethod
     public def approveConsolidatedLandFaas(consolidation){
-        consolidation.putAll(openConsolidation(consolidation.objid))
+        consolidation.putAll(open(consolidation))
         def faas = faasSvc.openFaas([objid:consolidation.newfaasid])
         if ( faas.state == STATE_PENDING || faas.state == STATE_INTERIM){
             faasSvc.approveFaas(faas)
@@ -364,10 +378,10 @@ class ConsolidationService
     }
 
     @ProxyMethod
-    public def approveConsolidation(consolidation){
+    public def approve(consolidation){
         checkPendingAffectedRpus(consolidation)
 
-        consolidation.putAll(openConsolidation(consolidation.objid))
+        consolidation.putAll(open(consolidation))
         if (consolidation.state != 'APPROVED'){
             getConsolidatedLands(consolidation.objid).each{cl ->
                 em.cancelRealProperty([objid:cl.rpu.realpropertyid])
@@ -379,10 +393,10 @@ class ConsolidationService
     }    
 
     @ProxyMethod
-    public def submitToProvinceConsolidation(consolidation){
+    public def submitToProvince(consolidation){
         consolidation.state = 'FORAPPROVAL';
         insertFaasSignatories(consolidation)
-        updateConsolidation(consolidation)
+        update(consolidation)
         return consolidation
     }    
 
@@ -402,7 +416,8 @@ class ConsolidationService
     }    
 
 
-    void createConsolidatedFaas(consolidation){
+    @ProxyMethod
+    public def createConsolidatedFaas(consolidation){
         def info = consolidation._info 
         info.txntype = consolidation.txntype 
         def faas = faasSvc.initCapture(buildInitInfo(info))
@@ -412,6 +427,8 @@ class ConsolidationService
         consolidation.newrpuid = faas.rpu.objid
         consolidation.newfaasid = faas.objid 
         consolidation.lguid = faas.lguid 
+        em_consolidation.update(consolidation)
+        return [faas: faas, consolidation: open(consolidation)]
     }
 
     def buildInitInfo(info){
@@ -464,7 +481,7 @@ class ConsolidationService
                             ])
 
         checkAffectedRpus(affectedrpus)
-        def consolidation = openConsolidation(consolidatedland.consolidationid)
+        def consolidation = open([objid: consolidatedland.consolidationid])
         affectedrpus.each{arpu -> 
             doCreateAffectedRpu(consolidation, arpu)
         }
@@ -548,7 +565,13 @@ class ConsolidationService
         faas.objid = 'F' + arpu.objid 
         faas.previousfaases = faasSvc.buildPreviousFaases(faas, [pf])
         faas.state = STATE_PENDING
-        faas.txntype  = faasSvc.getTxnType(TXNTYPE_CS)
+
+        if ( util.toBoolean(var.faas_affected_rpu_txntype_dp, false) == true) {
+            faas.txntype  = faasSvc.getTxnType(TXNTYPE_DP)
+        } else {
+            faas.txntype  = faasSvc.getTxnType(TXNTYPE_CS)
+        }
+
         faas.effectivityyear = pdate.year
         faas.effectivityqtr = pdate.qtr
         faas.datacapture = 0
@@ -567,10 +590,23 @@ class ConsolidationService
 
     @ProxyMethod
     public void insertFaasSignatories(consolidation) {
-        em.deleteMotherFaasTasks(consolidation)
-        em.deleteAffectedRpuFaasTasks(consolidation)
-        em.insertConsolidatedFaasSignatories(consolidation)
-        em.insertAffectedRpuSignatories(consolidation)
+        def _taskid = consolidation._taskid
+        def currTask = em_task.find([objid: _taskid]).first()
+        if (!currTask) return 
+
+        faasSvc.insertOnlineFaasSignatory([
+            taskid: _taskid,
+            faasid: consolidation.newfaasid, 
+            task: currTask
+        ])
+
+        em_affectedrpu.find([consolidationid: consolidation.objid]).list().each{
+            faasSvc.insertOnlineFaasSignatory([
+                taskid: _taskid,
+                faasid: it.newfaasid, 
+                task: currTask
+            ])
+        }
     }
 
 

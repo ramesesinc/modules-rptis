@@ -30,11 +30,13 @@ class FAASListInterceptor
 	@After(pattern="FAASService.updateSignatoryInfo", index=10000)
 	void afterUpdateSignatory(evt){
 		def task = evt.args[0]
-		em.updateFaasList([objid:task.refid])
+		if (task) {
+			em.updateFaasList([objid:task.refid])
+		}
 	}		
 
 	
-	@Before(pattern="FAASService.deleteFaas")
+	@Before(pattern="FAASService.(deleteFaas|deleteRevertedFaas)")
 	void beforeDeleteFaas(evt){
 		def faas = evt.args[0]
 		em.deleteFaasList(faas)

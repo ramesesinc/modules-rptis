@@ -45,8 +45,7 @@ class LandTaxReportDelinquencyService
 
 	@Async
 	@ProxyMethod
-	public def generateDelinquencyReport( params ) {
-
+	public def buildReport( params ) {
 		validate(params)
 
 		def currentyear = dtSvc.getServerYear(); 
@@ -87,6 +86,9 @@ class LandTaxReportDelinquencyService
 		} 
 		else if ( params.reporttype == 'byclassification' ) {
 			list = buildDelinquentLedgersByClassification(params)
+		} 
+		else if ( params.reporttype == 'byclassdetailed' ) {
+			list = buildDelinquencyByClassificationDetailed(params)
 		} 
 		else {
 			if (params.format.type.equalsIgnoreCase('format2')){
@@ -149,6 +151,12 @@ class LandTaxReportDelinquencyService
 
 	def buildDelinquentLedgersByClassification(params){
 		def list = em.getDelinquentLedgersByClassification( params ); 
+		if ( !list ) throw new Exception('No records found. Try rebuilding the delinquency')
+		return list;
+	}
+
+	def buildDelinquencyByClassificationDetailed(params){
+		def list = em.getDelinquentLedgersByClassificationDetailed( params ); 
 		if ( !list ) throw new Exception('No records found. Try rebuilding the delinquency')
 		return list;
 	}

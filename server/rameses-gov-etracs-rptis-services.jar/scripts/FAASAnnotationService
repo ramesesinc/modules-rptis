@@ -5,8 +5,11 @@ import com.rameses.services.extended.*
 
 class FAASAnnotationService 
 {
-	@ActiveDB('faasannotation')
+	@DataContext('faasannotation')
 	def em
+
+	@DataContext('faasannotation_faas')
+	def em_annotation_faas
 	
 	@Service('TxnRefService')
 	def txnRef
@@ -32,7 +35,7 @@ class FAASAnnotationService
 
 	@Env
 	def env
-	
+
 	def SCHEMA_NAME = 'faasannotation'
 	
 	def STATE_DRAFT 		= 'DRAFT' 
@@ -77,21 +80,27 @@ class FAASAnnotationService
 	
 
 	@ProxyMethod
-	public def initAnnotation( faas ) {
+	public def init( faas ) {
 		txnRef.checkReference(faas.objid)
 		if (faas.state == 'CANCELLED') throw new Exception('FAAS has already been cancelled.')
 		if (faas.state != 'CURRENT') throw new Exception('FAAS is not yet approved. Only current record is allowed.')
-		return [
+		def entity = [
 			objid : util.generateId('FA'),
 			state : STATE_DRAFT,
-			faas  : faas,
-			faasid : faas.objid, 
 			oramount : 0.0,
-		]	
+			faasid: faas.objid,
+			faas: faas,
+		]
+
+		entity.items = [
+			[parent: [objid: entity.objid], faas: faas]
+		]
+
+		return entity
 	}
 	
 	@ProxyMethod
-	public Map createAnnotation( annotation ) {
+	public Map create( annotation ) {
 		validateInfo( annotation )
 		annotation.state  = STATE_DRAFT
 		annotation.txnno  = getNextSeries()
@@ -104,7 +113,7 @@ class FAASAnnotationService
 
 
 	@ProxyMethod
-	public Map updateAnnotation( annotation ) {
+	public Map update( annotation ) {
 		validateInfo( annotation )
 		em.update(annotation)
 		return annotation 
@@ -112,8 +121,8 @@ class FAASAnnotationService
 
 
 	@ProxyMethod
-	public def openAnnotation( objid ) {
-		def annotation = em.findById([objid:objid])
+	public def open( annotation ) {
+		annotation = em.read(annotation)
 		if( !annotation ) throw new Exception('Record does not exist or has already been deleted.')
 		return annotation 
 	}
@@ -142,21 +151,22 @@ class FAASAnnotationService
 
 
 	@ProxyMethod
-	public def deleteAnnotation( annotation ) {
+	public def delete( annotation ) {
 		txnRef.delete(annotation.objid)
 		em.delete(annotation)	
 	}
 
 
 	@ProxyMethod
-	public def cancelAnnotation(annotation) {
+	public def cancel(annotation) {
+		annotation = open(annotation)
 		annotation.state = STATE_CANCELLED
 		em.update(annotation)
 	}
 
 
 	@ProxyMethod
-	public Map submitAnnotationForApproval( annotation ) {
+	public Map submitForApproval( annotation ) {
 		validateInfo( annotation )
 		annotation.state = STATE_FORAPPROVAL
 		em.update(annotation )
@@ -165,7 +175,7 @@ class FAASAnnotationService
 
 
 	@ProxyMethod
-	public Map approveAnnotation( annotation ) {
+	public Map approve( annotation ) {
 		validateInfo(annotation)
 		annotation.state = STATE_APPROVED
 		em.update(annotation )
@@ -174,7 +184,7 @@ class FAASAnnotationService
 
 
 	@ProxyMethod
-	public def disapproveAnnotation( annotation ) {
+	public def disapprove( annotation ) {
 		annotation.state = STATE_DRAFT
 		em.update(annotation) 
 		return annotation 
@@ -189,18 +199,6 @@ class FAASAnnotationService
 	@ProxyMethod
 	public def getAnnotationHistoryByFaasId( faasid ) {
 		return em.getAnnotationHistoryByFaasId([faasid:faasid])
-	}
-
-	@ProxyMethod
-	public def carryOverAnnotations( faas ) {
-		faas.previousfaases?.each{ pf ->
-			def annotations = getAnnotationsByFaasId( pf.prevfaasid )
-			annotations.each{
-				it.objid = 'FA' + new java.rmi.server.UID();
-				it.faasid = pf.faasid 
-				em.create(it);
-			}
-		}
 	}
 
 	@ProxyMethod
@@ -222,7 +220,7 @@ class FAASAnnotationService
 		def currdate = dateSvc.serverDate 
 		def ordate	 = dateSvc.parse('yyyy-MM-dd', annotation.ordate )
 		if( ordate > currdate ) throw new Exception('O.R. Date must not exceed current date.')
-		checkFaasCurrentState( annotation.faasid )
+		checkFaasCurrentState(annotation.faasid)
 	} 
 	
 
@@ -233,6 +231,16 @@ class FAASAnnotationService
 
 	def getNextSeries(){
 		return env.ORGID.replaceAll('-', '') + seqSvc.getNextFormattedSeries('FAASAnnotation')
+	}
+
+
+
+	@ProxyMethod
+	public void postRemote(annotation){
+		def exist = em.find([objid: annotation.objid]).first() != null
+		if (!exist) {
+			em.create(annotation)
+		}
 	}
 
 }
