@@ -39,8 +39,8 @@ class RPTMainSyncService {
 	@DataContext('syncdata_pending')
 	def em_sync_pending
 
-	@DataContext('syncdata_offline_org')
-	def em_sync_offline_org
+	@DataContext('syncdata_org')
+	def em_sync_org
 
 	@DataContext('sys_org')
 	def em_org
@@ -48,7 +48,13 @@ class RPTMainSyncService {
 
 	@ProxyMethod
 	public void updateCompletedSyncData() {
-		def syncdatalist = em_sync.select('objid,refno,action').find([state: 'SYNCHING']).orderBy('dtfiled').list()
+		def where = []
+		where << 'state = :synching'
+		where << 'forprocess.objid IS NOT NULL'
+		def syncdatalist = em_sync.select('objid,refno,action')
+								.where(where.join(' AND '), [synching: 'SYNCHING'])
+								.orderBy('dtfiled')
+								.list()
 		syncdatalist.each {
 			if (checkSyncCompleted(it)) {
 				em_sync.find([objid: it.objid]).update([state: 'COMPLETED'])
@@ -66,49 +72,63 @@ class RPTMainSyncService {
 	}
 
 	@ProxyMethod
-	public void sendData(syncdata){
-		try {
-			syncdata.state = 'SYNCHING'
-			em_sync.find([objid: syncdata.objid]).update([state: syncdata.state])
+	public void scheduleForProcess() {
+		def forprocess = em_sync_forprocess.where('1=1').first();
+		if (forprocess && forprocess.objid) {
+			return;
+		}
 
-			def items = getItemsForSync(syncdata)
-			items.each { item ->
-				try {
-					mergeSyncDataInfo(item, syncdata)
-					// if (util.isTrue(item.async)) {
-					// 	self.sendSyncData(item)
-					// 	println 'Sync [Async-SENT] ' + item.action + ': ' + item.refno
-					// } else if (isDependedActionCompleted(item)) {
-						self.asyncSend(item)
-						logItemSent(item)
-						println 'Sync [SENT] ' + item.action + ': ' + item.refno
-					// }
-				} catch (err) {
-					logItemError(item, err)
-				}
+		getDataForProcess().each{
+			println 'Scheduling items for process...'
+			em_sync_forprocess.create(it)
+		}
+	}
+
+	@ProxyMethod
+	public void processForSyncData() {
+		getDataForSync().each {
+			sendData(it)
+		}
+	}
+
+	void sendData(syncdata){
+		def haserror = false
+		def items = getItemsForSync(syncdata)
+		items.each { item ->
+			try {
+				mergeSyncDataInfo(item, syncdata)
+				self.asyncSend(item)
+				logItemSent(item)
+				println 'Sync [SENT] ' + item.action + ': ' + item.refno
+			} catch (err) {
+				haserror = true
+				logItemError(item, err)
 			}
 		}
-		catch(err){
-			moveToPending(syncdata, err)
+
+		if (haserror) {
+			updateOrgErrorStatus(syncdata)
+		} else {
+			resetOrgErrorStatus(syncdata)
 		}
 	}
 
-	def isDependedActionCompleted(item) {
-		if (!item.dependedaction) return true
+	// def isDependedActionCompleted(item) {
+	// 	if (!item.dependedaction) return true
 
-		def param = [
-			parentid: item.parentid, 
-			action: item.dependedaction,
-			sync: 'SYNC'
-		]
+	// 	def param = [
+	// 		parentid: item.parentid, 
+	// 		action: item.dependedaction,
+	// 		sync: 'SYNC'
+	// 	]
 
-		def dependeditem = em_sync_item.select('objid')
-							.where('parentid = :parentid AND action = :action AND state <> :sync', param)
-							.first()
+	// 	def dependeditem = em_sync_item.select('objid')
+	// 						.where('parentid = :parentid AND action = :action AND state <> :sync', param)
+	// 						.first()
 
-		return dependeditem == null 
+	// 	return dependeditem == null 
 
-	}
+	// }
 
 	void mergeSyncDataInfo(item, syncdata) {
 		item.dtfiled = syncdata.dtfiled
@@ -267,26 +287,38 @@ class RPTMainSyncService {
 
 	@ProxyMethod
 	public def getDataForSync(){
-		def params = [orgid: getOrgId(), forsync: 'FORSYNC', synching: 'SYNCHING']
+		def params = [orgid: getOrgId(), active: 'ACTIVE']
 		def where = []
 		where << 'orgid = :orgid'
-		where << '(state = :forsync OR state = :synching)' 
-		where << 'pending.objid IS NULL'
-		where << 'offline.orgid IS NULL'
+		where << 'forprocess.objid IS NOT NULL'
+		where << 'remote.state = :active'
 		return em_sync.where(where.join(' AND '), params)
 				.orderBy('dtfiled')
-				.limit(10)
+				.limit(5)
 				.list()
 	}
 
-	@ProxyMethod
-	public def getItemsForSync(syncdata){
-		def params = [parentid: syncdata.objid, sync: 'SYNC']
-		return em_sync_item.where('parentid = :parentid AND state <> :sync', params)
-				.orderBy('idx')
-				.limit(50)
+	def getDataForProcess(){
+		def params = [orgid: getOrgId(), synching: 'SYNCHING', active: 'ACTIVE']
+		def where = []
+		where << 'orgid = :orgid'
+		where << 'state = :synching' 
+		where << 'pending.objid IS NULL'
+		where << 'forprocess.objid IS NULL'
+		where << 'remote.state = :active'
+		return em_sync.select('objid,parentid').where(where.join(' AND '), params)
+				.orderBy('dtfiled')
+				.limit(5)
 				.list()
 	}
+
+def getItemsForSync(syncdata){
+        def params = [parentid: syncdata.objid, sync: 'SYNC']
+        return em_sync_item.where('parentid = :parentid AND state <> :sync', params)
+                .orderBy('idx')
+                .limit(10)
+                .list()
+    }
 
 	
 
@@ -317,8 +349,8 @@ class RPTMainSyncService {
 		def where = []
 		where << 'pending.objid IS NOT NULL'
 		where << 'pending.expirydate <= :currdate'
-		where << 'offline.orgid IS NULL'
-		def pendings = em_sync.where(where.join(' AND '), [currdate: dtSvc.serverDate])
+		where << 'remote.state = :active'
+		def pendings = em_sync.where(where.join(' AND '), [currdate: dtSvc.serverDate, active: 'ACTIVE'])
 				.orderBy('dtfiled')
 				.limit(25)
 				.list()
@@ -328,7 +360,7 @@ class RPTMainSyncService {
 			if (pendingitem) {
 				sendSyncDataMeta(it)
 			} else {
-				em_sync.find([objid: it.objid]).update([state: 'FORSYNC'])
+				em_sync.find([objid: it.objid]).update([state: 'SYNCHING'])
 
 				em_sync_item.where('parentid = :parentid AND state <> :sync', [parentid: it.objid, sync: 'SYNC'])
 							.update([state: 'FORSYNC'])
@@ -338,58 +370,70 @@ class RPTMainSyncService {
 		}
 	}
 
-	@ProxyMethod
-	public void rescheduleOfflineOrg() {
-		em_sync_offline_org.where('expirydate < :currdate', [currdate: dtSvc.serverDate]).delete()
-	}
+	// @ProxyMethod
+	// public void rescheduleOfflineOrg() {
+	// 	em_sync_offline_org.where('expirydate < :currdate', [currdate: dtSvc.serverDate]).delete()
+	// }
 
 	void sendSyncDataMeta(data) {
 		try {
 			data.items = em_sync_item.find([parentid: data.objid]).list()
 			coordinator.createSyncMeta(data)
-			em_sync.find([objid: data.objid]).update([state: 'FORSYNC'])
-			em_sync_item.find([parentid: data.objid]).update([state: 'FORSYNC'])
-			data.items.each {item ->
-				em_sync_forprocess.create([objid: item.objid, parentid: data.objid])
-			}
+			em_sync.find([objid: data.objid]).update([state: 'SYNCHING'])
+			em_sync_item.find([parentid: data.objid]).update([state: 'SYNCHING'])
 			println 'Sync [META] Sending ' + data.action + ': '  + data.refno
 		} catch(err) {
-			moveToPending(data, err)
+			moveToPending(data, err, [state: data.state])
 		}
 	}
 
 	void logItemSent(item){
-		em_sync_forprocess.delete(item)
 		em_sync_item.find([objid: item.objid]).update([state: 'SYNC', error: null])
+
 	}
 
 	void logItemError(item, err) {
 		em_sync_item.find([objid: item.objid]).update([state: 'ERROR', error: err.message])
+		err.printStackTrace();
 	}
 
-	void moveToPending(syncdata, err) {
+	void moveToPending(syncdata, err, options) {
 		def currdate = dtSvc.serverDate
 
 		syncdata.error = err.message 
 		syncdata.expirydate = dtSvc.add(currdate, '10s')
 		em_sync_pending.save(syncdata)
-		em_sync.find([objid: syncdata.objid]).update([state: 'ERROR'])
+		def newstate = options?.state ? options.state : 'ERROR'
+		em_sync.find([objid: syncdata.objid]).update([state: newstate])
 
-		if (err.message.toLowerCase().matches('.*partner.*')) {
-			def offlineorg = em_sync_offline_org.read(syncdata.remote)
-			if (!offlineorg) {
-				offlineorg = [orgid: syncdata.remote.orgid]
-				offlineorg.expirydate = dtSvc.add(currdate, '60s')
-				em_sync_offline_org.create(offlineorg)
-			}
-		}
+		updateOrgErrorStatus(syncdata)
+	}
+
+	void updateOrgErrorStatus(syncdata) {
+		em_sync_org.find([orgid: syncdata.remote.orgid])
+		.update([
+			state: "{case when errorcount + 1 >= 3 then 'INACTIVE' else 'ACTIVE' end}", 
+			errorcount: '{errorcount + 1}'
+		])
+	}
+
+	void resetOrgErrorStatus(syncdata) {
+		em_sync_org.find([orgid: syncdata.remote.orgid])
+			.update([state: "ACTIVE", errorcount: 0])
 	}
 
 	def getPendingSyncData(){
-		def params = [orgid: getOrgId(), state: 'PENDING']
-		return em_sync.where('orgid = :orgid AND state = :state AND pending.objid IS NULL ', params)
+		def params = [orgid: getOrgId(), pending: 'PENDING', active: 'ACTIVE']
+
+		def where = []
+		where << 'orgid = :orgid'
+		where << 'state = :pending'
+		where << 'pending.objid IS NULL'
+		where << 'remote.state = :active'
+
+		return em_sync.where(where.join(' AND '), params)
 				.orderBy('dtfiled')
-				.limit(10)
+				.limit(5)
 				.list()
 	}
 
@@ -411,7 +455,7 @@ class RPTMainSyncService {
 
 	void deleteSyncData(syncdata) {
 		em_sync_pending.find([objid: syncdata.objid]).delete()
-		em_sync_forprocess.find([parentid: syncdata.objid]).delete()
+		em_sync_forprocess.find([objid: syncdata.objid]).delete()
 		em_sync_item.find([parentid: syncdata.objid]).delete()
 		em_sync.find([objid: syncdata.objid]).delete()
 	}
@@ -423,6 +467,26 @@ class RPTMainSyncService {
     	return em_org.find([root: 1]).first()?.objid
     }
 
+
+    @ProxyMethod
+    public def getRemoteOrgData() {
+    	def rootorg = em_org.find([root: 1]).first()
+    	if (!rootorg) return []
+
+    	def orgs = [];
+    	if ('PROVINCE'.equalsIgnoreCase(rootorg.orgclass)) {
+    		orgs = em_org.select('objid,code').find([orgclass: 'MUNICIPALITY']).list()
+    	} else {
+			orgs = em_org.select('objid,code').find([orgclass: 'PROVINCE']).list()
+    	}
+    	return [rootorg: rootorg, orgs: orgs]
+    }
+
+    @ProxyMethod
+    public def activate(org) {
+    	def remote = [orgid: org.rootorg.objid]
+    	resetOrgErrorStatus([remote: remote])
+    }
     
 }
 

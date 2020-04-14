@@ -14,6 +14,7 @@
 		<field name="sender_objid" />
 		<field name="sender_name" caption="Sender" />
 		<field name="fileid" caption="File ID" />
+		<field name="haserror" expr="case when pending.objid is not null then 1 else 0 end" caption="Has Error" />
 
 		<complex name="forprocess" ref="syncdata_forprocess" jointype="many-to-one" required="false">
 			<key field="objid" target="objid" />
@@ -23,7 +24,7 @@
 			<key field="objid" target="objid" />
 		</complex>
 
-		<complex name="offline" ref="syncdata_offline_org" jointype="many-to-one" required="false">
+		<complex name="remote" ref="syncdata_org" jointype="many-to-one" required="false">
 			<key field="remote_orgid" target="orgid" />
 		</complex>
 	</element>

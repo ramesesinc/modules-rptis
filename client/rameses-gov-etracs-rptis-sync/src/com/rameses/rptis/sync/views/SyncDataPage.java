@@ -72,7 +72,7 @@ public class SyncDataPage extends javax.swing.JPanel {
         xFormPanel1.add(xLabel4);
 
         xLabel5.setCaption("Remote Org");
-        xLabel5.setExpression("#{entity.remote.org}");
+        xLabel5.setExpression("#{entity.remote.orgid}");
         xLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         xLabel5.setPreferredSize(new java.awt.Dimension(0, 19));
         xFormPanel1.add(xLabel5);
@@ -99,8 +99,8 @@ public class SyncDataPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
@@ -159,7 +159,7 @@ public class SyncDataPage extends javax.swing.JPanel {
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "refno"}
                 , new Object[]{"caption", "Ref No."}
-                , new Object[]{"width", 110}
+                , new Object[]{"width", 130}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}
                 , new Object[]{"required", false}
@@ -189,7 +189,7 @@ public class SyncDataPage extends javax.swing.JPanel {
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "error"}
                 , new Object[]{"caption", "Error"}
-                , new Object[]{"width", 100}
+                , new Object[]{"width", 300}
                 , new Object[]{"minWidth", 0}
                 , new Object[]{"maxWidth", 0}
                 , new Object[]{"required", false}

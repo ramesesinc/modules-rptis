@@ -106,3 +106,4 @@ and f.rpuid = r.objid
 and pf.prevtaxability is null 
 ;
 
+

@@ -12,10 +12,14 @@ class RPTMainSyncTask {
 	}
 
 	@Schedule(interval=2)
+	public void scheduleForProcess(task) {
+		svc.scheduleForProcess();
+	}
+
+
+	@Schedule(interval=1)
 	public void processForSyncData(task) {
-		svc.getDataForSync().each {
-			svc.sendData(it)
-		}
+		svc.processForSyncData()
 	}
 
 	@Schedule(interval=5)
@@ -33,8 +37,5 @@ class RPTMainSyncTask {
 		svc.deleteCompletedSyncData()
 	}
 
-	@Schedule(interval=5)
-	public void rescheduleOfflineOrg(task) {
-		svc.rescheduleOfflineOrg()
-	}
+	
 }
