@@ -1,0 +1,29 @@
+<workunit>
+    <invokers>
+        <invoker folderid="/menucategory/rpt/util" 
+                 action="init" 
+                 caption="Manage Data Synchronization"
+                 role="ADMIN" permission="util.manage-data-sync" />
+        
+        <invoker type="quick_launcher" 
+                 code="MDS"
+                 action="init" 
+                 caption="Manage Data Synchronization"
+                 role="ADMIN" permission="util.manage-data-sync" />
+
+         <invoker type="formActions" 
+                action="_close" 
+                caption="Close" 
+                immediate="true" />
+         
+         <invoker type="formActions" 
+                action="refresh" 
+                caption="Refresh" 
+                immediate="true" />
+
+    </invokers>
+    <code class="com.rameses.rptis.sync.models.ManagementModel"/>
+    <pages>
+        <page template="com.rameses.rptis.sync.views.ManagementPage" />
+    </pages>
+</workunit>

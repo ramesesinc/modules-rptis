@@ -26,7 +26,7 @@ public class ChangePreviousInfoController extends ChangeFaasInfoController
     }
     
     
-    
+    def taxabilities = ['TAXABLE', 'EXEMPT'];
     def selectedItem;
     
     def listHandler = [

@@ -30,8 +30,9 @@ public class RRPAReportInitPage extends javax.swing.JPanel {
 
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xComboBox8 = new com.rameses.rcp.control.XComboBox();
+        xComboBox10 = new com.rameses.rcp.control.XComboBox();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
-        xComboBox8 = new com.rameses.rcp.control.XComboBox();
+        xComboBox9 = new com.rameses.rcp.control.XComboBox();
         xComboBox7 = new com.rameses.rcp.control.XComboBox();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
         xComboBox2 = new com.rameses.rcp.control.XComboBox();
@@ -49,7 +50,7 @@ public class RRPAReportInitPage extends javax.swing.JPanel {
         xLabel3 = new com.rameses.rcp.control.XLabel();
         xLabel4 = new com.rameses.rcp.control.XLabel();
 
-        xFormPanel1.setCaptionWidth(110);
+        xFormPanel1.setCaptionWidth(120);
         xFormPanel1.setPadding(new java.awt.Insets(5, 10, 5, 5));
 
         xComboBox8.setCaption("Revision Year");
@@ -60,6 +61,14 @@ public class RRPAReportInitPage extends javax.swing.JPanel {
         xComboBox8.setPreferredSize(new java.awt.Dimension(200, 20));
         xFormPanel1.add(xComboBox8);
 
+        xComboBox10.setCaption("Distribution Type");
+        xComboBox10.setItems("distributiontypes");
+        xComboBox10.setName("entity.distributiontype"); // NOI18N
+        xComboBox10.setAllowNull(false);
+        xComboBox10.setPreferredSize(new java.awt.Dimension(200, 20));
+        xComboBox10.setRequired(true);
+        xFormPanel1.add(xComboBox10);
+
         xComboBox1.setCaption("Report Format");
         xComboBox1.setExpression("#{item.caption}");
         xComboBox1.setItems("reporttypes");
@@ -69,14 +78,14 @@ public class RRPAReportInitPage extends javax.swing.JPanel {
         xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
 
-        xComboBox8.setCaption("Taxability");
-        xComboBox8.setDepends(new String[] {"entity.reporttype"});
-        xComboBox8.setItems("taxabilities");
-        xComboBox8.setName("entity.taxability"); // NOI18N
-        xComboBox8.setAllowNull(false);
-        xComboBox8.setPreferredSize(new java.awt.Dimension(200, 20));
-        xComboBox8.setRequired(true);
-        xFormPanel1.add(xComboBox8);
+        xComboBox9.setCaption("Taxability");
+        xComboBox9.setDepends(new String[] {"entity.reporttype"});
+        xComboBox9.setItems("taxabilities");
+        xComboBox9.setName("entity.taxability"); // NOI18N
+        xComboBox9.setAllowNull(false);
+        xComboBox9.setPreferredSize(new java.awt.Dimension(200, 20));
+        xComboBox9.setRequired(true);
+        xFormPanel1.add(xComboBox9);
 
         xComboBox7.setCaption("Period Type");
         xComboBox7.setExpression("#{item.caption}");
@@ -277,6 +286,7 @@ public class RRPAReportInitPage extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.rameses.rcp.control.XComboBox xComboBox1;
+    private com.rameses.rcp.control.XComboBox xComboBox10;
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;
@@ -284,6 +294,7 @@ public class RRPAReportInitPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox6;
     private com.rameses.rcp.control.XComboBox xComboBox7;
     private com.rameses.rcp.control.XComboBox xComboBox8;
+    private com.rameses.rcp.control.XComboBox xComboBox9;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;

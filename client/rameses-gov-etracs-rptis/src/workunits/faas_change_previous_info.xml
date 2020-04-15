@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workunit>
     <invokers>
-        <invoker type="faas:actions " action="init" 
+        <invoker type="faas:actions" action="init" 
             caption="Modify Superseded Information" target="popup"  
             role="ADMIN" permission="faas.change_previous_info" 
             actiontype="change_previous_info"

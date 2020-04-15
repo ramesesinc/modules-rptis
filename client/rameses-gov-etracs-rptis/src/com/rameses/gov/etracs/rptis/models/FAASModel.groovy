@@ -410,10 +410,13 @@ public class FAASModel
 
 
     def popupActions(def inv) {
+        getEntity()._showOldSketch = getShowOldSketch()
+        getEntity()._showNewSketch= !getEntity()._showOldSketch
+
         def popupMenu = new PopupMenuOpener();
         def list = Inv.lookupOpeners( inv.properties.category, [entity: entity] ).findAll{
             def vw = it.properties.visibleWhen;
-            return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean(vw, [mode:mode, entity: entity]));
+            return  ((!vw)  ||  ExpressionResolver.getInstance().evalBoolean(vw, [mode:mode, entity: entity, orgid:OsirisContext.env.ORGID]));
         }
         list.sort{a,b -> a.caption <=> b.caption }
         list.each{
@@ -421,5 +424,4 @@ public class FAASModel
         }
         return popupMenu;
     }
-
 }

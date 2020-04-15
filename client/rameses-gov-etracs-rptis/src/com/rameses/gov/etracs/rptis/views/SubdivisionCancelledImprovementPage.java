@@ -1,11 +1,11 @@
 package com.rameses.gov.etracs.rptis.views;
 
-import com.rameses.gov.etracs.rpt.subdivision.ui.*;
 import com.rameses.osiris2.themes.FormPage;
 import com.rameses.rcp.ui.annotations.StyleSheet;
 import com.rameses.rcp.ui.annotations.Template;
 
 @StyleSheet
+@Template(FormPage.class)
 public class SubdivisionCancelledImprovementPage extends javax.swing.JPanel {
     
     /** Creates new form SubdivisionLandMain */
@@ -21,14 +21,9 @@ public class SubdivisionCancelledImprovementPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        xActionBar1 = new com.rameses.rcp.control.XActionBar();
         xDataTable2 = new com.rameses.rcp.control.XDataTable();
 
         setLayout(new java.awt.BorderLayout());
-
-        xActionBar1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        xActionBar1.setName("formActions"); // NOI18N
-        add(xActionBar1, java.awt.BorderLayout.PAGE_START);
 
         xDataTable2.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
@@ -132,7 +127,6 @@ public class SubdivisionCancelledImprovementPage extends javax.swing.JPanel {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.control.XActionBar xActionBar1;
     private com.rameses.rcp.control.XDataTable xDataTable2;
     // End of variables declaration//GEN-END:variables
     

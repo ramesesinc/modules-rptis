@@ -38,6 +38,7 @@
 	<field name="swornamount" class="java.math.BigDecimal"/>
 	<field name="useswornamount" class="java.lang.Boolean"/>
 	<field name="taxable" class="java.lang.Boolean"/>
+	<field name="isadditional" class="java.lang.Boolean"/>
 
 	<variable name="TOTALMV" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{taxable} ? $F{marketvalue} : 0.0]]></variableExpression>
@@ -240,6 +241,92 @@ Used]]></text>
 			<band height="14"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
+						x="0"
+						y="0"
+						width="123"
+						height="14"
+						forecolor="#333333"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[$F{useswornamount} == false && $F{taxable}== true]]></printWhenExpression>
+						</reportElement>
+					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{originalcost}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="(#,##0.00)" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="123"
+						height="14"
+						forecolor="#333333"
+						key="textField-2"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[$F{useswornamount} == false && $F{taxable}== false]]></printWhenExpression>
+						</reportElement>
+					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{originalcost}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="482"
+						height="14"
+						key="textField-1"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[$F{useswornamount} == true && $F{taxable} == true]]></printWhenExpression>
+						</reportElement>
+					<box leftPadding="3" rightPadding="2">					<pen lineWidth="0.0" lineColor="#FF0066"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FF0066"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["SWORN AMOUNT:    " + ($F{swornamount}!=null ? (new java.text.DecimalFormat("#,##0.00").format($F{swornamount})) : "0.00")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="482"
+						height="14"
+						key="textField-6"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[$F{useswornamount} == true && $F{taxable} == false]]></printWhenExpression>
+						</reportElement>
+					<box leftPadding="3" rightPadding="2">					<pen lineWidth="0.0" lineColor="#FF0066"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FF0066"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["SWORN AMOUNT:    (" + ($F{swornamount}!=null ? (new java.text.DecimalFormat("#,##0.00").format($F{swornamount})) : "0.00") + ")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
 						x="496"
 						y="0"
 						width="57"
@@ -321,28 +408,6 @@ Used]]></text>
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{depreciationvalue}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="123"
-						height="14"
-						forecolor="#333333"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[$F{useswornamount} == false && $F{taxable}== true]]></printWhenExpression>
-						</reportElement>
-					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{originalcost}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.0000" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -448,28 +513,6 @@ Used]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="(#,##0.00)" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
-						y="0"
-						width="123"
-						height="14"
-						forecolor="#333333"
-						key="textField-2"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[$F{useswornamount} == false && $F{taxable}== false]]></printWhenExpression>
-						</reportElement>
-					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{originalcost}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="(#,##0.00)" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
 						x="236"
 						y="0"
 						width="88"
@@ -492,13 +535,16 @@ Used]]></text>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
+						mode="Opaque"
 						x="0"
 						y="0"
-						width="482"
+						width="438"
 						height="14"
-						key="textField-1"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-7"
 						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[$F{useswornamount} == true && $F{taxable} == true]]></printWhenExpression>
+							<printWhenExpression><![CDATA[$F{isadditional} ]]></printWhenExpression>
 						</reportElement>
 					<box leftPadding="3" rightPadding="2">					<pen lineWidth="0.0" lineColor="#FF0066"/>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
@@ -509,28 +555,7 @@ Used]]></text>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["SWORN AMOUNT:    " + ($F{swornamount}!=null ? (new java.text.DecimalFormat("#,##0.00").format($F{swornamount})) : "0.00")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="482"
-						height="14"
-						key="textField-6"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[$F{useswornamount} == true && $F{taxable} == false]]></printWhenExpression>
-						</reportElement>
-					<box leftPadding="3" rightPadding="2">					<pen lineWidth="0.0" lineColor="#FF0066"/>
-					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#FF0066"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FF0066"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="7" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["SWORN AMOUNT:    (" + ($F{swornamount}!=null ? (new java.text.DecimalFormat("#,##0.00").format($F{swornamount})) : "0.00") + ")"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["ADDITIONAL PAGE TOTALS "]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

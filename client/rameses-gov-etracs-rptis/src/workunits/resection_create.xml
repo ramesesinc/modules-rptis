@@ -3,7 +3,7 @@
     <invokers>
         <invoker folderid="/menucategory/rpt/txn"
                  action="init"  
-                 caption="Create New Resection" 
+                 caption="New Resection" 
                  index="171"
                  role="TAXMAPPER" 
                  permission="resection.create" />

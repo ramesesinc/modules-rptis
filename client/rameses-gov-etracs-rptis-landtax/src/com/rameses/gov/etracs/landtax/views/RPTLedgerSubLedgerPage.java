@@ -151,47 +151,47 @@ public class RPTLedgerSubLedgerPage extends javax.swing.JPanel {
         xButton1.setName("addSubLedger"); // NOI18N
         xButton1.setText("Add");
 
-        xButton2.setMnemonic('o');
         xButton2.setDepends(new String[] {"selectedItem"});
+        xButton2.setMnemonic('o');
         xButton2.setName("openSubLedger"); // NOI18N
-        xButton2.setText("Open");
         xButton2.setVisibleWhen("#{selectedItem != null}");
+        xButton2.setText("Open");
 
-        xButton3.setMnemonic('d');
         xButton3.setDepends(new String[] {"selectedItem"});
+        xButton3.setMnemonic('d');
         xButton3.setName("deleteSubLedger"); // NOI18N
-        xButton3.setText("Delete");
         xButton3.setVisibleWhen("#{selectedItem && selectedItem.rptledger.state == 'PENDING'}");
+        xButton3.setText("Delete");
 
         xFormPanel1.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         xFormPanel1.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
         xFormPanel1.setPadding(new java.awt.Insets(0, 0, 0, 0));
 
         xIntegerField1.setCaption("No. of Sub-Ledgers");
+        xIntegerField1.setName("subledgerCount"); // NOI18N
         xIntegerField1.setCaptionWidth(110);
         xIntegerField1.setCellPadding(new java.awt.Insets(0, 50, 0, 0));
         xIntegerField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xIntegerField1.setEnabled(false);
-        xIntegerField1.setName("subledgerCount"); // NOI18N
         xFormPanel1.add(xIntegerField1);
 
         xDecimalField1.setCaption("Total Area (ha)");
+        xDecimalField1.setName("totalSubledgerArea"); // NOI18N
+        xDecimalField1.setPattern("#,##0.0000");
+        xDecimalField1.setScale(6);
         xDecimalField1.setCaptionWidth(90);
         xDecimalField1.setCellPadding(new java.awt.Insets(0, 20, 0, 0));
         xDecimalField1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xDecimalField1.setEnabled(false);
-        xDecimalField1.setName("totalSubledgerArea"); // NOI18N
-        xDecimalField1.setPattern("#,##0.0000");
-        xDecimalField1.setScale(6);
         xDecimalField1.setStretchWidth(25);
         xFormPanel1.add(xDecimalField1);
 
         xDecimalField2.setCaption("Total MV");
+        xDecimalField2.setName("totalSubledgerMV"); // NOI18N
         xDecimalField2.setCaptionWidth(60);
         xDecimalField2.setCellPadding(new java.awt.Insets(0, 20, 0, 0));
         xDecimalField2.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         xDecimalField2.setEnabled(false);
-        xDecimalField2.setName("totalSubledgerMV"); // NOI18N
         xDecimalField2.setStretchWidth(25);
         xFormPanel1.add(xDecimalField2);
 
@@ -211,14 +211,14 @@ public class RPTLedgerSubLedgerPage extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 1039, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(xButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -226,10 +226,10 @@ public class RPTLedgerSubLedgerPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xDataTable1, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(xButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(xButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

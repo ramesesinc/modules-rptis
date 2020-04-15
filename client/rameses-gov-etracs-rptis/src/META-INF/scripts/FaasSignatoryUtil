@@ -59,6 +59,30 @@ public class FaasSignatoryUtil
         ])
         
     }
+
+    def getLookupProvinceAppraiser(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTAPPRAISER',
+            onselect : { 
+                if (!caller.entity.provappraiser) 
+                    caller.entity.provappraiser = [:]
+                caller.entity.provappraiser.putAll(it)
+            },
+            onempty  : {clearSignatory(caller.entity.provappraiser)},
+        ])
+    }
+
+    def getLookupProvinceTaxmapper(){
+        return InvokerUtil.lookupOpener('txnsignatory:lookup',[
+            doctype : 'RPTTAXMAPPER',
+            onselect : { 
+                if (!caller.entity.provtaxmapper)
+                    caller.entity.provtaxmapper = [:]
+                caller.entity.provtaxmapper.putAll(it) 
+            },
+            onempty  : { clearSignatory(caller.entity.provtaxmapper) },
+        ])
+    }
     
     void clearSignatory(signatory){
         if (signatory){

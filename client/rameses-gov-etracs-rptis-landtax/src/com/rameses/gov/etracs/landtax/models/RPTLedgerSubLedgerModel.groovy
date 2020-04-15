@@ -105,5 +105,9 @@ class RPTLedgerSubLedgerModel
         }
         binding?.refresh('totalSubledger.*|subledgerCount');
     }
+
+    def getTotalSubledgerArea() {
+        return subledgers.rptledger.totalareaha.sum();
+    }
         
 }
