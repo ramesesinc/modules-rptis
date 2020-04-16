@@ -91,6 +91,9 @@ class ConsolidationSyncService
 
 	
 	def scheduleSubmitToProvince = {syncdata, consolidation ->
+		syncdata.info = syncdata.info ? syncdata.info : [:]
+    	syncdata.info.txntype = 'CS'
+    	
     	def consolidatedfaas = [objid: consolidation.newfaasid]
     	faasSyncSvc.scheduleFaasData(syncdata, consolidatedfaas)
 

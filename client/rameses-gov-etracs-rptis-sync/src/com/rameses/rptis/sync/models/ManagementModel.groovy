@@ -11,9 +11,15 @@ class ManagementModel  {
 
     @Service('PersistenceService')
     def persistence;
+
+    @Service('RPTSyncManagementService')
+    def svc;
+
+    def timer;
     
     void init() {
-        
+        timer = new Thread(new TimerTask(refreshScreen));
+        timer.start();
     }
 
     void refresh() {
@@ -23,13 +29,14 @@ class ManagementModel  {
     	pendingListHandler.reload();
     }
 
+    def refreshScreen = {
+        refresh();
+    }
+
     /* outbox support */
 
     def getOutboxItems() {
-    	def p = [_schemaname: 'syncdata'];
-    	p.where = ['orgid = :orgid AND remote.state = :active',  [orgid: OsirisContext.env.ORGID, active: 'ACTIVE']];
-    	p.orderBy = 'dtfiled';
-    	return qrySvc.getList(p);
+        return svc.getOutboxItems([orgid: OsirisContext.env.ORGID])
     }
 
     def selectedOutboxItem;
@@ -41,25 +48,9 @@ class ManagementModel  {
     	}
     ] as BasicListModel;
 
-    def getOutboxItemDetails() {
-    	if (!selectedOutboxItem) return [];
-
-    	def p = [_schemaname: 'syncdata_item'];
-    	p.findBy = [parentid: selectedOutboxItem.objid];
-    	p.orderBy = 'idx';
-    	return qrySvc.getList(p);
-    }
-
-	def outboxItemListHandler = [
-		getRows: {outboxItemDetails.size()},
-    	fetchList: { outboxItemDetails }
-    ] as BasicListModel;
-
 
 
      /* inactive outbox support */
-
-
 
     def getInactiveItems() {
     	def p = [_schemaname: 'syncdata'];
@@ -69,17 +60,17 @@ class ManagementModel  {
     }
 
     def inactiveListHandler = [
-    	fetchList: { inactiveItems }
+    	fetchList: { inactiveItems },
+        onOpenItem : {item, colName -> 
+            return Inv.lookupOpener('syncdata:open', [entity: item])
+        }
     ] as BasicListModel;
 
 
 	/* inbox support */
 
     def getInboxItems() {
-    	def p = [_schemaname: 'syncdata'];
-    	p.findBy =[remote_orgid: OsirisContext.env.ORGID];
-    	p.orderBy = 'dtfiled';
-    	return qrySvc.getList(p);
+        return svc.getInboxItems([remoteorgid: OsirisContext.env.ORGID])
     }
 
     def selectedInboxItem;
@@ -102,7 +93,10 @@ class ManagementModel  {
     def selectedPendingItem;
 
     def pendingListHandler = [
-    	fetchList: { pendingItems }
+    	fetchList: { pendingItems },
+        onOpenItem : {item, colName -> 
+            return Inv.lookupOpener('syncdata:open', [entity: item])
+        }
     ] as BasicListModel;
 
 
@@ -140,6 +134,23 @@ class ManagementModel  {
     	}
     }
 
-
-
 }
+
+class TimerTask  implements Runnable {
+        def refreshScreen;
+
+        TimerTask(refreshScreen) {
+            this.refreshScreen = refreshScreen;
+        }
+
+        public void run() {
+            while ( true) {
+                try {
+                    refreshScreen();
+                    sleep(5000)
+                } catch (e) {
+                    //ignore 
+                }
+            }
+        }
+    }

@@ -113,22 +113,6 @@ class RPTMainSyncService {
 		}
 	}
 
-	// def isDependedActionCompleted(item) {
-	// 	if (!item.dependedaction) return true
-
-	// 	def param = [
-	// 		parentid: item.parentid, 
-	// 		action: item.dependedaction,
-	// 		sync: 'SYNC'
-	// 	]
-
-	// 	def dependeditem = em_sync_item.select('objid')
-	// 						.where('parentid = :parentid AND action = :action AND state <> :sync', param)
-	// 						.first()
-
-	// 	return dependeditem == null 
-
-	// }
 
 	void mergeSyncDataInfo(item, syncdata) {
 		item.dtfiled = syncdata.dtfiled
@@ -294,7 +278,7 @@ class RPTMainSyncService {
 		where << 'remote.state = :active'
 		return em_sync.where(where.join(' AND '), params)
 				.orderBy('dtfiled')
-				.limit(5)
+				.limit(1)
 				.list()
 	}
 
@@ -316,7 +300,7 @@ def getItemsForSync(syncdata){
         def params = [parentid: syncdata.objid, sync: 'SYNC']
         return em_sync_item.where('parentid = :parentid AND state <> :sync', params)
                 .orderBy('idx')
-                .limit(10)
+                .limit(1)
                 .list()
     }
 
@@ -369,11 +353,6 @@ def getItemsForSync(syncdata){
 			}
 		}
 	}
-
-	// @ProxyMethod
-	// public void rescheduleOfflineOrg() {
-	// 	em_sync_offline_org.where('expirydate < :currdate', [currdate: dtSvc.serverDate]).delete()
-	// }
 
 	void sendSyncDataMeta(data) {
 		try {

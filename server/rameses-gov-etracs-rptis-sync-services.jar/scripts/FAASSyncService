@@ -100,7 +100,7 @@ class FAASSyncService
 			refno: syncdata.refno, 
 			async: (async == null ? syncdata.async : async),
 			action: (action ? action : syncdata.action),
-			info: [:]
+			info: (syncdata.info ? syncdata.info : [:])
 		]
 	}
 
@@ -155,7 +155,7 @@ class FAASSyncService
     void scheduleSharedData(syncdata, faas) {
     	rptSync.scheduleExaminations(syncdata, faas.objid)
     	rptSync.scheduleRequirements(syncdata, faas.objid)
-    	rptSync.scheduleImages(syncdata, faas.objid)
+    	rptSync.scheduleImagesByRefId(syncdata, faas.objid)
 
     	def item = null
     	faas.affectedrpus.each{
@@ -370,6 +370,7 @@ class FAASSyncService
 		faas.tasks = em_task.find([refid: faas.objid]).list()
 		faas.signatory = faasSvc.findSignatory(faas)
 		faas.sketch = faasSvc.openSketch(faas)
+		faas._options = syncdata.info 
 		return faas 
 	}
 

@@ -886,12 +886,14 @@ class FAASService
 
 
 	void insertTxnReference(faas){
-		if (faas.previousfaases &&  ! faas.txntype.objid.matches('SD|CS|DP')){
-			def prevfaasid = faas.previousfaases[0].prevfaasid
-			if (prevfaasid){
-				def refno = ( faas.tdno == null ? 'Doc No. ' + faas.utdno : 'TD No. ' + faas.tdno  ) 
-				txnRef.insert([objid:prevfaasid, refid:faas.objid, msg:'FAAS is currently referenced by ' + refno ])
-			}
+		if (!faas.previousfaases) return
+		if (faas.txntype.objid.matches('SD|CS|DP')) return
+		if (faas._options && faas._options.txntype.toString().matches('SD|CS|RS')) return
+
+		def prevfaasid = faas.previousfaases[0].prevfaasid
+		if (prevfaasid){
+			def refno = ( faas.tdno == null ? 'Doc No. ' + faas.utdno : 'TD No. ' + faas.tdno  ) 
+			txnRef.insert([objid:prevfaasid, refid:faas.objid, msg:'FAAS is currently referenced by ' + refno ])
 		}
 	}	
 
