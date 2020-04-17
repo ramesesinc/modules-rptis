@@ -16,10 +16,6 @@
 		<field name="fileid" caption="File ID" />
 		<field name="haserror" expr="case when pending.objid is not null then 1 else 0 end" caption="Has Error" />
 
-		<complex name="forprocess" ref="syncdata_forprocess" jointype="many-to-one" required="false">
-			<key field="objid" target="objid" />
-		</complex>
-
 		<complex name="pending" ref="syncdata_pending" jointype="many-to-one" required="false">
 			<key field="objid" target="objid" />
 		</complex>
