@@ -293,7 +293,7 @@ class RPTMainSyncService {
 		where << 'forprocess.objid IS NULL'
 		return em_sync_item.select('objid').where(where.join(' AND '), params)
 				.orderBy('syncdata.dtfiled, idx')
-				.limit(5)
+				.limit(3)
 				.list()
 				.each{ it.processed = false }
 	}

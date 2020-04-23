@@ -367,7 +367,7 @@ class FAASSyncService
 		def faas = faasSvc.openFaas(getFaas(syncdata))
 		faas.rpu.rpumaster = rpuSvc.openRpuMaster(faas.rpu)
 		faas.taxpayer = entitySvc.open(faas.taxpayer)
-		faas.tasks = em_task.find([refid: faas.objid]).list()
+		faas.tasks = em_task.where('refid = :refid AND actor.username IS NOT NULL', [refid: faas.objid]).list()
 		faas.signatory = faasSvc.findSignatory(faas)
 		faas.sketch = faasSvc.openSketch(faas)
 		faas._options = syncdata.info 
