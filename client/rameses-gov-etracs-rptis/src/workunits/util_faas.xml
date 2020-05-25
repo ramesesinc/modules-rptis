@@ -7,6 +7,16 @@
         <invoker type="quick_launcher" code="UTIL04" action="deleteApprovedFaas" caption="Delete Approved FAAS"
             role="ADMIN" 
             target="process" index="1004" />
+            
+        <invoker type="quick_launcher" code="UTIL04" action="deleteApprovedFaas" caption="Delete Approved FAAS"
+            role="ADMIN" 
+            target="process" index="1004" />
+
+        <invoker folderid="/menucategory/rpt/util" 
+            caption="Delete Approved FAAS"
+            action="deleteApprovedFaas" 
+            role="ADMIN"
+            target="process" />
     </invokers>
     
     <code lang="groovy">
