@@ -7,6 +7,9 @@ class FAASSupportService
 	@Env
 	def env 
 
+	@Service("Var")
+	def var;
+
 	@ActiveDB('faas_support')
 	def em 
 
@@ -42,6 +45,12 @@ class FAASSupportService
 
 	@DataContext('faas_list')
 	def faaslistDb 
+
+	@DataContext('rptledger')
+	def em_rptledger
+
+	@DataContext('rptledger_faas')
+	def em_rptledger_faas
 
 	@Service('FAASStewardshipService')
 	def stewardshipSvc
@@ -250,9 +259,17 @@ class FAASSupportService
 	}
 
 	void checkPaymentMade(faas){
-		def pmt = em.findOnlinePaymentByFaas(faas)
-		if (pmt) {
-			throw new Exception('Cannot delete FAAS. Payment has already been made.')
+		if (util.isTrue(var.faas_force_delete_current_record)) {
+			def rptledger = em_rptledger.select('objid').find([faasid: faas.objid]).first()
+			if (rptledger) {
+				em_rptledger.find(rptledger).update([faasid: null])
+				em_rptledger_faas.find([rptledgerid: rptledger.objid]).update([faasid: null])
+			}
+		} else {
+			def pmt = em.findOnlinePaymentByFaas(faas)
+			if (pmt) {
+				throw new Exception('Cannot delete FAAS. Payment has already been made.')
+			}
 		}
 	}
 
