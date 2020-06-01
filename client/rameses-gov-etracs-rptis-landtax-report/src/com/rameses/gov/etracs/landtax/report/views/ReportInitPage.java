@@ -38,7 +38,7 @@ public class ReportInitPage extends javax.swing.JPanel {
         xComboBox7 = new com.rameses.rcp.control.XComboBox();
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
-        xComboBox5 = new com.rameses.rcp.control.XComboBox();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xComboBox6 = new com.rameses.rcp.control.XComboBox();
 
         setOpaque(false);
@@ -82,24 +82,21 @@ public class ReportInitPage extends javax.swing.JPanel {
         xIntegerField1.setRequired(true);
         xFormPanel1.add(xIntegerField1);
 
-        xComboBox5.setAllowNull(false);
-        xComboBox5.setCaption("Quarter");
-        xComboBox5.setDepends(new String[] {"entity.period"});
-        xComboBox5.setExpression("#{item.name}");
-        xComboBox5.setItemKey("code");
-        xComboBox5.setItems("quarters");
-        xComboBox5.setName("entity.qtr"); // NOI18N
-        xComboBox5.setPreferredSize(new java.awt.Dimension(120, 22));
-        xComboBox5.setRequired(true);
-        xFormPanel1.add(xComboBox5);
+        xComboBox1.setCaption("Quarter");
+        xComboBox1.setDepends(new String[] {"entity.period"});
+        xComboBox1.setItems("quarters");
+        xComboBox1.setName("entity.qtr"); // NOI18N
+        xComboBox1.setPreferredSize(new java.awt.Dimension(120, 20));
+        xComboBox1.setRequired(true);
+        xFormPanel1.add(xComboBox1);
 
-        xComboBox6.setAllowNull(false);
         xComboBox6.setCaption("Month");
         xComboBox6.setDepends(new String[] {"entity.period", "entity.qtr"});
-        xComboBox6.setDynamic(true);
         xComboBox6.setExpression("#{item.caption}");
         xComboBox6.setItems("months");
         xComboBox6.setName("entity.month"); // NOI18N
+        xComboBox6.setAllowNull(false);
+        xComboBox6.setDynamic(true);
         xComboBox6.setPreferredSize(new java.awt.Dimension(120, 22));
         xComboBox6.setRequired(true);
         xFormPanel1.add(xComboBox6);
@@ -107,9 +104,9 @@ public class ReportInitPage extends javax.swing.JPanel {
         add(xFormPanel1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;
-    private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XComboBox xComboBox6;
     private com.rameses.rcp.control.XComboBox xComboBox7;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;

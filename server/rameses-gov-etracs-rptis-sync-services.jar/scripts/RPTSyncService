@@ -164,6 +164,7 @@ class RPTSyncService
         	syncSvc.createItem(syncdata, item)
             scheduleImages(syncdata, exam.objid)
         }
+        scheduleImages(syncdata, parentid)
 	}
 
 	@ProxyMethod
@@ -179,6 +180,7 @@ class RPTSyncService
         	syncSvc.createItem(syncdata, item)
             scheduleImages(syncdata, req.objid)
         }
+        scheduleImages(syncdata, parentid)
 	}
 
 	@ProxyMethod

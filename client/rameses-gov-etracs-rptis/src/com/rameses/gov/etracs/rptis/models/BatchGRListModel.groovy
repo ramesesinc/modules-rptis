@@ -8,7 +8,7 @@ import com.rameses.osiris2.common.*
 public class BatchGRListModel extends com.rameses.seti2.models.CrudListModel {
     def open() {
         def res = super.open();
-        if ('APPROVED'.equalsIgnoreCase(selectedItem.state)) {
+        if ('APPROVED'.equalsIgnoreCase(selectedItem.state) && selectedItem.taskstate == null) {
             def param = [ schemaName:'batchgr', adapter:adapter, entity: selectedItem];
             return Inv.lookupOpener('batchgr:closedwf:open', param);
         } else {

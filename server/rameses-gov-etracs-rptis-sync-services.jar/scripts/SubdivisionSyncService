@@ -115,6 +115,9 @@ class SubdivisionSyncService
 
 
 	def scheduleSubmitToProvince = {syncdata, subdivision ->
+		syncdata.info = syncdata.info ? syncdata.info : [:]
+    	syncdata.info.txntype = 'SD'
+
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
         	syncdata.async = true
         	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])

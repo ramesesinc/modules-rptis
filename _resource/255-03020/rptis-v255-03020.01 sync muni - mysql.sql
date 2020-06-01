@@ -37,9 +37,10 @@ drop table if exists syncdata_forprocess
 
 CREATE TABLE `syncdata_forprocess` (
   `objid` varchar(50) NOT NULL,
-  PRIMARY KEY (`objid`)
+  `processed` int(11) DEFAULT '0',
+  PRIMARY KEY (`objid`),
+  CONSTRAINT `fk_forprocess_syncdata_item` FOREIGN KEY (`objid`) REFERENCES `syncdata_item` (`objid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ;
-
 
 
