@@ -70,8 +70,10 @@ select
   rp.*,
   (select max(partialled) from rptpayment_item where parentid = rp.objid) as partialled
 from rptpayment rp 
+left join cashreceipt_void cv on rp.receiptid = cv.receiptid
 where refid = $P{objid}
 and voided = 0
+and cv.objid is null 
 order by rp.fromyear desc, rp.fromqtr desc, rp.receiptno desc
 
 
