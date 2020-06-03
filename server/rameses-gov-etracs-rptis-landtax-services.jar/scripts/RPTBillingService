@@ -454,7 +454,11 @@ public class RPTBillingService
 			item.qtr = first.qtr 
 			item.originalav = first.rptledgerfaas.assessedvalue 
 			item.taxdifference = first.taxdifference
-			item.period = buildPeriod(bill, list, minyear)
+			if (list.size() <= 2) {
+				item.period =  list.first().year + "-" + list.first().qtr
+			}else {
+				item.period =  buildPeriod(bill, list, minyear)
+			}
 			item.periodqtrs = buildPeriodQuarters(bill, list, minyear)
 			item.total = 0.0 
 			item.flag = ''
