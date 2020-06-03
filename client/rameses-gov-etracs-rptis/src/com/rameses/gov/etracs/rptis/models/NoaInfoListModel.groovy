@@ -86,7 +86,13 @@ public class NoaInfoListModel
             return;
         }
             
-        printTask = new PrintTask(notices: notices, oncomplete:oncomplete, onprogress:onprogress);
+        printTask = new PrintTask(
+            notices: notices, 
+            oncomplete: oncomplete, 
+            onprogress: onprogress, 
+            persistence: persistence,
+            noticeSvc: noticeSvc
+        );
         Thread t = new Thread(printTask);
         t.start();
         printing = true;
@@ -122,6 +128,8 @@ public class PrintTask implements Runnable
     boolean cancelled;
     def oncomplete;
     def onprogress;
+    def persistence;
+    def noticeSvc;
     
     public void run(){
         int count = 0;
@@ -130,21 +138,27 @@ public class PrintTask implements Runnable
         for(int i=0; i < notices.size(); i++){
             if (cancelled) 
                 break;
+
+            try {
+                def notice = notices[i];
+                notice._schemaname = 'assessmentnotice';
+                def noa = persistence.read(notice);
+                def o = InvokerUtil.lookupOpener('assessmentnotice:report', [entity: noticeSvc.open(noa)]);
+                if (o){
+                    // o.handle.report.viewReport();
+                    ReportUtil.print(o.handle.report.report, false);
+                }
+                count += 1;
+                onprogress('Printing ' + noa.txnno);
                 
-            def noa = persistence.read(notices[i]);
-            def o = InvokerUtil.lookupOpener('assessmentnotice:report', [entity: noticeSvc.open(noa)]);
-            if (o){
-                o.handle.report.viewReport();
-                ReportUtil.print(o.handle.report.report, false);
-            }
-            count += 1;
-            onprogress('Printing ' + noa.txnno);
-            
-            try{
-                Thread.sleep(2000);
-            }
-            catch(e){
-                //ignore
+                try{
+                    Thread.sleep(2000);
+                }
+                catch(e){
+                    //ignore
+                }
+            } catch (e ) {
+                e.printStackTrace();
             }
         }
         
