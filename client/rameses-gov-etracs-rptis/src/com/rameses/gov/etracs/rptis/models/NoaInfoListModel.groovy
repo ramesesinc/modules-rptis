@@ -131,8 +131,8 @@ public class PrintTask implements Runnable
             if (cancelled) 
                 break;
                 
-            def noa = notices[i];
-            def o = InvokerUtil.lookupOpener('assessmentnotice:report', [entity: noa]);
+            def noa = persistence.read(notices[i]);
+            def o = InvokerUtil.lookupOpener('assessmentnotice:report', [entity: noticeSvc.open(noa)]);
             if (o){
                 o.handle.report.viewReport();
                 ReportUtil.print(o.handle.report.report, false);
