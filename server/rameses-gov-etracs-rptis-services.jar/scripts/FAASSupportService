@@ -262,7 +262,7 @@ class FAASSupportService
 		if (util.isTrue(var.faas_force_delete_current_record)) {
 			def rptledger = em_rptledger.select('objid').find([faasid: faas.objid]).first()
 			if (rptledger) {
-				em_rptledger.find(rptledger).update([faasid: null])
+				em_rptledger.find([objid: rptledger.objid]).update([faasid: null])
 				em_rptledger_faas.find([rptledgerid: rptledger.objid]).update([faasid: null])
 			}
 		} else {
