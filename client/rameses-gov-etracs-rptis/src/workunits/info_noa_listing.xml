@@ -1,0 +1,34 @@
+<workunit>
+    <invokers>
+        <invoker type="subdivision:info" 
+            action="init" 
+            caption="Notice of Assessments" 
+            visibleWhen="#{entity.state == 'APPROVED'}" 
+            index="452"/>
+        <invoker type="consolidation:info" 
+            action="init" 
+            caption="Notice of Assessments" 
+            visibleWhen="#{entity.state == 'APPROVED'}" 
+            index="452"/>
+        <invoker type="resection:info" 
+            action="init" 
+            caption="Notice of Assessments" 
+            visibleWhen="#{entity.state == 'APPROVED'}" 
+            index="452"/>
+        <invoker type="batchgr:info" 
+            action="init" 
+            caption="Notice of Assessments" 
+            visibleWhen="#{entity.state == 'APPROVED'}" 
+            index="452"/>
+
+        <invoker type="formActions" 
+            action="generateNoa"
+            caption="Generate Notice of Assessments"
+            visibleWhen="#{showGenerateNoa}"
+            />
+    </invokers>
+    <code class="com.rameses.gov.etracs.rptis.models.NoaInfoListModel" />
+    <page>
+        <page template="com.rameses.gov.etracs.rpt.common.InfoListPage" />
+    </page>    
+</workunit>

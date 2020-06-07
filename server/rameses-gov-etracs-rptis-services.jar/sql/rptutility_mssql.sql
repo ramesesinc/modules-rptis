@@ -45,9 +45,10 @@ where objid=$P{rpuid}
 
 
 [modifySubLedgerPin]
-update rptledger rl, rptledger_subledger sl set 
-  fullpin = concat($P{newpin}, '-', sl.subacctno),
+update rl set 
+  fullpin = ($P{newpin} + '-' + sl.subacctno),
   barangayid = $P{barangayid}
+from rptledger rl, rptledger_subledger sl 
 where faasid = $P{faasid}
 and rl.objid = sl.parent_objid
 

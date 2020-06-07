@@ -1,6 +1,11 @@
 <workunit>
     <invokers>
-        <invoker type="subdivision:info:remotetool" action="resend" caption="Resend To Municipality" role="ADMIN" target="process"/>
+        <invoker type="subdivision:info:remotetool" 
+            action="resend" 
+            caption="Resend To Municipality" 
+            role="ADMIN" 
+            target="process" 
+            visibleWhen="#{entity.state == 'APPROVED' }" />
     </invokers>
     <code>
         

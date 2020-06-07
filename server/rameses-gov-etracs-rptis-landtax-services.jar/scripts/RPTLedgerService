@@ -127,6 +127,7 @@ class RPTLedgerService
     public void delete( ledger ) {
         em_rptbill_ledger.find([rptledgerid:ledger.objid]).delete() 
         em_rptledger_item.find([parentid:ledger.objid]).delete() 
+        em_rptledger_faas.find([rptledgerid:ledger.objid]).delete() 
 
         def credits = em_credit.select('objid').find([rptledger_objid: ledger.objid]).list()
         credits.each{
