@@ -46,5 +46,18 @@ class MunicipalityConsolidationSupportService
         svc.sendAsyncMessage(msg)
         println 'Resubmit Consolidation requirements to province....'
     }
+
+
+    /* SYNC SERVICE SUPPORT */
+    @ProxyMethod 	
+	public def resendToProvince( consolidation ) {
+        return consolidation
+	}
+
+    @ProxyMethod
+    public def resendRequirements( consolidation ){
+        return consolidation
+    }    
+
 }
 

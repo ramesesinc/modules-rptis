@@ -24,15 +24,15 @@ class MunicipalityConsolidationSupportController
     
     void resendToProvince(){
         if (MsgBox.confirm('Resubmit consolidation to Province?')){
-            svc.resubmitToProvince(entity);
-            MsgBox.confirm('Consolidation has been successfully submitted to province.')
+            svc.resendToProvince(entity);
+            MsgBox.alert('Consolidation has been successfully submitted to province.')
         }
     }
     
     void resendRequirements(){
         if (MsgBox.confirm('Resubmit consolidation requirements to Province?')){
-            svc.resubmitRequirements(entity);
-            MsgBox.confirm('Consolidation requirements have been successfully submitted to province.')
+            svc.resendRequirements(entity);
+            MsgBox.alert('Consolidation requirements have been successfully submitted to province.')
         }
     }
     

@@ -6,7 +6,21 @@
             caption="Resend to Province" 
             target="process" 
             role="ADMIN" 
-            visibleWhen="#{entity.state == 'CURRENT'}" />
+            visibleWhen="#{entity.state == 'CURRENT' &amp;&amp; entity.datacapture}" />
+
+        <invoker type="faas:actions" 
+            action="resendToProvince" 
+            caption="Resend to Province" 
+            target="process" 
+            role="ADMIN" 
+            visibleWhen="#{!entity.datacapture &amp;&amp; entity.taskstate == 'provapprover'}" />
+
+        <invoker type="faas:actions" 
+            action="resendRequirements" 
+            caption="Resend Requirements" 
+            target="process" 
+            role="ADMIN" 
+            visibleWhen="#{!entity.datacapture &amp;&amp; entity.taskstate == 'provapprover'}" />
     </invokers>
     <code>
 <![CDATA[
@@ -27,12 +41,18 @@ class MunicipalityFAASSupportController
     def entity;
     
     void resendToProvince(){
-        if (MsgBox.confirm('Resubmit FAAS to Province?')){
-            svc.resubmitToProvince(entity);
-            MsgBox.alert('FAAS has been successfully submitted to province.')
+        if (MsgBox.confirm('Resend to Province?')){
+            svc.resendToProvince(entity);
+            MsgBox.alert('FAAS has been successfully resent to province.')
         }
     }
-        
+
+    void resendRequirements(){
+        if (MsgBox.confirm('Resend Requirements to Province?')){
+            svc.resendRequirements(entity);
+            MsgBox.alert('Requirements has been successfully resent to province.')
+        }
+    }
 }
 
 
