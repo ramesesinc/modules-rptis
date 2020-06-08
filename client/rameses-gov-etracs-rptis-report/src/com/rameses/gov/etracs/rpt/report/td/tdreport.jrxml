@@ -124,6 +124,7 @@
 	<field name="prevadministrator" class="java.lang.String"/>
 	<field name="signatories" class="java.lang.Object"/>
 	<field name="show_interim_watermark" class="java.lang.Boolean"/>
+	<field name="backtaxes" class="java.lang.Object"/>
 
 
 		<group  name="PIN" >
@@ -3071,6 +3072,28 @@ TRUE COPY]]></text>
 			</band>
 			</groupFooter>
 		</group>
+		<group  name="BACKTAX" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="21"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[$F{backtaxes}.source.size() > 0]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="5"
+						width="541"
+						height="13"
+						key="subreport-7"/>
+					<dataSourceExpression><![CDATA[$F{backtaxes}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA["tdbacktax.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
 		<group  name="CANCELNOTE" >
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
@@ -3346,7 +3369,7 @@ TRUE COPY]]></text>
 						y="39"
 						width="8"
 						height="13"
-						forecolor="#FF00FF"
+						forecolor="#000000"
 						key="staticText-151"/>
 					<box></box>
 					<textElement>
