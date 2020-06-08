@@ -45,6 +45,12 @@ class FAASSyncInterceptor
         faas.putAll(faasSvc.approveFaas(faas))
         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
     }   
+    
+    @After(pattern="FAASService.resendToMunicipality", index=50000) 
+    public void resendToMunicipality( evt ) {
+        def faas = evt.result
+        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
+    }   
 
     @After(pattern="FAASWorkflowService.signal", eval="#{args[0].state == 'recommender' && args[0].action == 'submit_to_province'}", index=50000) 
     public void createProvinceApproval( evt ) {
