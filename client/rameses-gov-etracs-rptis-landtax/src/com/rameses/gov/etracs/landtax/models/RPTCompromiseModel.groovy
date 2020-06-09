@@ -346,8 +346,8 @@ public class RPTCompromiseModel
     }
     
     boolean getShowRestructure(){
-        if (!entity.state.matches('FORAPPROVAL|APPROVED')) return false;
         if (entity.installments.find{it.amtpaid > 0.0}) return false;
+        if (entity.state.matches('APPROVED')) return false;
         return true;
     }
     
