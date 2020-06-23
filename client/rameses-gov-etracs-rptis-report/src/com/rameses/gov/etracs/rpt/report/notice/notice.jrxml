@@ -1166,7 +1166,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="6" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["     ": $F{approver.title}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["     " + $F{approver.title}]]></textFieldExpression>
 				</textField>
 			</band>
 		</summary>

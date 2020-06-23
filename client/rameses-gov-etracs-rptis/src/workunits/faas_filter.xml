@@ -1,0 +1,12 @@
+<workunit>
+    <invokers>
+        <invoker type="faas:report:filter" caption="FAAS Filter" target="popup" />
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.rptis.models.FAASFilterModel" />    
+
+    <pages>
+        <page template="com.rameses.gov.etracs.rptis.views.FAASFilterPage"/>
+    </pages>    
+    
+</workunit>

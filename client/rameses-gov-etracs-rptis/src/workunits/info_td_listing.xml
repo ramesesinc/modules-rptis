@@ -68,17 +68,18 @@
                 binding.refresh('msg');
             }
             
-            void printAll(){
-                if (!MsgBox.confirm('Print all tax declarations?'))
-                    return;
-                    
+            def printAll(){
                 if (!faases) 
                     return;
                     
-                printTask = new PrintTask(faases:faases, oncomplete:oncomplete, onprogress:onprogress);
-                Thread t = new Thread(printTask);
-                t.start();
-                printing = true;
+                def onFilter = {filteredList ->
+                    printTask = new PrintTask(faases:filteredList, oncomplete:oncomplete, onprogress:onprogress);
+                    Thread t = new Thread(printTask);
+                    t.start();
+                    printing = true;
+                }
+
+                return Inv.lookupOpener('faas:report:filter', [onFilter: onFilter, list: faases]);
             }
             
         }
