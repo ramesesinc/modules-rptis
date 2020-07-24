@@ -57,6 +57,7 @@ public class BatchGRService
         entity.effectivityyear = pdate.year + 1
         entity.effectivityqtr = 4
         entity.originlgu = (entity.originlgu ?entity.originlgu : [objid: env.ORGID])
+        entity.section = entity.section ? entity.section : '%'
         entity = em_batchgr.create(entity)
 
         entity.lguid = entity.lgu.objid
@@ -370,6 +371,7 @@ public class BatchGRService
 
     void deleteRevisedFaases(entity) {
     	em_batchgr_item.where('parent_objid = :objid and newfaasid is not null', entity)
+            .orderBy("pin, suffix DESC")
     		.list().each {
     			faasSvc.deleteFaasById(it.newfaasid)
     		}
