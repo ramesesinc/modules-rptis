@@ -52,7 +52,7 @@ public class RPTLedgerItemFact
         this.ledger = ledgerfact
         this.entity = item 
         this.objid = item.objid 
-        this.rptledgerfaasid = item.rptledgerfaas.objid
+        this.rptledgerfaasid = item.rptledgerfaas?.objid
         this.year = item.year
         this.qtr = item.qtr
         this.av = item.av
