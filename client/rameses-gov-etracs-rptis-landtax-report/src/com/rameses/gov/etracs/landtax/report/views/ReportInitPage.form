@@ -89,28 +89,24 @@
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
-        <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox5">
+        <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox1">
           <Properties>
-            <Property name="allowNull" type="boolean" value="false"/>
             <Property name="caption" type="java.lang.String" value="Quarter"/>
             <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
               <StringArray count="1">
                 <StringItem index="0" value="entity.period"/>
               </StringArray>
             </Property>
-            <Property name="expression" type="java.lang.String" value="#{item.name}"/>
-            <Property name="itemKey" type="java.lang.String" value="code"/>
             <Property name="items" type="java.lang.String" value="quarters"/>
             <Property name="name" type="java.lang.String" value="entity.qtr" noResource="true"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[120, 22]"/>
+              <Dimension value="[120, 20]"/>
             </Property>
             <Property name="required" type="boolean" value="true"/>
           </Properties>
         </Component>
         <Component class="com.rameses.rcp.control.XComboBox" name="xComboBox6">
           <Properties>
-            <Property name="allowNull" type="boolean" value="false"/>
             <Property name="caption" type="java.lang.String" value="Month"/>
             <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
               <StringArray count="2">
@@ -118,10 +114,11 @@
                 <StringItem index="1" value="entity.qtr"/>
               </StringArray>
             </Property>
-            <Property name="dynamic" type="boolean" value="true"/>
             <Property name="expression" type="java.lang.String" value="#{item.caption}"/>
             <Property name="items" type="java.lang.String" value="months"/>
             <Property name="name" type="java.lang.String" value="entity.month" noResource="true"/>
+            <Property name="allowNull" type="boolean" value="false"/>
+            <Property name="dynamic" type="boolean" value="true"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[120, 22]"/>
             </Property>

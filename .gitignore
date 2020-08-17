@@ -26,3 +26,10 @@ Thumbs.db
 /client/rameses-gov-etracs-rptis-landtax-province/build/
 /client/rameses-gov-etracs-rptis-landtax-province/dist/
 _build
+/client/rameses-gov-etracs-rptis-report/dist/
+/client/rameses-gov-etracs-rptis-landtax/dist/
+/client/rameses-gov-etracs-rptis-landtax-report/dist/
+/client/rameses-gov-etracs-rptis-municipality/dist/
+/client/rameses-gov-etracs-rptis-sync/nbproject/private/
+/client/rameses-gov-etracs-rptis-sync/dist/
+/client/rameses-gov-etracs-rptis-sync/build/

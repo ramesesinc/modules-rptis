@@ -47,6 +47,9 @@ class CashReceiptCompromisePaymentModel
             entity.bill = bill;
             entity.amount = currentyeardue;
         }
+        if (entity.amount > 0) {
+            entity.items = svc.getReceiptItems(entity);
+        }
         return list ;
     }
 }

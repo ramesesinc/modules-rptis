@@ -149,7 +149,7 @@ class RPTReceiptCompromiseService
 	* 	  - credits
 	*====================================================*/
 	@ProxyMethod
-	public void buildPostingItems(receipt){
+	public def buildPostingItems(receipt){
 		def rptledger = em_rptledger.find([objid:receipt.compromise.rptledgerid]).first() 
 		if (!rptledger) throw new Exception('Ledger does not exist or has already been deleted.')
 
@@ -177,6 +177,13 @@ class RPTReceiptCompromiseService
 			item.discount = numSvc.roundA(it.discount, 4)
 			receipt.items << item
 		}
+		return receipt 
+	}
+
+	@ProxyMethod
+	public def getReceiptItems(receipt){
+		def rct = buildPostingItems(receipt)
+		return rct.items
 	}
 
 

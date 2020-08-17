@@ -48,6 +48,7 @@ class RealPropertyAssessmentReportModel extends AsyncReportModel
         'TAXABLE', 'EXEMPT',
     ]
  
+    def distributiontypes = ['DOMINANT', 'MIXED'];
     
     def reporttypes = [
         [type:'standard', caption:'STANDARD', reportname:'reportonrpa.jasper'],

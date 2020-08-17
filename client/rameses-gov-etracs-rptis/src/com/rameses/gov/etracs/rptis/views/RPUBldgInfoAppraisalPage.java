@@ -33,14 +33,13 @@ public class RPUBldgInfoAppraisalPage extends javax.swing.JPanel {
         xDataTable11 = new com.rameses.rcp.control.XDataTable();
         xDataTable5 = new com.rameses.rcp.control.XDataTable();
         jPanel13 = new javax.swing.JPanel();
-        xDataTable12 = new com.rameses.rcp.control.XDataTable();
-        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
-        xComboBox2 = new com.rameses.rcp.control.XComboBox();
         jPanel1 = new javax.swing.JPanel();
         xDataTable8 = new com.rameses.rcp.control.XDataTable();
         jPanel2 = new javax.swing.JPanel();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xDataTable1 = new com.rameses.rcp.control.XDataTable();
+        xDataTable12 = new com.rameses.rcp.control.XDataTable();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -343,58 +342,6 @@ public class RPUBldgInfoAppraisalPage extends javax.swing.JPanel {
 
         tabAppraisal1.addTab("Actual Uses and Floor Information", jSplitPane3);
 
-        xDataTable12.setDepends(new String[] {"selectedAdditionalItem"});
-        xDataTable12.setHandler("paramListHandler");
-        xDataTable12.setName("selectedParam"); // NOI18N
-        xDataTable12.setColumns(new com.rameses.rcp.common.Column[]{
-            new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "param.caption"}
-                , new Object[]{"caption", "Parameter"}
-                , new Object[]{"width", 100}
-                , new Object[]{"minWidth", 0}
-                , new Object[]{"maxWidth", 0}
-                , new Object[]{"required", false}
-                , new Object[]{"resizable", true}
-                , new Object[]{"nullWhenEmpty", true}
-                , new Object[]{"editable", false}
-                , new Object[]{"visible", true}
-                , new Object[]{"visibleWhen", null}
-                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
-            }),
-            new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "value"}
-                , new Object[]{"caption", "Value"}
-                , new Object[]{"width", 90}
-                , new Object[]{"minWidth", 0}
-                , new Object[]{"maxWidth", 90}
-                , new Object[]{"required", false}
-                , new Object[]{"resizable", true}
-                , new Object[]{"nullWhenEmpty", true}
-                , new Object[]{"editable", true}
-                , new Object[]{"editableWhen", null}
-                , new Object[]{"visible", true}
-                , new Object[]{"visibleWhen", null}
-                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
-                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
-            })
-        });
-        xDataTable12.setDynamic(true);
-        xDataTable12.setPreferredSize(new java.awt.Dimension(0, 50));
-
-        xFormPanel2.setPadding(new java.awt.Insets(0, 0, 0, 0));
-
-        xComboBox2.setCaption("Floor");
-        xComboBox2.setDepends(new String[] {"selectedStructuralType", "selectedFloor"});
-        xComboBox2.setExpression("#{item.floorno} - (#{item.bldgtypecode}) - #{item.actualusename} - #{item.bldgkindname}");
-        xComboBox2.setItems("floors");
-        xComboBox2.setName("floor"); // NOI18N
-        xComboBox2.setAllowNull(false);
-        xComboBox2.setDynamic(true);
-        xComboBox2.setImmediate(true);
-        xComboBox2.setPreferredSize(new java.awt.Dimension(250, 22));
-        xFormPanel2.add(xComboBox2);
-
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         xDataTable8.setDepends(new String[] {"selectedStructuralType", "floor"});
@@ -467,29 +414,100 @@ public class RPUBldgInfoAppraisalPage extends javax.swing.JPanel {
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.SOUTH);
 
+        xDataTable1.setHandler("floorListHandler");
+        xDataTable1.setName("floor"); // NOI18N
+        xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "floorno"}
+                , new Object[]{"caption", " #"}
+                , new Object[]{"width", 50}
+                , new Object[]{"minWidth", 50}
+                , new Object[]{"maxWidth", 50}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.NONE}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "info"}
+                , new Object[]{"caption", "Floor "}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.NONE}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            })
+        });
+        xDataTable1.setPreferredSize(new java.awt.Dimension(300, 80));
+        jPanel1.add(xDataTable1, java.awt.BorderLayout.WEST);
+
+        xDataTable12.setDepends(new String[] {"selectedAdditionalItem"});
+        xDataTable12.setHandler("paramListHandler");
+        xDataTable12.setName("selectedParam"); // NOI18N
+        xDataTable12.setColumns(new com.rameses.rcp.common.Column[]{
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "param.caption"}
+                , new Object[]{"caption", "Parameter"}
+                , new Object[]{"width", 100}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 0}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
+            }),
+            new com.rameses.rcp.common.Column(new Object[]{
+                new Object[]{"name", "value"}
+                , new Object[]{"caption", "Value"}
+                , new Object[]{"width", 90}
+                , new Object[]{"minWidth", 0}
+                , new Object[]{"maxWidth", 90}
+                , new Object[]{"required", false}
+                , new Object[]{"resizable", true}
+                , new Object[]{"nullWhenEmpty", true}
+                , new Object[]{"editable", true}
+                , new Object[]{"editableWhen", null}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
+                , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
+                , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 2)}
+            })
+        });
+        xDataTable12.setDynamic(true);
+        xDataTable12.setPreferredSize(new java.awt.Dimension(0, 50));
+
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
         jPanel13Layout.setHorizontalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xFormPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel13Layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(xDataTable12, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xDataTable12, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+            .addGroup(jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xDataTable12, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(xDataTable12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -506,7 +524,7 @@ public class RPUBldgInfoAppraisalPage extends javax.swing.JPanel {
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JTabbedPane tabAppraisal1;
-    private com.rameses.rcp.control.XComboBox xComboBox2;
+    private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XDataTable xDataTable11;
     private com.rameses.rcp.control.XDataTable xDataTable12;
     private com.rameses.rcp.control.XDataTable xDataTable5;
@@ -514,6 +532,5 @@ public class RPUBldgInfoAppraisalPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDataTable xDataTable8;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
-    private com.rameses.rcp.control.XFormPanel xFormPanel2;
     // End of variables declaration//GEN-END:variables
 }

@@ -27,7 +27,7 @@ class SubdividedLandModel
     def faas;
     def motherlands;
     def assistant;
-    
+
     void init(){
         lands = svc.getSubdividedLands(entity.objid);
         motherlands = svc.getMotherLands([objid:entity.objid]);
@@ -67,7 +67,8 @@ class SubdividedLandModel
         svc.deleteSubdividedLand(selectedItem);
         lands.remove(selectedItem);
         listHandler.load();
-        binding.refresh('count');
+        getSections();
+        binding.refresh('count|selectedSection');
     }
     
     void removeItem(){
@@ -97,7 +98,8 @@ class SubdividedLandModel
                 ]
                 lands << svc.createSubdividedLand(land, entity);
                 listHandler.load();
-                binding.refresh('count');
+                getSections();
+                binding.refresh('count|selectedSection');
             }
         ])
     }
@@ -135,4 +137,26 @@ class SubdividedLandModel
         def taskstate = entity.taskstate.toString().replace('prov', '');
         return svc.getAssistantInfo([objid: OsirisContext.env.USERID, taskstate: taskstate]);
     }
+
+
+    /*==========================================
+    * SECTION FILTER SUPPORT 
+    ==========================================*/
+    def selectedSection;
+
+    void setSelectedSection(section) {
+        this.selectedSection = section;
+        reloadLands();
+    }
+
+    def getSections() {
+        return svc.getSubdividedLandSections([objid: entity.objid])
+    }
+
+    void reloadLands() {
+        lands = svc.getLands([objid: entity.objid, section: selectedSection?.section]);
+        listHandler.reload();
+        binding.refresh('count');
+    }
+
 }

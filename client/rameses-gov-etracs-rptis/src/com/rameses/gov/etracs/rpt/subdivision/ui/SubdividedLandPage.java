@@ -20,6 +20,8 @@ public class SubdividedLandPage extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xDataTable1 = new com.rameses.rcp.control.XDataTable();
         jPanel2 = new javax.swing.JPanel();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
@@ -32,6 +34,22 @@ public class SubdividedLandPage extends javax.swing.JPanel {
         jPanel1.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        xFormPanel1.setPadding(new java.awt.Insets(10, 5, 10, 5));
+
+        xComboBox1.setCaption("Section");
+        xComboBox1.setExpression("#{item.section}");
+        xComboBox1.setItems("sections");
+        xComboBox1.setName("selectedSection"); // NOI18N
+        xComboBox1.setCaptionWidth(70);
+        xComboBox1.setDynamic(true);
+        xComboBox1.setEmptyText("ALL");
+        xComboBox1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xComboBox1);
+
+        jPanel1.add(xFormPanel1, java.awt.BorderLayout.PAGE_START);
+
+        xDataTable1.setHandler("listHandler");
+        xDataTable1.setName("selectedItem"); // NOI18N
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "newpin"}
@@ -43,12 +61,12 @@ public class SubdividedLandPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.NONE}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             })
         });
-        xDataTable1.setHandler("listHandler");
-        xDataTable1.setName("selectedItem"); // NOI18N
         jPanel1.add(xDataTable1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
@@ -78,10 +96,10 @@ public class SubdividedLandPage extends javax.swing.JPanel {
 
         add(jPanel1, java.awt.BorderLayout.WEST);
 
-        xSubFormPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153))));
         xSubFormPanel1.setDepends(new String[] {"selectedItem"});
-        xSubFormPanel1.setDynamic(true);
         xSubFormPanel1.setHandler("opener");
+        xSubFormPanel1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153))));
+        xSubFormPanel1.setDynamic(true);
         add(xSubFormPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
     
@@ -90,7 +108,9 @@ public class SubdividedLandPage extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private com.rameses.rcp.control.XActionBar xActionBar1;
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XDataTable xDataTable1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XSubFormPanel xSubFormPanel1;

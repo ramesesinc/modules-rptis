@@ -12,9 +12,14 @@ public class SyncCoordinatorService {
 		require(syncdata, 'action', 'action')
 		require(syncdata, 'remote', 'remote')
 		require(syncdata.remote, 'orgcode', 'remote.orgcode')
-
-		def svc = dynSvc.lookup(syncdata.remote.orgcode + ':RemoteSyncService', 'gdx-service')
+		def svc = dynSvc.lookup(syncdata.remote.orgcode + ':RemoteSyncService', 'gdx-node-script')
 		return svc.receive(syncdata)
+	}
+
+	@ProxyMethod
+	public def createSyncMeta(syncdata) {
+		def svc = dynSvc.lookup(syncdata.remote.orgcode + ':RemoteSyncService', 'gdx-node-script')
+		return svc.createSyncMeta(syncdata)	
 	}
 
 	void require(data, field, caption){

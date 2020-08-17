@@ -27,6 +27,10 @@ public class InfoListPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel2 = new javax.swing.JPanel();
+        xPanel2 = new com.rameses.rcp.control.XPanel();
+        xLabel3 = new com.rameses.rcp.control.XLabel();
+        xLabel4 = new com.rameses.rcp.control.XLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         xSubFormPanel1 = new com.rameses.rcp.control.XSubFormPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -36,6 +40,24 @@ public class InfoListPage extends javax.swing.JPanel {
         xLabel1 = new com.rameses.rcp.control.XLabel();
 
         setPreferredSize(new java.awt.Dimension(661, 434));
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        xPanel2.setVisibleWhen("#{mode == 'processing'}");
+        xPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        xPanel2.setLayout(new java.awt.BorderLayout());
+
+        xLabel3.setFontStyle("font-weight:bold;font-size:12;");
+        xLabel3.setForeground(new java.awt.Color(51, 51, 51));
+        xLabel3.setPadding(new java.awt.Insets(1, 5, 1, 1));
+        xLabel3.setPreferredSize(new java.awt.Dimension(150, 20));
+        xLabel3.setText("Processing request please wait...");
+        xPanel2.add(xLabel3, java.awt.BorderLayout.CENTER);
+
+        xLabel4.setIconResource("com/rameses/rcp/icons/loading16.gif");
+        xPanel2.add(xLabel4, java.awt.BorderLayout.WEST);
+
+        jPanel2.add(xPanel2, java.awt.BorderLayout.NORTH);
 
         jSplitPane1.setDividerLocation(200);
 
@@ -52,11 +74,13 @@ public class InfoListPage extends javax.swing.JPanel {
         );
         xSubFormPanel1Layout.setVerticalGroup(
             xSubFormPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 410, Short.MAX_VALUE)
+            .add(0, 380, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(xSubFormPanel1);
 
+        xDataTable1.setHandler("listHandler");
+        xDataTable1.setName("selectedItem"); // NOI18N
         xDataTable1.setColumns(new com.rameses.rcp.common.Column[]{
             new com.rameses.rcp.common.Column(new Object[]{
                 new Object[]{"name", "rputype"}
@@ -68,6 +92,8 @@ public class InfoListPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
@@ -81,13 +107,13 @@ public class InfoListPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             })
         });
-        xDataTable1.setHandler("listHandler");
         xDataTable1.setImmediate(true);
-        xDataTable1.setName("selectedItem"); // NOI18N
         xDataTable1.setPreferredSize(new java.awt.Dimension(250, 80));
 
         xButton1.setMnemonic('a');
@@ -117,7 +143,7 @@ public class InfoListPage extends javax.swing.JPanel {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                .add(xDataTable1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(xButton1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -127,32 +153,42 @@ public class InfoListPage extends javax.swing.JPanel {
 
         jSplitPane1.setLeftComponent(jPanel1);
 
+        jPanel2.add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
-                .addContainerGap())
+            .add(0, 661, Short.MAX_VALUE)
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
-                .addContainerGap())
+            .add(0, 434, Short.MAX_VALUE)
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
     }// </editor-fold>//GEN-END:initComponents
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JSplitPane jSplitPane1;
     private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XDataTable xDataTable1;
     private com.rameses.rcp.control.XLabel xLabel1;
+    private com.rameses.rcp.control.XLabel xLabel3;
+    private com.rameses.rcp.control.XLabel xLabel4;
+    private com.rameses.rcp.control.XPanel xPanel2;
     private com.rameses.rcp.control.XSubFormPanel xSubFormPanel1;
     // End of variables declaration//GEN-END:variables
     

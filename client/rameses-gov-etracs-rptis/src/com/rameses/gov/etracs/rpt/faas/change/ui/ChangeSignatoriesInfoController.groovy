@@ -24,12 +24,16 @@ public class ChangeSignatoriesInfoController extends ChangeFaasInfoController
         prevsignatory.taxmapper   = util.clone(entity.taxmapper)
         prevsignatory.recommender = util.clone(entity.recommender)
         prevsignatory.approver    = util.clone(entity.approver)
+        prevsignatory.provtaxmapper    = util.clone(entity.provtaxmapper)
+        prevsignatory.provappraiser    = util.clone(entity.provappraiser)
         
         return [
             appraiser       : entity.appraiser,
             taxmapper       : entity.taxmapper,
             recommender     : entity.recommender,
             approver        : entity.approver,
+            provtaxmapper        : entity.provtaxmapper,
+            provappraiser        : entity.provappraiser,
         ]
     }
     
@@ -52,6 +56,19 @@ public class ChangeSignatoriesInfoController extends ChangeFaasInfoController
     
     def getLookupApprover(){
         return util.getLookupApprover();
+    }
+
+    def getLookupProvinceTaxmapper(){
+        return util.getLookupProvinceTaxmapper();
+    }
+
+    def getLookupProvinceAppraiser(){
+        return util.getLookupProvinceAppraiser();
+    }
+    
+
+    def getOrgclass() {
+        return OsirisContext.env.ORGCLASS.toLowerCase();
     }
      
 }

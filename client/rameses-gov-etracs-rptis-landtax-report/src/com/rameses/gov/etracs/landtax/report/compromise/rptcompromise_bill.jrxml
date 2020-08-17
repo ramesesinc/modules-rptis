@@ -39,8 +39,8 @@
 	<parameter name="USERJOBTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="installments" isForPrompting="false" class="java.lang.Object"/>
 
-	<field name="taxpayer.name" class="java.lang.String"/>
-	<field name="taxpayer.address" class="java.lang.String"/>
+	<field name="rptledger.taxpayer.name" class="java.lang.String"/>
+	<field name="rptledger.taxpayer.address.text" class="java.lang.String"/>
 	<field name="txnno" class="java.lang.String"/>
 	<field name="txndate" class="java.util.Date"/>
 	<field name="term" class="java.lang.Integer"/>
@@ -417,7 +417,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayer.name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rptledger.taxpayer.name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -438,7 +438,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
 						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{taxpayer.address}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{rptledger.taxpayer.address.text}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

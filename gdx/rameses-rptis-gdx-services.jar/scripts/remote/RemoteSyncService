@@ -6,13 +6,18 @@ import java.text.*;
 
 public class RemoteSyncService {
 
-	@Service(value="SyncService", connection="local-etracs")
+	@Service(value="RPTMainSyncService", connection="local-etracs-server")
 	def svc;
 
 
 	@ProxyMethod
 	public def receive(syncdata) {
-		return svc.receive(syncdata)
+		return svc.receiveData(syncdata)
+	}
+
+	@ProxyMethod
+	public def createSyncMeta(syncdata) {
+		return svc.createSyncMeta(syncdata)
 	}
 
 }

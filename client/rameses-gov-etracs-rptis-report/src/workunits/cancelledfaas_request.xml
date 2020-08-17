@@ -6,6 +6,13 @@
         <invoker type="cancelledfaas:formActions" 
                  action="view" 
                  caption="Request for Cancellation" 
+                 visibleWhen="#{mode == 'read'}"
+                 index="100"/>
+
+     <invoker type="cancelledimprovement:formActions" 
+                 action="view" 
+                 caption="Request for Cancellation" 
+                 visibleWhen="#{mode == 'read'}"
                  index="100"/>
    </invokers>
    <code class="com.rameses.gov.etracs.rpt.report.cancelledfaas.CancelledFaasRequestReportModel" />

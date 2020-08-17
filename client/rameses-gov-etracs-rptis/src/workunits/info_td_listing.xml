@@ -99,22 +99,27 @@
                     if (cancelled) 
                         break;
                         
-                    def faas = faases[i];
-                    def o = InvokerUtil.lookupOpener('td:report:print', [entity:faas]);
-                    if (o){
-                        o.handle.initPreview();
-                        o.handle.report.viewReport();
-                        ReportUtil.print(o.handle.report.report, false);
+                    try {
+                        def faas = faases[i];
+                        def o = InvokerUtil.lookupOpener('td:report:print', [entity:faas]);
+                        if (o){
+                            o.handle.initPreview();
+                            ReportUtil.print(o.handle.report.report, false);
+                        }
+                        count += 1;
+                        onprogress('Printing ' + faas.tdno);
+                        
+                        try{
+                            Thread.sleep(2000);
+                        }
+                        catch(e){
+                            //ignore
+                        }
+                    } catch (e) {
+                        println '===========================================';
+                        e.printStackTrace();
                     }
-                    count += 1;
-                    onprogress('Printing ' + faas.tdno);
-                    
-                    try{
-                        Thread.sleep(2000);
-                    }
-                    catch(e){
-                        //ignore
-                    }
+
                 }
                 
                 onprogress('');
