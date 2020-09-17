@@ -332,6 +332,12 @@ public class BatchGRService
     @ProxyMethod
     public def getCounts(entity){
         def cnt = em_batchgr.findCounts(entity)
+        if (cnt.count == null) {
+            cnt.count = 0
+            cnt.revised = 0
+            cnt.currentcnt = 0
+            cnt.error = 0
+        }
         cnt.current = cnt.currentcnt
         return cnt 
     }
