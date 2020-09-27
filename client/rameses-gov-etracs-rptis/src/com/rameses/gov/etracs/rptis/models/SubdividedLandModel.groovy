@@ -135,7 +135,7 @@ class SubdividedLandModel
 
     def getAssistant() {
         def taskstate = entity.taskstate.toString().replace('prov', '');
-        return svc.getAssistantInfo([objid: OsirisContext.env.USERID, taskstate: taskstate]);
+        return svc.getAssistantInfo([subdivisionid: entity.objid, objid: OsirisContext.env.USERID, taskstate: taskstate]);
     }
 
 

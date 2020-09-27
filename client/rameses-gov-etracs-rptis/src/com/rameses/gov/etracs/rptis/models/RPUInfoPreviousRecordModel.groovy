@@ -10,6 +10,9 @@ class RPUInfoPreviousRecordModel extends SubPageModel
 {
     @Service('FAASService')
     def svc;
+
+    @Service('Var')
+    def var;
     
     def selectedItem;
 
@@ -124,7 +127,8 @@ class RPUInfoPreviousRecordModel extends SubPageModel
     
     void buildPrevFaasInfo(item){
         def faas = svc.getFaasByTdNo(item.prevtdno)
-        if (faas){
+        def initSuperseded = RPTUtil.toBoolean(var.get('faas_datacapture_initialize_superseded'), true);
+        if (faas && initSuperseded){
             item.prevfaasid = faas.objid;
             item.prevrpuid = faas.rpuid;
             item.prevpin = faas.fullpin;

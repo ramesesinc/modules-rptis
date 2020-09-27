@@ -251,8 +251,7 @@ class RPTLedgerService
 
     def getFaasesForPosting(faashistory, yr, qtr) {
         return faashistory.findAll{ 
-                    yr >= it.fromyear && (yr <= it.toyear || it.toyear == 0) &&
-                    qtr >= it.fromqtr && (qtr <= it.toqtr || it.toqtr == 0) 
+                    yr >= it.fromyear && (yr <= it.toyear || it.toyear == 0) 
                 }
     }
 
@@ -1266,9 +1265,8 @@ class RPTLedgerService
     }
 
     /*================================================================ 
-    * adjust the ledger item balances if effectivityqtr <> 1.
-    * delete the year = effectivityyear and then post ledger item 
-    * for the effectivityyear and adjust amtpaid based on effectivityqtr
+    * set ledgeritem from/to qtr. the item will be deleted when payment
+    * for the year is completed.
     ================================================================*/
     void adjustLedgerItemByEffectivity(faas, ledger) {
         if (faas.effectivityqtr == 1) return
@@ -1276,24 +1274,9 @@ class RPTLedgerService
         def yr = faas.effectivityyear
         def qtr = faas.effectivityqtr
 
-        //delete item for the effectivity year
-        em_rptledger_item.where('parentid = :parentid and year >= :year ',  [parentid: ledger.objid, year: yr]).delete()
-
-        //post new entry
-        def faashistory = getTaxableFaases(ledger)
-        ledger.faases = getFaasesForPosting(faashistory, yr, qtr)
-        postLedgerItem(ledger, yr)
-
-        //adjsut amtpaid based on effectivityqtr
-        def items = em_rptledger_item.select('objid,amount,amtpaid')
-                    .find([parentid: ledger.objid, year: yr])
-                    .list()
-
-        items.each{
-            def qtrlyamt = numSvc.round(it.amount / 4);
-            def amtpaid = numSvc.round(qtrlyamt * ledger.lastqtrpaid)
-            em_rptledger_item.find([objid: it.objid]).update([amtpaid: amtpaid])
-        }
+        //set fromqtr and toqtr of current year items 
+        em_rptledger_item.where('parentid = :parentid and year = :year ',  [parentid: ledger.objid, year: yr])
+            .update([fromqtr: 1, toqtr: qtr])
     }
 
 

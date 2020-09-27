@@ -64,14 +64,14 @@ public class RPTLedgerRuleService
 	}
 
 	def buildFacts(ledger, yr){
-		def currdate = dtSvc.serverDate
+		def currdate = dtSvc.parseCurrentDate()
 		def facts = []
-		facts << new CurrentDate(currdate)
-		facts << new EffectiveDate(currdate)
+		facts << new CurrentDate(currdate.date)
+		facts << new EffectiveDate(currdate.date)
 		def ledgerfact = new RPTLedgerFact(ledger)
 		facts << ledgerfact 
 
-		def faases = em_ledger_faas.select('tdno,fromyear,toyear,idleland,assessedvalue,classification.objid,actualuse.objid')
+		def faases = em_ledger_faas.select('tdno,fromyear,fromqtr,toyear,toqtr,idleland,assessedvalue,classification.objid,actualuse.objid')
 						.find([rptledgerid: ledger.objid, state:'APPROVED'])
 						.list()
 
@@ -89,6 +89,12 @@ public class RPTLedgerRuleService
 			item.rputype = ledger.rputype 
 			item.txntype = faas.txntype.objid 
 		    item.year = yr 
+			item.fromqtr = null
+			item.fromqtr = null
+			if ( yr <= currdate.year && (yr == faas.fromyear || yr == faas.toyear)) {
+				item.fromqtr = faas.fromqtr
+				item.toqtr = (faas.toqtr == 0 ? 4 : faas.toqtr)	
+			}
 		    item.av = faas.assessedvalue
 		    item.basicav = item.av 
 		    item.sefav = item.av 

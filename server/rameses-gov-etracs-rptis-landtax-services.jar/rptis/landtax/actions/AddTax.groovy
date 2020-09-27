@@ -16,6 +16,8 @@ public class AddTax implements RuleActionHandler {
 		item.rptledgerfaas = [objid:avfact.objid]
 		item.rptledgerfaasid = avfact.objid 
 		item.year = params.year 
+		item.fromqtr = avfact.fromqtr
+		item.toqtr = avfact.toqtr
 		item.taxdifference = avfact.taxdifference 
 		item.av = params.av.getDecimalValue()
 		item.basicav = (params.basicav ? params.basicav.getDecimalValue() : item.av)

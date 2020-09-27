@@ -71,7 +71,6 @@ public class BatchGRInitPage extends javax.swing.JPanel {
         xTextField1.setCaption("Section");
         xTextField1.setName("entity.section"); // NOI18N
         xTextField1.setPreferredSize(new java.awt.Dimension(150, 20));
-        xTextField1.setRequired(true);
         formPanel1.add(xTextField1);
 
         xComboBox2.setCaption("Property Type");

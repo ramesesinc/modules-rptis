@@ -6,21 +6,14 @@
             caption="Resend to Province" 
             target="process" 
             role="ADMIN" 
-            visibleWhen="#{entity.state == 'CURRENT' &amp;&amp; entity.datacapture}" />
-
-        <invoker type="faas:actions" 
-            action="resendToProvince" 
-            caption="Resend to Province" 
-            target="process" 
-            role="ADMIN" 
-            visibleWhen="#{!entity.datacapture &amp;&amp; entity.taskstate == 'provapprover'}" />
+            visibleWhen="#{entity.state == 'CURRENT'}" />
 
         <invoker type="faas:actions" 
             action="resendRequirements" 
             caption="Resend Requirements" 
             target="process" 
             role="ADMIN" 
-            visibleWhen="#{!entity.datacapture &amp;&amp; entity.taskstate == 'provapprover'}" />
+            visibleWhen="#{entity.state == 'CURRENT'}" />
     </invokers>
     <code>
 <![CDATA[

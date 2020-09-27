@@ -27,7 +27,7 @@ class MunicipalityRedFlagService
 		redflag.remarks = changeinfo.reason
 		changeinfoSvc.updateInfo(changeinfo)
 		redflag.putAll(redflagSvc.resolveRedFlag(redflag))
-		notifyFiledBy(redflag)
+		// notifyFiledBy(redflag)
 		userNotificationService.removeMessage([objid:redflag.refid])
 		return redflag 
 	}
@@ -36,8 +36,9 @@ class MunicipalityRedFlagService
 	public def resendToProvince( redflag ) {
 		redflag = redflagSvc.open(redflag)
 		def changeinfo = changeinfoSvc.openByRedFlag(redflag)
-		notifyFiledBy(redflag)
-		return changeinfo 
+		// changeinfoSvc.updateInfo(changeinfo)
+		// notifyFiledBy(redflag)
+		return redflag 
 	}
 
 	void notifyFiledBy(redflag){

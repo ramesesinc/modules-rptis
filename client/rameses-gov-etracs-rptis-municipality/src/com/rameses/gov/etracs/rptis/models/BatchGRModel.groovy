@@ -13,7 +13,9 @@ import com.rameses.gov.etracs.rptis.tasks.*;
 public class BatchGRModel extends AbstractBatchGRModel
 {
     def getApproverTask(task){
-        if (task.state.matches('approver|provapprover'))
+        if (task.state.matches('muniapprover'))
+            return new ApproveBatchGRTask();
+        else if (task.state.matches('approver|provapprover'))
             return new ManualApproveBatchGRTask();
         else
             return new SubmitToProvinceBatchGRTask();

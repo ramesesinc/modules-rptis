@@ -146,7 +146,7 @@ public class BatchGRItemModel
                 onRevise(svc.revise(item));
                 size = itemsforrevision.size();
                 try{
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 }catch(e) {
                     //
                 }
