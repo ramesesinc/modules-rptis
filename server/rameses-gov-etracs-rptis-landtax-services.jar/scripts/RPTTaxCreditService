@@ -48,16 +48,19 @@ class RPTTaxCreditService
     def OVER_PAYMENT = 'OVER_PAYMENT'
     def DOUBLE_PAYMENT = 'DOUBLE_PAYMENT'
     def WRONG_LEDGER = 'WRONG_LEDGER'
+    def TAX_ADJUSTMENT = 'TAX_ADJUSTMENT'
 
     def TYPE_CASHRECEIPT = 'cashreceipt'
     def TYPE_CREDIT_ADVISE = 'credit_advise'
+    def TYPE_CREDIT_TAX_ADJUSTMENT = 'tax_adjustment'
 
     @ProxyMethod
     public def getCreditTypes() {
         return [
             OVER_PAYMENT, 
             DOUBLE_PAYMENT, 
-            WRONG_LEDGER
+            WRONG_LEDGER,
+            TAX_ADJUSTMENT,
         ]
     }
 
@@ -65,11 +68,13 @@ class RPTTaxCreditService
     public def getReferenceTypes(type) {
         def types = [
             TYPE_CASHRECEIPT, 
-            TYPE_CREDIT_ADVISE
+            TYPE_CREDIT_ADVISE,
+            TYPE_CREDIT_TAX_ADJUSTMENT
         ]
 
         if (WRONG_LEDGER.equalsIgnoreCase(type)) {
             types.remove(TYPE_CREDIT_ADVISE)
+            types.remove(TYPE_CREDIT_TAX_ADJUSTMENT)
         }
         return types
     }
@@ -131,6 +136,7 @@ class RPTTaxCreditService
                 break
             case 'OVER_PAYMENT' : 
             case 'DOUBLE_PAYMENT' : 
+            case 'TAX_ADJUSTMENT' : 
                 postOverPayment(credit)
                 break
         }

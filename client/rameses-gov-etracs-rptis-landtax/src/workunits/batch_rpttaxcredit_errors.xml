@@ -1,0 +1,17 @@
+<workunit extends="com/rameses/seti2/templates/CrudList.xml"
+    schemaName="vw_batch_rpttaxcredit_error"
+    cols="tdno,error"
+    orderBy="tdno"
+    allowCreate="false"
+    allowEdit="false"
+    allowOpen="false"
+    allowDelete="false"
+>
+    <invokers>
+        <invoker type="vw_batch_rpttaxcredit_error:open"
+            action="init" caption="Batch Realty Tax Credit Errors"  
+            target="popup" index="20"
+        />
+    </invokers>
+    <code class="com.rameses.gov.etracs.landtax.models.BatchRPTTaxCreditErrorModel" />
+</workunit>
