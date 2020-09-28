@@ -121,5 +121,9 @@ class RPTTaxCreditModel extends CrudFormModel
         ]);
     }
 
+    public def getPrintFormData() {
+        return svc.getReportData(entity); 
+    }
+
 
 }
