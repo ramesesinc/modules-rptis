@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit schemaName="batch_rpttaxcredit"
+    allowEdit="#{entity.state=='DRAFT'}"
+>
+    <invokers>
+        <invoker type="batch_rpttaxcredit:create" 
+                 action="create" caption="Batch Tax Credit Posting (New)" 
+                 target="window"
+                 role="LANDTAX" permission="batch_rpttaxcredit.read"/> 
+
+        <invoker type="batch_rpttaxcredit:open" 
+                 action="open" caption="Batch Tax Credit Posting" 
+                 target="window"
+                 role="LANDTAX" permission="batch_rpttaxcredit.read"/> 
+
+        <invoker type="formActions" 
+            action="_close"
+            caption="Close"
+            visibleWhen="#{mode != 'create'}"
+        />
+        
+        <invoker type="formActions" 
+            action="postCredits"
+            caption="Post Credits"
+            visibleWhen="#{mode != 'create' &amp;&amp; !processing &amp;&amp; entity.state == 'DRAFT'}"
+        />
+
+        <invoker type="formActions" 
+            action="cancelPosting"
+            caption="Cancel Posting"
+            visibleWhen="#{processing}"
+        />
+         
+    </invokers>
+    
+    <code class="com.rameses.gov.etracs.landtax.models.BatchRPTTaxCreditModel">
+    </code>
+    
+    <pages>
+        <page name="create" template="com.rameses.gov.etracs.landtax.views.BatchRPTTaxCreditNewPage" />
+        <page template="com.rameses.gov.etracs.landtax.views.BatchRPTTaxCreditPage" />
+    </pages>
+</workunit>
