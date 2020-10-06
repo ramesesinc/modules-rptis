@@ -109,12 +109,14 @@ class BatchRPTTaxCreditService
         // then use it otherwise get the it from rptpayment_item
         def filter = [year: batch.creditedyear, rptledgerid: rptledger.objid];
         def data = em_batch.findAmountFromLedgerItem(filter);
-        if (data.amount == 0) {
+        if (!data.amount) {
             data = em_batch.findAmountFromPaymentItem(filter);
         }
-        if (data.amount == 0) {
+
+        if (!data.amount) {
             throw new Exception("Cannot credit zero amount.")
         }
+        
         return numSvc.round(data.amount * batch.rate / 100.0);
     }
 

@@ -128,24 +128,29 @@ class RPTTaxCreditService
             throw new Exception('Credit has already been fully applied.')
         }
 
-        generateBilling(credit)
-            
-        switch (credit.type) {
-            case 'WRONG_LEDGER':
-                postWrongLedgerPayment(credit)
-                break
-            case 'OVER_PAYMENT' : 
-            case 'DOUBLE_PAYMENT' : 
-            case 'TAX_ADJUSTMENT' : 
-                postOverPayment(credit)
-                break
-        }
+        try {
+            generateBilling(credit)
+                
+            switch (credit.type) {
+                case 'WRONG_LEDGER':
+                    postWrongLedgerPayment(credit)
+                    break
+                case 'OVER_PAYMENT' : 
+                case 'DOUBLE_PAYMENT' : 
+                case 'TAX_ADJUSTMENT' : 
+                    postOverPayment(credit)
+                    break
+            }
 
-        if (credit.amtapplied >= credit.amount) {
-            credit.state = STATE_CLOSED
-            credit.amtapplied = credit.amount
+            if (credit.amtapplied >= credit.amount) {
+                credit.state = STATE_CLOSED
+                credit.amtapplied = credit.amount
+            }
+            em_credit.update(credit)
+        } catch(e) {
+            e.printStackTrace()
+            //ignore possible if fully paid 
         }
-        em_credit.update(credit)
         return credit
     }
 

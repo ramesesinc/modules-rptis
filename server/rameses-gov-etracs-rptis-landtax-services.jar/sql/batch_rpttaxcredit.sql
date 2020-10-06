@@ -34,7 +34,7 @@ from (
 	group by b.objid, b.name
 ) x 
 where x.barangay is not null
-group by x.barangay 
+group by x.objid, x.barangay
 order by x.barangay
 
 
@@ -49,6 +49,8 @@ select
 	rl.barangayid
 from rptledger rl
 where rl.state = 'APPROVED'
+and rl.totalav > 0
+and rl.taxable = 1
 
 
 [findAmountFromLedgerItem]
