@@ -3,20 +3,8 @@ import com.rameses.util.*;
 
 class OnlineLandTaxBillingService {
 
-	@Service("BusinessCashReceiptService")
-	def svc;
-
-	@Service("DateService")
-	def dateSvc;
-
-	@DataContext("business_application")
-	def appEm;
-
-	@Service("PersistenceService")
-	def persistenceSvc;	
-
-	@Service('BusinessPostPaymentService')
-	def postPaymentSvc;
+	@Service('RPTLedgerPostPaymentService')
+    def postPaymentSvc
 
 	@Service("NumberService")
 	def numSvc;
@@ -54,28 +42,29 @@ class OnlineLandTaxBillingService {
 	}
 
 	@ProxyMethod
-	public def verifyPayment(params) {
-		def r = [:]
-		r.appno = o.refno;
-		if ( o.info?.qtr ) r.qtr = o.info.qtr; 
-		def z = generateBilling( r );
-		if ( o.amount != z.amount ) 
-			throw new Exception('Bill amount has changed from '+ o.amount +' to '+ z.amount); 
-		o.businessid = z.app.business.objid;
-		o.applicationid = z.app.objid;
-		o.appyear = z.app.appyear; 
-		o.taxfees = z.taxfees;
-		o.expirydate = z.expirydate; 
-		o.items = z.items;
+	public def verifyPayment(eor) {
+        def bill = generateBilling(params)
+        def currentamt = bill.totals.total 
+        if (currentamt != params.amount) {
+            throw new Exception('Bill amount has changed from '+ params.amount +' to '+ currentamt); 
+        }
+        params.putAll(bill)
 		return o;
+
+        def bill = getBilling([refno:eor.info.barcode])
+        def billamount = bill.totals.total 
+        if (billamount != eor.amount) {
+            throw new Exception('Bill amount has changed from '+ eor.amount +' to '+ billamount); 
+        }
+        
+        eor.ledgers = [bill.rptledger]
+        eor.rptledger = bill.rptledger 
+        postPaymentSvc.buildCashReceiptItemsAndShares(eor)
 	}
 
 	@ProxyMethod
 	public void postPayment(  def eor ) {
-		def bill = generateBilling([refno:eor.info.barcode])
-        eor.ledgers = [bill.rptledger]
-        eor.rptledger = bill.rptledger 
-        postPaymentSvc.buildCashReceiptItemsAndShares(eor)
+        postPaymentSvc.postPayment(eor) 
 	}
 
 	def generateBilling(params){
