@@ -8,6 +8,8 @@ public class AssessedValue
     String rputype
     String txntype 
     Integer year
+    Integer fromqtr
+    Integer toqtr
     Double av
     Double basicav
     Double sefav
@@ -23,6 +25,8 @@ public class AssessedValue
         this.rputype = item.rputype 
         this.txntype = item.txntype 
         this.year = item.year
+        this.fromqtr = item.fromqtr
+        this.toqtr = item.toqtr
         this.av = item.av
         this.basicav = item.basicav
         this.sefav = item.sefav

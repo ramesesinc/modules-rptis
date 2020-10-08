@@ -33,7 +33,7 @@ class FAASSyncInterceptor
         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
     }   
 
-    @After(pattern="MunicipalityFAASService.resendToProvince", eval="#{result.datacapture == true}", index=50000) 
+    @After(pattern="MunicipalityFAASService.resendToProvince", index=50000) 
     public void resendCaptureToProvince( evt ) {
         def faas = evt.result 
         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DATACAPTURE'))
@@ -43,6 +43,12 @@ class FAASSyncInterceptor
     public void createOnlineApprovedFAAS( evt ) {
         def faas = evt.args[0].data 
         faas.putAll(faasSvc.approveFaas(faas))
+        syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
+    }   
+    
+    @After(pattern="FAASService.resendToMunicipality", index=50000) 
+    public void resendToMunicipality( evt ) {
+        def faas = evt.result
         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-APPROVAL'))
     }   
 

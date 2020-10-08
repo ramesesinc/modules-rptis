@@ -50,13 +50,13 @@ public abstract class AbstractBatchGRModel extends RPTWorkflowController
     public void afterSignal(Object result){
         super.afterSignal(result);
         entity.putAll(svc.open(entity));
-        if (task && task.state.matches('cityapprover|provapprover|forprovsubmission')){
+        if (task && task.state.matches('muniapprover|cityapprover|provapprover|forprovsubmission')){
             autoposting = true;
         }
     }
     
     public Object findPage(Map o){
-         if (entity.state != 'APPROVED' && task && task.state.matches('cityapprover|provapprover|forprovsubmission')){
+         if (entity.state != 'APPROVED' && task && task.state.matches('muniapprover|cityapprover|provapprover|forprovsubmission')){
              info = null;
              if (autoposting)
                 doApprove();

@@ -38,7 +38,6 @@ public class NoaInfoListModel
             new Column(name:'txnno', caption:'Txn No.', editable:false, ),
             new Column(name:'tdno', caption:'TD No.', editable:true, width:150, required:true),
         ]},
-
     ] as BasicListModel;
     
     
@@ -77,25 +76,25 @@ public class NoaInfoListModel
         binding.refresh('msg');
     }
     
-    void printAll(){
-        if (!MsgBox.confirm('Print all notices?')) {
-            return;
-        }
-            
+    def printAll(){
         if (!notices) {
             return;
         }
-            
-        printTask = new PrintTask(
-            notices: notices, 
-            oncomplete: oncomplete, 
-            onprogress: onprogress, 
-            persistence: persistence,
-            noticeSvc: noticeSvc
-        );
-        Thread t = new Thread(printTask);
-        t.start();
-        printing = true;
+
+        def onFilter = {filteredList ->
+            printTask = new PrintTask(
+                notices: filteredList, 
+                oncomplete: oncomplete, 
+                onprogress: onprogress, 
+                persistence: persistence,
+                noticeSvc: noticeSvc
+            );
+            Thread t = new Thread(printTask);
+            t.start();
+            printing = true;
+        }
+
+        return Inv.lookupOpener('faas:report:filter', [onFilter: onFilter, list: notices]);
     }
 
     def getShowGenerateNoa() {

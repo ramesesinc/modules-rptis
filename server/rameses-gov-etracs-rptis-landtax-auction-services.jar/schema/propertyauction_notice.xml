@@ -10,9 +10,9 @@
 		<field name="validuntil" required="true" type="date" caption="Validity" />
 		<field name="period" required="true" caption="Period"/>
 		<field name="fromyear" required="true" type="integer" caption="From Year"/>
-		<field name="fromqtr" required="true" type="integer" caption="From Qtr"/>
+		<field name="fromqtr" type="integer" caption="From Qtr"/>
 		<field name="toyear" required="true" type="integer" caption="To Year"/>
-		<field name="toqtr" required="true" type="integer" caption="To Qtr"/>
+		<field name="toqtr" type="integer" caption="To Qtr"/>
 		<field name="basic" required="true" type="decimal" />
 		<field name="basicint" required="true" type="decimal" />
 		<field name="basicdisc" required="true" type="decimal" />
