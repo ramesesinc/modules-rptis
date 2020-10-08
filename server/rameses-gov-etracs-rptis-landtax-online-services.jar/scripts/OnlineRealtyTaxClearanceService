@@ -1,0 +1,11 @@
+import com.rameses.annotations.*;
+import com.rameses.util.*;
+
+class OnlineRealtyTaxClearanceService {
+
+	@ProxyMethod
+    public def getClearance( params ) {
+        println 'params => ' + params
+        return [tdno: "L-0001"]
+    }
+}
