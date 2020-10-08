@@ -1,0 +1,12 @@
+<workunit extends="com/rameses/seti2/templates/CrudList.xml"
+    schemaName="batch_rpttaxcredit"
+    cols="state,txnno,txndate,rate,creditedyear,reason"
+    allowDelete="#{entity &amp;&amp; entity.state == 'DRAFT'}"
+>
+    <invokers>
+        <invoker folderid="/menucategory/landtax/mgmt" 
+                action="init" caption="Batch Realty Tax Credit Posting"  
+                 target="window" index="20"
+                 role="SHARED" permission="batch_rpttaxcredit.list"/>
+    </invokers>
+</workunit>
