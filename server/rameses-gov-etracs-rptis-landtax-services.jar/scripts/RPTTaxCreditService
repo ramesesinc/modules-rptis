@@ -52,7 +52,7 @@ class RPTTaxCreditService
 
     def TYPE_CASHRECEIPT = 'cashreceipt'
     def TYPE_CREDIT_ADVISE = 'credit_advise'
-    def TYPE_CREDIT_TAX_ADJUSTMENT = 'tax_adjustment'
+    def TYPE_ORDINANCE = 'tax_adjustment'
 
     @ProxyMethod
     public def getCreditTypes() {
@@ -69,12 +69,16 @@ class RPTTaxCreditService
         def types = [
             TYPE_CASHRECEIPT, 
             TYPE_CREDIT_ADVISE,
-            TYPE_CREDIT_TAX_ADJUSTMENT
+            TYPE_ORDINANCE
         ]
 
         if (WRONG_LEDGER.equalsIgnoreCase(type)) {
             types.remove(TYPE_CREDIT_ADVISE)
-            types.remove(TYPE_CREDIT_TAX_ADJUSTMENT)
+            types.remove(TYPE_ORDINANCE)
+        }
+        if (TAX_ADJUSTMENT.equalsIgnoreCase(type)) {
+            types.remove(TYPE_CASHRECEIPT)
+            types.remove(TYPE_CREDIT_ADVISE)
         }
         return types
     }
@@ -84,6 +88,9 @@ class RPTTaxCreditService
         credit.txnno = getNextSeries()
         credit.txndate = dtSvc.serverDate
         credit.amtapplied = 0
+        if (credit.type == TAX_ADJUSTMENT) {
+            buildTaxAdjustmentCreditInfo(credit)
+        }
         validateCreate(credit)
     }
 
@@ -145,15 +152,11 @@ class RPTTaxCreditService
                 break
         }
 
-            if (credit.amtapplied >= credit.amount) {
-                credit.state = STATE_CLOSED
-                credit.amtapplied = credit.amount
-            }
-            em_credit.update(credit)
-        } catch(e) {
-            e.printStackTrace()
-            //ignore possible if fully paid 
+        if (credit.amtapplied >= credit.amount) {
+            credit.state = STATE_CLOSED
+            credit.amtapplied = credit.amount
         }
+        em_credit.update(credit)
         return credit
     }
 
@@ -394,6 +397,68 @@ class RPTTaxCreditService
             runningamt = numSvc.round(runningamt + qtrlyamt)
         }
         return qtrpmt 
+    }
+
+
+    @ProxyMethod
+    /* required: rptledger.objid, creditedyear */
+    public def checkTaxCreditPosted(params) {
+        def credits = em_credit.find([rptledger_objid: params.rptledger.objid]).list()
+        def credit = credits.find{ "TAX_ADJUSTMENT".equalsIgnoreCase(it.type) && it.info.creditedyear == params.creditedyear }
+        return credit != null
+    }
+
+    @ProxyMethod
+    /* required: rptledger.objid, creditedyear, rate */
+    public def getCreditInfo(params) {
+        def rptledger = params.rptledger
+        generateCurrentBill(rptledger)
+        
+        // if receivable is available in rptledger_item
+        // then use it otherwise get the it from rptpayment_item
+        def filter = [year: params.creditedyear, rptledgerid: rptledger.objid]
+        def data = em_credit.findTaxDueFromLedgerItem(filter)
+        if (data.taxdue == null || data.taxdue == 0) {
+            data = em_credit.findTaxDueFromPaymentItem(filter)
+        }
+        if (data.taxdue == null || data.taxdue == 0) {
+            throw new Exception("Cannot credit zero amount.")
+        }
+        data.credit = numSvc.round(data.taxdue * params.rate / 100.0)
+        return data;
+    }
+
+    void buildTaxAdjustmentCreditInfo(credit) {
+        if (checkTaxCreditPosted([
+            rptledger: credit.rptledger,
+            creditedyear: credit.info.creditedyear,
+        ])) {
+            throw new Exception("Tax credit could not be created because a tax credit for the year " + credit.info.creditedyear + " has already been posted.")
+        }
+
+        def creditinfo = getCreditInfo([
+            rptledger: credit.rptledger,
+            creditedyear: credit.info.creditedyear,
+            rate: credit.info.rate,
+        ])
+        credit.amount = creditinfo.credit
+        credit.balance = credit.amount
+        credit.amtapplied = 0
+        credit.info = [
+            creditedyear: credit.info.creditedyear,
+            annualtax: creditinfo.taxdue,
+            av: creditinfo.av,
+            rate: credit.info.rate,
+            rateoflevy: creditinfo.rateoflevy,
+        ]
+    }
+
+    void generateCurrentBill(rptledger) {
+        try {
+            billingSvc.generateBillByLedger(rptledger)
+        } catch(Throwable e) {
+            println 'Ignore: ' + e.message
+        }
     }
 }
 

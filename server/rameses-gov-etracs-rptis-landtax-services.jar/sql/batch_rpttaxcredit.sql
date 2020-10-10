@@ -52,37 +52,3 @@ where rl.state = 'APPROVED'
 and rl.totalav > 0
 and rl.taxable = 1
 
-
-[findTaxDueFromLedgerItem]
-select 
-	x.taxdue, 
-	x.av, 
-	(x.taxdue / x.av * 100) as rateoflevy
-from (
-	select 
-		sum(amount) as taxdue, 
-		min(av) as av
-	from rptledger_item 
-	where parentid = $P{rptledgerid}
-	and year = $P{year}
-)x
-
-
-[findTaxDueFromPaymentItem]
-select 
-	x.taxdue, 
-	x.av, 
-	(x.taxdue / x.av * 100) as rateoflevy
-from (
-	select 
-		sum(rpi.amount) as taxdue, 
-		min(rlf.assessedvalue) as av
-	from rptpayment rp
-	inner join rptpayment_item rpi on rpi.parentid = rp.objid 
-	inner join rptledgerfaas rlf on rpi.rptledgerfaasid = rlf.objid 
-	left join cashreceipt_void cv on rp.receiptid = cv.receiptid 
-	where rp.refid = $P{rptledgerid}
-	and year = $P{year}
-	and cv.objid is null 
-)x
-

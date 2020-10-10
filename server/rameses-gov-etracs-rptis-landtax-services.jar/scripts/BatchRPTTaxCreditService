@@ -66,7 +66,10 @@ class BatchRPTTaxCreditService
     @ProxyMethod
     public def postTaxCredit(params) {
         try {
-            if (checkTaxCreditPosted(params)) {
+            if (creditSvc.checkTaxCreditPosted([
+                rptledger: params.rptledger, 
+                creditedyear: params.batch.creditedyear
+            ])) {
                 return [status: "OK"]
             }
 
@@ -83,19 +86,6 @@ class BatchRPTTaxCreditService
             return [status: e.message]
         }
     }
-
-    def checkTaxCreditPosted(params) {
-        def credits = em_credit.find([rptledger_objid: params.rptledger.objid]).list()
-        credits.each{
-            if ("TAX_ADJUSTMENT".equalsIgnoreCase(it.type) 
-                && it.info.creditedyear == params.batch.creditedyear) 
-            {
-                 return true
-            }
-        }
-        return false
-    }
-
 
     def createTaxCredit(params) {
         def batch = params.batch
@@ -122,38 +112,18 @@ class BatchRPTTaxCreditService
             creditedyear: batch.creditedyear,
             annualtax: creditinfo.taxdue,
             av: creditinfo.av,
-            rate: 50.0,
+            rate: batch.rate,
             rateoflevy: creditinfo.rateoflevy,
         ]
         return persistence.create(credit)
     }
 
     def getCreditInfo(params) {
-        def batch = params.batch
-        def rptledger = params.rptledger
-        generateCurrentBill(rptledger)
-        
-        // if receivable is available in rptledger_item
-        // then use it otherwise get the it from rptpayment_item
-        def filter = [year: batch.creditedyear, rptledgerid: rptledger.objid]
-        def data = em_batch.findTaxDueFromLedgerItem(filter)
-        if (data.taxdue == null || data.taxdue == 0) {
-            data = em_batch.findTaxDueFromPaymentItem(filter)
-        }
-        if (data.taxdue == null || data.taxdue == 0) {
-            throw new Exception("Cannot credit zero amount.")
-        }
-        data.credit = numSvc.round(data.taxdue * batch.rate / 100.0)
-        return data;
-    }
-
-
-    void generateCurrentBill(rptledger) {
-        try {
-            billingSvc.generateBillByLedger(rptledger)
-        } catch(Throwable e) {
-            println 'Ignore: ' + e.message
-        }
+        return creditSvc.getCreditInfo([
+            rptledger: params.rptledger,
+            creditedyear: params.batch.creditedyear,
+            rate: params.batch.rate
+        ])
     }
 
     def getNextSeries() {
