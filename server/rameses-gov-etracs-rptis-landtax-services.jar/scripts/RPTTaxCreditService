@@ -130,17 +130,20 @@ class RPTTaxCreditService
 
         try {
             generateBilling(credit)
-                
-            switch (credit.type) {
-                case 'WRONG_LEDGER':
-                    postWrongLedgerPayment(credit)
-                    break
-                case 'OVER_PAYMENT' : 
-                case 'DOUBLE_PAYMENT' : 
-                case 'TAX_ADJUSTMENT' : 
-                    postOverPayment(credit)
-                    break
-            }
+        } catch(e) {
+            return credit;
+        }
+            
+        switch (credit.type) {
+            case 'WRONG_LEDGER':
+                postWrongLedgerPayment(credit)
+                break
+            case 'OVER_PAYMENT' : 
+            case 'DOUBLE_PAYMENT' : 
+            case 'TAX_ADJUSTMENT' : 
+                postOverPayment(credit)
+                break
+        }
 
             if (credit.amtapplied >= credit.amount) {
                 credit.state = STATE_CLOSED
@@ -170,6 +173,54 @@ class RPTTaxCreditService
         }
     }
 
+    @ProxyMethod
+    public def getReportData(params) {
+        def credit = em_credit.read(params)
+        if (!credit) throw new Exception("Tax Credit does not exist or has already been deleted.")
+        credit.rptledger = em_rptledger.find([objid: credit.rptledger.objid]).first()
+        credit.items = getCreditItems(credit)
+        return credit
+    }
+
+    def getCreditItems(credit) {
+        def items = []
+
+        //dr items
+        items << [
+            txndate: dtSvc.parse("yyyy-MM-dd", credit.info.creditedyear+"-01-01"),
+            particulars: "BEGINNING BALANCE",
+            dr: credit.info.annualtax,
+        ]
+
+        // cr items
+        def params = [rptledgerid: credit.rptledger.objid, year: credit.info.creditedyear]
+
+        items += em_credit.getCreditYearPayments(params).each{
+            def period = "";
+            if (it.startqtr != it.endqtr) {
+                period = "Paid " + qtrs[it.startqtr] + " - " + qtrs[it.endqtr] + " quarters"
+            } else {
+                period = " Paid " + qtrs[it.startqtr] + " quarter"
+            } 
+            it.particulars = "OR# " + it.receiptno + " " + period
+        }
+
+        // tax credit
+        items << [
+            txndate: credit.txndate,
+            particulars: credit.remarks,
+            cr: credit.amount
+        ]
+
+        return items;
+    }
+
+    def qtrs = [
+        1: "1st",
+        2: "2nd",
+        3: "3rd",
+        4: "4th"
+    ]
 
     def getNextSeries() {
         def lguid = env.ORGID.replaceAll('-','')
@@ -294,6 +345,7 @@ class RPTTaxCreditService
         pmt.paidby = [:]
         pmt.paidby.name = credit.rptledger.taxpayer.name
         pmt.paidby.address = credit.rptledger.taxpayer.address.text
+        if (!pmt.paidby.address) pmt.paidby.address = '-'
         pmt.postedby = env.FULLNAME
         pmt.postedbytitle = env.JOBTITLE
         pmt.dtposted = dtSvc.serverDate

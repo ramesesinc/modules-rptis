@@ -30,4 +30,8 @@ class RPTLedgerCreditModel
         getRows: { credits.size() },
         fetchList: { credits }
     ] as BasicListModel;
+
+    def preview() {
+        return Inv.lookupOpener("rpttaxcredit:preview", [entity: selectedItem]);
+    }
 }

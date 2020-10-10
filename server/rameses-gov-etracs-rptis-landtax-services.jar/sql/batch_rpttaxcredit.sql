@@ -34,7 +34,7 @@ from (
 	group by b.objid, b.name
 ) x 
 where x.barangay is not null
-group by x.objid, x.barangay
+group by x.objid, x.barangay 
 order by x.barangay
 
 
@@ -53,18 +53,36 @@ and rl.totalav > 0
 and rl.taxable = 1
 
 
-[findAmountFromLedgerItem]
-select sum(amount) as amount
-from rptledger_item 
-where parentid = $P{rptledgerid}
-and year = $P{year}
+[findTaxDueFromLedgerItem]
+select 
+	x.taxdue, 
+	x.av, 
+	(x.taxdue / x.av * 100) as rateoflevy
+from (
+	select 
+		sum(amount) as taxdue, 
+		min(av) as av
+	from rptledger_item 
+	where parentid = $P{rptledgerid}
+	and year = $P{year}
+)x
 
-[findAmountFromPaymentItem]
-select sum(rpi.amount + rpi.interest - rpi.discount) as amount
-from rptpayment rp
-inner join rptpayment_item rpi on rpi.parentid = rp.objid 
-left join cashreceipt_void cv on rp.receiptid = cv.receiptid 
-where rp.refid = $P{rptledgerid}
-and year = $P{year}
-and cv.objid is null 
+
+[findTaxDueFromPaymentItem]
+select 
+	x.taxdue, 
+	x.av, 
+	(x.taxdue / x.av * 100) as rateoflevy
+from (
+	select 
+		sum(rpi.amount) as taxdue, 
+		min(rlf.assessedvalue) as av
+	from rptpayment rp
+	inner join rptpayment_item rpi on rpi.parentid = rp.objid 
+	inner join rptledgerfaas rlf on rpi.rptledgerfaasid = rlf.objid 
+	left join cashreceipt_void cv on rp.receiptid = cv.receiptid 
+	where rp.refid = $P{rptledgerid}
+	and year = $P{year}
+	and cv.objid is null 
+)x
 

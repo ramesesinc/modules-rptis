@@ -11,6 +11,9 @@ class BatchRPTTaxCreditService
     @DataContext('batch_rpttaxcredit')
     def em_batch
 
+    @DataContext('rpttaxcredit')
+    def em_credit
+
     @DataContext('batch_rpttaxcredit_ledger')
     def em_batch_ledger
 
@@ -63,6 +66,10 @@ class BatchRPTTaxCreditService
     @ProxyMethod
     public def postTaxCredit(params) {
         try {
+            if (checkTaxCreditPosted(params)) {
+                return [status: "OK"]
+            }
+
             def credit = createTaxCredit(params)
             creditSvc.approve(credit)
             creditSvc.apply(credit)
@@ -73,8 +80,20 @@ class BatchRPTTaxCreditService
             em_batch_ledger
                 .find([objid: params.rptledger.objid])
                 .update([state: "ERROR", error: e.message])
+            return [status: e.message]
         }
-        return [status: "ERROR"]
+    }
+
+    def checkTaxCreditPosted(params) {
+        def credits = em_credit.find([rptledger_objid: params.rptledger.objid]).list()
+        credits.each{
+            if ("TAX_ADJUSTMENT".equalsIgnoreCase(it.type) 
+                && it.info.creditedyear == params.batch.creditedyear) 
+            {
+                 return true
+            }
+        }
+        return false
     }
 
 
@@ -89,7 +108,8 @@ class BatchRPTTaxCreditService
         credit.refid = batch.objid
         credit.refno = batch.txnno
         credit.refdate = batch.txndate
-        credit.amount = getCreditAmount(params)
+        def creditinfo = getCreditInfo(params)
+        credit.amount = creditinfo.credit
         credit.balance = credit.amount
         credit.amtapplied = 0
         credit.rptledger = rptledger
@@ -97,35 +117,42 @@ class BatchRPTTaxCreditService
         credit.approvedby_objid = env.USERID
         credit.approvedby_name = env.FULLNAME
         credit.approvedby_title = env.JOBTITLE
+        credit.info = [
+            batchid: batch.objid,
+            creditedyear: batch.creditedyear,
+            annualtax: creditinfo.taxdue,
+            av: creditinfo.av,
+            rate: 50.0,
+            rateoflevy: creditinfo.rateoflevy,
+        ]
         return persistence.create(credit)
     }
 
-    def getCreditAmount(params) {
+    def getCreditInfo(params) {
         def batch = params.batch
         def rptledger = params.rptledger
         generateCurrentBill(rptledger)
         
         // if receivable is available in rptledger_item
         // then use it otherwise get the it from rptpayment_item
-        def filter = [year: batch.creditedyear, rptledgerid: rptledger.objid];
-        def data = em_batch.findAmountFromLedgerItem(filter);
-        if (!data.amount) {
-            data = em_batch.findAmountFromPaymentItem(filter);
+        def filter = [year: batch.creditedyear, rptledgerid: rptledger.objid]
+        def data = em_batch.findTaxDueFromLedgerItem(filter)
+        if (data.taxdue == null || data.taxdue == 0) {
+            data = em_batch.findTaxDueFromPaymentItem(filter)
         }
-
-        if (!data.amount) {
+        if (data.taxdue == null || data.taxdue == 0) {
             throw new Exception("Cannot credit zero amount.")
         }
-        
-        return numSvc.round(data.amount * batch.rate / 100.0);
+        data.credit = numSvc.round(data.taxdue * batch.rate / 100.0)
+        return data;
     }
 
 
     void generateCurrentBill(rptledger) {
         try {
             billingSvc.generateBillByLedger(rptledger)
-        } catch(e) {
-            //ignore errors such as paid ledgers
+        } catch(Throwable e) {
+            println 'Ignore: ' + e.message
         }
     }
 

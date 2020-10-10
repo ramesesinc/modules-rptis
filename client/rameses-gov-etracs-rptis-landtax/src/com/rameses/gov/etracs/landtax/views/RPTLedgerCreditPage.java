@@ -24,6 +24,7 @@ public class RPTLedgerCreditPage extends javax.swing.JPanel {
 
         xDataTable5 = new com.rameses.rcp.control.XDataTable();
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
+        xButton1 = new com.rameses.rcp.control.XButton();
 
         xDataTable5.setHandler("listHandler");
         xDataTable5.setName("selectedItem"); // NOI18N
@@ -169,30 +170,40 @@ public class RPTLedgerCreditPage extends javax.swing.JPanel {
         xFormPanel1.setCellpadding(new java.awt.Insets(2, 0, 0, 0));
         xFormPanel1.setPadding(new java.awt.Insets(0, 0, 0, 0));
 
+        xButton1.setDepends(new String[] {"selectedItem"});
+        xButton1.setName("preview"); // NOI18N
+        xButton1.setText("Preview");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable5, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(xDataTable5, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+                        .addGap(16, 16, 16))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(285, Short.MAX_VALUE)
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xDataTable5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(xDataTable5, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.rameses.rcp.control.XButton xButton1;
     private com.rameses.rcp.control.XDataTable xDataTable5;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     // End of variables declaration//GEN-END:variables
