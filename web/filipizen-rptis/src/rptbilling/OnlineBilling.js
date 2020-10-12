@@ -49,7 +49,6 @@ const OnlineBilling = ({
     getBilling(billOptions).then(bill => {
       setBill(bill.info);
       setBarcode(bill.info.billno);
-      setMode('viewbill');
       setLoading(false)
     }).catch(err => {
       setError(err.toString());
@@ -110,7 +109,7 @@ const OnlineBilling = ({
         <BackLink caption='Back' action={onCancelBilling} />
         <Panel row>
           <Button caption='Pay Option' action={() => setShowPayOption(true)} variant="outlined" />
-          <Button caption='Confirm Payment' action={checkoutPayment} />
+          <Button caption='Confirm Payment' action={checkoutPayment} disableWhen={bill.amount === 0} />
         </Panel>
       </ActionBar>
 
