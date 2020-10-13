@@ -35,7 +35,6 @@ class RPTTaxCreditModel extends CrudFormModel
     
     void afterInit(){
         creditTypes = svc.getCreditTypes();
-        entity.info = [:];
     }
 
     void afterOpen(){

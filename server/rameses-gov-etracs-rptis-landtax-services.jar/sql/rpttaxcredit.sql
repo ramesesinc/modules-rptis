@@ -11,6 +11,7 @@ inner join rptpayment_item rpi on rp.objid = rpi.parentid
 left join cashreceipt_void cv on rp.receiptid = cv.objid 
 where rp.refid = $P{rptledgerid}
 and rpi.year = $P{year}
+and rp.type <> 'credit'
 and cv.objid is null 
 group by rp.receiptid, rp.receiptno, rp.receiptdate
 

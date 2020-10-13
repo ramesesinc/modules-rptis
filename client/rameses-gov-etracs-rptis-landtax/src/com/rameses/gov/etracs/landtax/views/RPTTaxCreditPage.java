@@ -48,6 +48,7 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
         xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
         xSeparator2 = new com.rameses.rcp.control.XSeparator();
@@ -199,6 +200,12 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xDecimalField1.setRequired(true);
         xFormPanel1.add(xDecimalField1);
 
+        xDecimalField3.setCaption("Balance");
+        xDecimalField3.setDepends(new String[] {"entity.type", "entity.ref"});
+        xDecimalField3.setName("entity.balance"); // NOI18N
+        xDecimalField3.setRequired(true);
+        xFormPanel1.add(xDecimalField3);
+
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 80));
 
         xTextArea1.setCaption("Remarks");
@@ -289,6 +296,7 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDateField xDateField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XDecimalField xDecimalField3;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XLabel xLabel1;

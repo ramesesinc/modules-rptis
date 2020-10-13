@@ -37,7 +37,7 @@
     visible:false;
 }
 
-"entity.dtapproved" [ true ] {
+"entity.(dtapproved|balance)" [ true ] {
     enabled:false;
 }
 

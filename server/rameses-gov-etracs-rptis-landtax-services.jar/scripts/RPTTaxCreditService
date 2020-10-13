@@ -147,12 +147,14 @@ class RPTTaxCreditService
                 break
             case 'OVER_PAYMENT' : 
             case 'DOUBLE_PAYMENT' : 
-            case 'TAX_ADJUSTMENT' : 
                 postOverPayment(credit)
                 break
+            case 'TAX_ADJUSTMENT' : 
+                postTaxAdjustment(credit)
+                break;
         }
 
-        if (credit.amtapplied >= credit.amount) {
+        if (credit.amtapplied >= credit.amount || credit.amount - credit.amtapplied < 0.05) {
             credit.state = STATE_CLOSED
             credit.amtapplied = credit.amount
         }
@@ -282,13 +284,28 @@ class RPTTaxCreditService
         postRptPayment(credit)
     }
 
+    /* post tax adjustment for years >= creditedyear */
+    void postTaxAdjustment(credit) {
+        def items = credit.remove('postingitems')
+        credit.postingitems = items.findAll{ it.year >= credit.info.creditedyear}
+        credit._hasarrears = items.find{it.year < credit.info.creditedyear}
+        if (!credit.postingitems) return
+        credit.postingitems.each{
+            it.discount = 0.0
+            it.interest = 0.0
+            it.total = it.amount
+        }
+        distributeCredit(credit)
+        postRptPayment(credit)
+    }
+
     void distributeCredit(credit) {
         def credititems = []
         def partialamt = credit.balance
 
         def postingitems = credit.remove('postingitems')
         if (!postingitems) {
-            throw new Exception('Credit posting items must be specified.')
+            throw new Exception('Items to credit must be specified.')
         }
         
         def priorities = postingitems.priority.unique().sort()
@@ -372,12 +389,15 @@ class RPTTaxCreditService
 
         em_rptledger_item.where('parentid = :objid and amount <= amtpaid', credit.rptledger).delete()
 
-        def fullypaiditems = credit.items.findAll{ !it.partialled }
-        if (fullypaiditems) {
-            def lastitem = fullypaiditems.last()
-            em_rptledger.find([objid: credit.rptledger.objid])
-                        .update([lastyearpaid: lastitem.year, lastqtrpaid: lastitem.qtr])
+        if (!credit._hasarrears) {
+            def fullypaiditems = credit.items.findAll{ !it.partialled }
+            if (fullypaiditems) {
+                def lastitem = fullypaiditems.last()
+                em_rptledger.find([objid: credit.rptledger.objid])
+                            .update([lastyearpaid: lastitem.year, lastqtrpaid: lastitem.qtr])
+            }
         }
+
     }
 
     def calcLastQtrPaid(item) {

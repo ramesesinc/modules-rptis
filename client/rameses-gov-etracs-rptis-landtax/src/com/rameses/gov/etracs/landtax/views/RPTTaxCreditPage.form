@@ -370,6 +370,19 @@
                     <Property name="required" type="boolean" value="true"/>
                   </Properties>
                 </Component>
+                <Component class="com.rameses.rcp.control.XDecimalField" name="xDecimalField3">
+                  <Properties>
+                    <Property name="caption" type="java.lang.String" value="Balance"/>
+                    <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
+                      <StringArray count="2">
+                        <StringItem index="0" value="entity.type"/>
+                        <StringItem index="1" value="entity.ref"/>
+                      </StringArray>
+                    </Property>
+                    <Property name="name" type="java.lang.String" value="entity.balance" noResource="true"/>
+                    <Property name="required" type="boolean" value="true"/>
+                  </Properties>
+                </Component>
                 <Container class="javax.swing.JScrollPane" name="jScrollPane1">
                   <Properties>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
