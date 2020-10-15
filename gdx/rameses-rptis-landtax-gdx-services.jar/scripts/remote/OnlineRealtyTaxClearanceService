@@ -2,7 +2,7 @@ import com.rameses.annotations.*;
 
 public class OnlineRealtyTaxClearanceService {
 
-	@Service(value="OnlineRealtyTaxClearanceService", connection="local-landtax-server")
+	@Service(value="OnlineRealtyTaxClearanceService", connection="landtax")
 	def svc;
 
 	@ProxyMethod
