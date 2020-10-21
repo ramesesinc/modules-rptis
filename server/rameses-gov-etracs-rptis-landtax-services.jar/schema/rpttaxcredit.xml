@@ -11,6 +11,7 @@
         <field name="refdate" required="true" caption="Ref Date"/>
         <field name="amount" required="true" type="decimal" caption="Amount" />
         <field name="amtapplied" required="true" type="decimal" caption="Applied" />
+        <field name="discapplied" type="decimal" caption="Credited Discount" />
         <field name="rptledger_objid" required="true" />
         <field name="srcledger_objid" />
         <field name="remarks" />

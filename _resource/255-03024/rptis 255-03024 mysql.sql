@@ -17,6 +17,7 @@ CREATE TABLE `batch_rpttaxcredit` (
   `paymentto` varchar(255) DEFAULT NULL,
   `creditedyear` int(255) NOT NULL,
   `reason` varchar(255) NOT NULL,
+  `validity` date NULL,
   PRIMARY KEY (`objid`),
   KEY `ix_state` (`state`),
   KEY `ix_txnno` (`txnno`)
@@ -75,3 +76,11 @@ where br.state = 'ERROR'
 
 alter table rpttaxcredit add info text
 ;
+
+
+alter table rpttaxcredit add discapplied decimal(16,2) not null
+;
+
+update rpttaxcredit set discapplied = 0 where discapplied is null 
+;
+

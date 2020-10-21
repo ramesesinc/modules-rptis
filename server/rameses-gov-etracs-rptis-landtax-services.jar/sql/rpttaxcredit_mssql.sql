@@ -66,11 +66,11 @@ and cv.objid is null
 
 
 [closeBatchTaxCredits]
-update batch_rpttaxcredit b, 
-	batch_rpttaxcredit_ledger_posted bl, 
-	rpttaxcredit c
-set 
+update c set 
 	c.state = 'CLOSED'
+from batch_rpttaxcredit b, 
+	batch_rpttaxcredit_ledger_posted bl, 
+	rpttaxcredit c	
 where b.objid = bl.parentid 
 and bl.objid = c.rptledger_objid
 and b.objid = $P{objid}
@@ -78,8 +78,9 @@ and c.state <> 'CLOSED'
 
 
 [revertTaxCredits]
-update 
-	rptledger_item rli, 
+update rli set 
+	rli.amtpaid = rli.amtpaid - x.amtpaid
+from rptledger_item rli, 
 	( select 
 			bl.objid as rptledgerid,
 			rpi.revtype, 
@@ -93,9 +94,7 @@ update
 		where b.objid = $P{objid}
 		and t.state <> 'CLOSED'
 		group by bl.objid, revtype, year
-	)x
-set 
-	rli.amtpaid = rli.amtpaid - x.amtpaid
+	)x	
 where rli.parentid = x.rptledgerid
 and rli.year = x.year 
 and rli.revtype = x.revtype 
