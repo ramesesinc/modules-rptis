@@ -34,6 +34,7 @@ public class BatchRPTTaxCreditNewPage extends javax.swing.JPanel {
         xLabel3 = new com.rameses.rcp.control.XLabel();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xDateField1 = new com.rameses.rcp.control.XDateField();
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
 
@@ -72,6 +73,10 @@ public class BatchRPTTaxCreditNewPage extends javax.swing.JPanel {
         xDecimalField1.setRequired(true);
         xFormPanel1.add(xDecimalField1);
 
+        xDateField1.setCaption("Validity Date");
+        xDateField1.setName("entity.validity"); // NOI18N
+        xFormPanel1.add(xDateField1);
+
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 100));
 
         xTextArea1.setCaption("Reason");
@@ -96,12 +101,13 @@ public class BatchRPTTaxCreditNewPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(71, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
+    private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XIntegerField xIntegerField1;

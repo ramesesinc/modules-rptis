@@ -13,5 +13,6 @@
         <!-- the year tax credit is applied-->
         <field name="creditedyear" caption="Year Credited" required="true" type="integer" searchable="true" />
         <field name="reason" required="true"  caption="Reason" />
+        <field name="validity" caption="Validity" />
     </element>
 </schema>
