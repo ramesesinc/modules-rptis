@@ -7,6 +7,24 @@
     enabled:true;
 }
 
+"entity.info.*" [entity.type != 'TAX_ADJUSTMENT'] {
+    visible:false;
+}
+
+"entity.info.*" [entity.type == 'TAX_ADJUSTMENT' && mode != 'read'] {
+    visible:true;
+    enabled:true;
+    required:true;
+}
+
+"entity.amount" [entity.type == 'TAX_ADJUSTMENT' && mode != 'read'] {
+    enabled:false;
+}
+
+"entity.amount" [entity.type != 'TAX_ADJUSTMENT' && mode != 'read'] {
+    enabled:true;
+}
+
 "entity.srcledger.*|entity.ref" [entity.type == 'WRONG_LEDGER'] {
     visible:true;
 }
@@ -19,7 +37,7 @@
     visible:false;
 }
 
-"entity.dtapproved" [ true ] {
+"entity.(dtapproved|balance)" [ true ] {
     enabled:false;
 }
 

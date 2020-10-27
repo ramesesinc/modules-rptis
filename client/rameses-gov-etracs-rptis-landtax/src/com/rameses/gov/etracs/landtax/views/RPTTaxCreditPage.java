@@ -45,7 +45,10 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xLookupField3 = new com.rameses.rcp.control.XLookupField();
         xTextField1 = new com.rameses.rcp.control.XTextField();
         xDateField1 = new com.rameses.rcp.control.XDateField();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
+        xDecimalField2 = new com.rameses.rcp.control.XDecimalField();
         xDecimalField1 = new com.rameses.rcp.control.XDecimalField();
+        xDecimalField3 = new com.rameses.rcp.control.XDecimalField();
         jScrollPane1 = new javax.swing.JScrollPane();
         xTextArea1 = new com.rameses.rcp.control.XTextArea();
         xSeparator2 = new com.rameses.rcp.control.XSeparator();
@@ -55,7 +58,7 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
 
         xTabbedPane1.setHandler("sections");
 
-        xFormPanel1.setCaptionWidth(115);
+        xFormPanel1.setCaptionWidth(140);
         xFormPanel1.setPadding(new java.awt.Insets(10, 10, 10, 10));
 
         xLabel1.setCaption("State");
@@ -112,6 +115,7 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xComboBox1.setCaption("Credit Type");
         xComboBox1.setItems("creditTypes");
         xComboBox1.setName("entity.type"); // NOI18N
+        xComboBox1.setAllowNull(false);
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 20));
         xComboBox1.setRequired(true);
         xFormPanel1.add(xComboBox1);
@@ -145,6 +149,7 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xComboBox2.setDepends(new String[] {"entity.type"});
         xComboBox2.setItems("refTypes");
         xComboBox2.setName("entity.reftype"); // NOI18N
+        xComboBox2.setAllowNull(false);
         xComboBox2.setDynamic(true);
         xComboBox2.setPreferredSize(new java.awt.Dimension(0, 20));
         xComboBox2.setRequired(true);
@@ -172,11 +177,34 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xDateField1.setRequired(true);
         xFormPanel1.add(xDateField1);
 
+        xIntegerField1.setCaption("Credited Year");
+        xIntegerField1.setDepends(new String[] {"entity.type"});
+        xIntegerField1.setName("entity.info.creditedyear"); // NOI18N
+        xIntegerField1.setRequired(true);
+        xIntegerField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xIntegerField1ActionPerformed(evt);
+            }
+        });
+        xFormPanel1.add(xIntegerField1);
+
+        xDecimalField2.setCaption("Adjustment Rate (%)");
+        xDecimalField2.setDepends(new String[] {"entity.type"});
+        xDecimalField2.setName("entity.info.rate"); // NOI18N
+        xDecimalField2.setRequired(true);
+        xFormPanel1.add(xDecimalField2);
+
         xDecimalField1.setCaption("Amount");
         xDecimalField1.setDepends(new String[] {"entity.type", "entity.ref"});
         xDecimalField1.setName("entity.amount"); // NOI18N
         xDecimalField1.setRequired(true);
         xFormPanel1.add(xDecimalField1);
+
+        xDecimalField3.setCaption("Balance");
+        xDecimalField3.setDepends(new String[] {"entity.type", "entity.ref"});
+        xDecimalField3.setName("entity.balance"); // NOI18N
+        xDecimalField3.setRequired(true);
+        xFormPanel1.add(xDecimalField3);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(0, 80));
 
@@ -231,8 +259,8 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(48, Short.MAX_VALUE))
         );
 
         xTabbedPane1.addTab("Credit Information", jPanel1);
@@ -250,10 +278,15 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
+                .addComponent(xTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void xIntegerField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIntegerField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_xIntegerField1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -262,7 +295,10 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDateField xDateField2;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
+    private com.rameses.rcp.control.XDecimalField xDecimalField2;
+    private com.rameses.rcp.control.XDecimalField xDecimalField3;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XLabel xLabel1;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;

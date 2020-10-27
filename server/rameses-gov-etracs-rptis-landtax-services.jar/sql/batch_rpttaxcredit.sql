@@ -34,7 +34,7 @@ from (
 	group by b.objid, b.name
 ) x 
 where x.barangay is not null
-group by x.objid, x.barangay
+group by x.objid, x.barangay 
 order by x.barangay
 
 
@@ -51,20 +51,4 @@ from rptledger rl
 where rl.state = 'APPROVED'
 and rl.totalav > 0
 and rl.taxable = 1
-
-
-[findAmountFromLedgerItem]
-select sum(amount) as amount
-from rptledger_item 
-where parentid = $P{rptledgerid}
-and year = $P{year}
-
-[findAmountFromPaymentItem]
-select sum(rpi.amount + rpi.interest - rpi.discount) as amount
-from rptpayment rp
-inner join rptpayment_item rpi on rpi.parentid = rp.objid 
-left join cashreceipt_void cv on rp.receiptid = cv.receiptid 
-where rp.refid = $P{rptledgerid}
-and year = $P{year}
-and cv.objid is null 
 

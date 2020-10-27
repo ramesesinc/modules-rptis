@@ -73,3 +73,5 @@ inner join rptledger rl on br.objid = rl.objid
 where br.state = 'ERROR'
 ;
 
+alter table rpttaxcredit add info text
+;
