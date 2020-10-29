@@ -9,15 +9,7 @@ class OnlineLandTaxBillingService
 	@Service('RPTBillingService')
     def billSvc
 
-    @Service('RPTReceiptService')
-    def receiptSvc
-
-    @DataContext('entity')
-    def em_entity 
-
-    @Service('RPTLedgerPostPaymentService')
-    def postPaymentSvc
-
+    
     def BARCODE_PREFIX = '56001:'
 
 
@@ -53,23 +45,10 @@ class OnlineLandTaxBillingService
         return data;
     }
 
-	@ProxyMethod
-	public def verifyPayment( eor ) {
-        
-	}
-
-	@ProxyMethod
-	public void postPayment( eor ) {
-        def po = eor.paymentorder;
-        def data = po.info.data;
-        def bill = generateBill([refno: data.barcode])
-        eor.ledgers = [bill.rptledger]
-        eor.rptledger = bill.rptledger 
-        postPaymentSvc.postPayment(eor) 
-        println 'Online realty tax payment successfully posted.'
-	}
-
-
+    @ProxyMethod
+	public def getEmailAttachments( eor ) {
+        return []
+    }
 
     def generateBill(params){
         def bill = [:]

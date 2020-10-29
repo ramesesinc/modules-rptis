@@ -306,7 +306,7 @@ class RPTReceiptService
 	}
 
 	@ProxyMethod
-	public void formatReceiptForPrinting(receipt){
+	public def formatReceiptForPrinting(receipt){
 		receipt._items = em.getItemsForPrinting(receipt)
 		receipt.owners = receipt._items.owner?.name.unique().join(";")
 		util.buildPeriodCovered(receipt._items)
@@ -315,6 +315,7 @@ class RPTReceiptService
 			addLGUInfo(receipt)
 		}
 		receipt.remove('ledgers')
+		return receipt
 	}
 
 

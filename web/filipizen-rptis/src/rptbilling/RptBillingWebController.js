@@ -38,6 +38,7 @@ const RptBillingWebController = ({
   service,
   location,
   history,
+  //TODO: reset to 0
   initialStep=0
 }) => {
 
