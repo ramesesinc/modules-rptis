@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Page, Panel, StateProvider, Content } from "rsi-react-web-components";
+import { Page, StateProvider, Content } from "rsi-react-web-components";
 import "rsi-react-web-components/dist/index.css";
 
 import { ContactVerification } from 'rsi-react-filipizen-components'
@@ -38,6 +38,7 @@ const RptBillingWebController = ({
   service,
   location,
   history,
+  //TODO: reset to 0
   initialStep=0
 }) => {
 

@@ -22,10 +22,6 @@ class OnlineRealtyTaxClearanceService {
     @DataContext('itemaccount_tag')
     def em_acct_tag
 
-    @Service("RPTCertificationOnlineService")
-    def certSvc
-
-
     
 	@ProxyMethod
     public def getBilling( params ) {
@@ -40,7 +36,7 @@ class OnlineRealtyTaxClearanceService {
         def pdate = dtSvc.parseCurrentDate()
         if (rptledger.lastyearpaid < pdate.year || 
             (rptledger.lastyearpaid == pdate.year && rptledger.lastqtrpaid < pdate.qtr)) {
-                throw new Exception("Realty tax is fully paid for the current year.")
+                throw new Exception("Realty tax is not fully paid for the current year.")
             }
 
         def clearance = [:]
@@ -61,37 +57,6 @@ class OnlineRealtyTaxClearanceService {
         ]
         return clearance
     }
-
-
-	@ProxyMethod
-	public def verifyPayment( eor ) {
-        return eor;
-	}
-
-	@ProxyMethod
-	public void postPayment(  def eor ) {
-        def po = eor.paymentorder
-        def data = po.info.data
-        
-        def params = [:]
-        params.faases = [[objid: data.faasid]]
-        params.entityid = data.taxpayer.objid
-        params.purpose = data.purpose
-        params.refid = eor.objid
-        params.reftype = 'FILIPIZEN'
-        params.refno = eor.receiptno
-        params.refdate = eor.receiptdate
-        def clearance = certSvc.issueTaxClearance(params)
-
-        def payment = [:]
-        payment.objid = clearance.objid
-        payment.orno = eor.receiptno
-        payment.ordate = eor.receiptdate
-        payment.oramount = eor.amount
-        certSvc.postPayment(payment)
-        println 'Online Realty Tax Clearance successfully posted.'
-	}
-
 
     def getClearanceAccount() {
         def errormsg = "Tax account is not registered. Kindly contact Land Tax office."

@@ -6,9 +6,6 @@ class TDOnlineService {
 	@Env 
 	def env
 
-	@Service('DateService')
-	def dtSvc
-
 	@Service('RPTBillingService')
 	def billSvc
 
@@ -39,46 +36,40 @@ class TDOnlineService {
 		def faas = em_faaslist.find([tdno: params.tdno]).first()
 		if (!faas) throw new Exception('TD No. does not exist.')
 
+		def rp = em_realproperty.find([objid: faas.realpropertyid]).first()
+		def boundary = [
+			north : rp?.north,
+			east : rp?.east,
+			south : rp?.south,
+			west : rp?.west,
+		]
+
 		def rptledger = getLedger(params)
-		
-		def info = [:]
-		info.boundary = getFaasBoundary(faas)
-		info.bill = getBill(rptledger)
-		info.lastpayment = getLastPayment(rptledger)
-		buildFaasInfo(faas, info)
-		return info
-	}
+		def bill = getBill(rptledger)
+		def lastpayment = getLastPayment(rptledger)
 
-	/*============================================
-	* Validate requested FAAS as follows:
-	* - Current only
-	* - Fully Paid up to current qtr
-	* - Exemptions: 
-	*      - Zero Value
-	*      - Exempt Properties
-	============================================*/
-	@ProxyMethod
-	public def verifyTaxDecForTxn(params) {
-		params.tdno = params.refno 
-		def faas = em_faaslist.find([tdno: params.tdno]).first()
-		if (!faas) throw new Exception('TD No. does not exist.')
-
-		if ('CANCELLED'.equalsIgnoreCase(faas.state)) {
-			throw new Exception('FAAS is already cancelled.')
-		}
-
-		if ( ! 'CURRENT'.equalsIgnoreCase(faas.state)) {
-			throw new Exception("FAAS is currently verified for approval by the Assessor's Office.")
-		}
-
-		def rptledger = getLedgerForTxn(faas)
-
-		def info = [:]
-		info.boundary = getFaasBoundary(faas)
-		info.bill = getBill(rptledger)
-		info.lastpayment = getLastPayment(rptledger)
-		buildFaasInfo(faas, info)
-		return info
+        return [
+        	objid: faas.objid,
+            tdno: faas.tdno,
+            pin: faas.displaypin,
+            titleno: faas.titleno,
+            cadastrallotno: faas.cadastrallotno,
+            blockno: faas.blockno,
+            surveyno: faas.surveyno,
+            classcode: faas.classcode,
+            owner: faas.owner,
+            taxpayer: faas.taxpayer,
+            administrator: faas.administrator,
+            barangay: faas.barangay,
+            street: rp?.street,
+            areaha: faas.totalareaha,
+            areasqm: faas.totalareasqm,
+            totalmv: faas.totalmv,
+            totalav: faas.totalav,
+            bill: bill,
+            lastpayment: lastpayment,
+            boundary: boundary,
+        ]
 	}
 
 	@ProxyMethod
@@ -90,48 +81,12 @@ class TDOnlineService {
 
 	def getLedger(params) {
 		def rptledger = em_rptledger
-						.select('objid,state,tdno,lastyearpaid,lastqtrpaid')
+						.select('objid,tdno,lastyearpaid,lastqtrpaid')
 						.find([tdno: params.tdno])
 						.first()
 		if (!rptledger) {
 			rptledger = [tdno: params.tdno]
 		}
-		return rptledger
-
-	}
-
-	def getLedgerForTxn(faas) {
-		def fields = 'objid,state,tdno,lastyearpaid,lastqtrpaid,taxable,totalav'
-		def rptledger = em_rptledger.select(fields).find([faasid: faas.objid]).first()
-		if (!rptledger) {
-			rptledger = em_rptledger.select(fields).find([tdno: faas.tdno]).first()
-		}
-
-		def msg = ''
-		if (!rptledger || !rptledger.state.toLowerCase().matches('approved|pending')) {
-			msg = 'The associated ledger for this FAAS is currently not available.\n'
-			msg += 'Kindly ask assistance with the Land Tax Office.'
-			throw new Exception(msg)
-		}
-
-		if ('PENDING'.equalsIgnoreCase(rptledger.state)) {
-			msg = 'The associated ledger for this FAAS is currently verified for approval.\n'
-			msg += 'Kindly ask assistance with the Land Tax Office.'
-			throw new Exception(msg)
-		}
-
-		//verify special case
-		if (rptledger.totalav <= 0 || util.toBoolean(rptledger.taxable, true) == false ) {
-			return rptledger
-		}
-
-		//verify full payment
-		def pdate = dtSvc.parseCurrentDate()
-		if ((rptledger.lastyearpaid < pdate.year) || 
-		    (rptledger.lastyearpaid == pdate.year && rptledger.lastqtrpaid < pdate.qtr)) {
-				throw new Exception('The associated ledger for this FAAS is not fully paid.')
-		}
-
 		return rptledger
 
 	}
@@ -176,37 +131,6 @@ class TDOnlineService {
 
 		if (!pmt) pmt = [:]
 		return pmt 
-	}
-
-	def getFaasBoundary(faas) {
-		def rp = em_realproperty.find([objid: faas.realpropertyid]).first()
-		return [
-			north : rp?.north,
-			east : rp?.east,
-			south : rp?.south,
-			west : rp?.west,
-			street: rp?.street,
-		]
-	}
-
-	void buildFaasInfo(faas, info) {
-		info.objid = faas.objid
-        info.tdno = faas.tdno
-        info.pin = faas.displaypin
-        info.titleno = faas.titleno
-        info.cadastrallotno = faas.cadastrallotno
-        info.blockno = faas.blockno
-        info.surveyno = faas.surveyno
-        info.classcode = faas.classcode
-        info.owner = faas.owner
-        info.taxpayer = faas.taxpayer
-        info.administrator = faas.administrator
-        info.barangay = faas.barangay
-        info.street = info.boundary.street
-        info.areaha = faas.totalareaha
-        info.areasqm = faas.totalareasqm
-        info.totalmv = faas.totalmv
-        info.totalav = faas.totalav
 	}
 
 }

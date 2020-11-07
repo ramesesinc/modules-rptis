@@ -34,6 +34,9 @@ class LandTaxReportTaxClearanceService
     @DataContext('sys_org')
     def em_org
 
+    @DataContext("rptcertification_online")
+    def em_cert_online
+
 
     @ProxyMethod
     public def getReportTypes() {
@@ -122,6 +125,15 @@ class LandTaxReportTaxClearanceService
         return certSvc.update(entity)
     }
 
+    @ProxyMethod
+    public def getOnlineIssuedClearance(params) {
+        def cert = em_cert_online.find([refid: params.refid]).first()
+        if (!cert) throw new Exception("Online certification payment does not exist or has been deleted.")
+        def clearance = openClearance(cert.objid)
+        clearance.qrcode = getQrCodeData(clearance)
+        updateLguInfo(clearance)
+        return clearance
+    }
 
     @ProxyMethod
     public def getClearedLedgers(cert) {
@@ -260,5 +272,43 @@ class LandTaxReportTaxClearanceService
             }
         }
         return keys
+    }
+
+    def getQrCodeData(clearance) {
+        def data = [:]
+        data.objid = clearance.objid
+        data.txnno = clearance.txnno
+        data.requestedby = clearance.requestedby
+        data.orno = clearance.orno
+        def b64Str = (new com.rameses.util.Base64Cipher()).encode(data);
+        return "qrcode:" + b64Str
+    }
+
+    /*===================================
+    * LGU Information
+    =====================================*/
+
+    @DataContext("city")
+    def em_city
+
+    @DataContext("province")
+    def em_prov
+
+    @DataContext("municipality")
+    def em_muni
+
+    void updateLguInfo(clearance) {
+        def lgu = em_city.find([root: 1]).first()
+        if (!lgu) lgu = em_prov.find([root: 1]).first()
+        if (!lgu) lgu = em_muni.find([root: 1]).first()
+        if (!lgu) throw new Exception("sys_org root lgu not specified.")
+
+        def org = em_org.find([objid: lgu.objid]).first()
+
+        def parentlgu = [:]
+        if (org.orgclass == "MUNICIPALITY") parentlgu = em_prov.find([objid: lgu.parentid]).first()
+
+        clearance.lguname = lgu.fullname
+        clearance.parentlguname = parentlgu.fullname
     }
 }

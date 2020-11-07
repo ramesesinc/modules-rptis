@@ -23,19 +23,16 @@ const OnlineTaxClearance = (props) => {
   const [error, setError] = useState()
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
-  //TODO: REMOVE TEST
-  // const [refno, setRefno] = useState("L-0001")
-  // const [purpose, setPurpose] = useState("LOAN")
   const [refno, setRefno] = useState()
   const [purpose, setPurpose] = useState()
   const [clearance, setClearance] = useState({})
 
-  const { partner, page, onCancel, onSubmit } = props
+  const { partner, page, onCancel, onSubmit } = props;
 
   const getClearance = async () => {
-    const svc = await Service.lookupAsync(`${partner.id}:OnlineRealtyTaxClearanceService`)
-    const params = { txntype, refno, purpose }
-    return await svc.getBilling(params)
+    const svc = await Service.lookupAsync(`${partner.id}:OnlineRealtyTaxClearanceService`, "rpt");
+    const params = { txntype, refno, purpose };
+    return await svc.invoke("getBilling", params);
   }
 
   const validated = () => {

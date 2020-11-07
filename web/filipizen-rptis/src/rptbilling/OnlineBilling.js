@@ -38,9 +38,9 @@ const OnlineBilling = ({
   const [barcode, setBarcode] = useState()
 
   const getBilling = async (billOptions = {}) => {
-    const svc = await Service.lookupAsync(`${partner.id}:OnlineLandTaxBillingService`)
+    const svc = await Service.lookupAsync(`${partner.id}:OnlineLandTaxBillingService`, "rpt")
     const params = { txntype, refno, ...billOptions }
-    return await svc.getBilling(params)
+    return await svc.invoke("getBilling", params);
   }
 
   const loadBill = (billOptions = {}) => {

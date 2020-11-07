@@ -1,73 +1,50 @@
-import com.rameses.annotations.*;
-import com.rameses.util.*;
+import com.rameses.annotations.* 
+import com.rameses.services.extended.*
 
-class OnlineLandTaxBillingService {
+class OnlineLandTaxBillingService 
+{
+	@Env
+	def env 
 
-	@Service('RPTLedgerPostPaymentService')
+	@Service('RPTBillingService')
+    def billSvc
+
+    @Service('RPTLedgerPostPaymentService')
     def postPaymentSvc
 
-	@Service("NumberService")
-	def numSvc;
+    def BARCODE_PREFIX = '56001:'
 
 	@ProxyMethod
-	public def getBilling(params) {
-		def bill = generateBilling(params)
-        def rptledger = bill.rptledger
-
-        def data = [:]
-        data.info = [
-            billid: bill.objid,
-            billno: bill.barcode,
-            billdate: bill.billdate,
-            billtoyear: bill.billtoyear,
-            billtoqtr: bill.billtoqtr,
-            billperiod: buildPeriod(rptledger),
-            rptledgerid: rptledger.objid,
-            taxpayer: rptledger.taxpayer,
-            tdno: rptledger.tdno, 
-            fullpin: rptledger.fullpin, 
-            rputype: rptledger.rputype, 
-            administrator: rptledger.administrator, 
-            totalareasqm: rptledger.totalareasqm, 
-            totals: bill.totals,
-            items: rptledger.items,
-            amount: bill.totals.total,
-            fromyear: rptledger.fromyear,
-            fromqtr: rptledger.fromqtr,
-            toyear: rptledger.toyear,
-            toqtr: rptledger.toqtr,
-        ]
-        data.amount = bill.totals.total 
-        result.putAll(data)
-	}
-
-	@ProxyMethod
-	public def verifyPayment(eor) {
-        def bill = generateBilling(params)
-        def currentamt = bill.totals.total 
-        if (currentamt != params.amount) {
-            throw new Exception('Bill amount has changed from '+ params.amount +' to '+ currentamt); 
-        }
-        params.putAll(bill)
-		return o;
-
-        def bill = getBilling([refno:eor.info.barcode])
-        def billamount = bill.totals.total 
-        if (billamount != eor.amount) {
-            throw new Exception('Bill amount has changed from '+ eor.amount +' to '+ billamount); 
-        }
-        
+	public def verifyPayment( eor ) {
+        def data = eor.info.data;
+        def bill = generateBill([refno: data.billno])
         eor.ledgers = [bill.rptledger]
         eor.rptledger = bill.rptledger 
-        postPaymentSvc.buildCashReceiptItemsAndShares(eor)
+        return [
+            ledgers: [bill.rptledger],
+            rptledger: bill.rptledger,
+            amount: eor.amount,
+            items: bill.rptledger.billitems,
+        ]
 	}
 
 	@ProxyMethod
-	public void postPayment(  def eor ) {
-        postPaymentSvc.postPayment(eor) 
+	public void postPayment( eor, bill ) {
+        def receipt = [:]
+        receipt.putAll(eor)
+        receipt.ledgers = bill.ledgers
+        receipt.rptledger = bill.rptledger
+        postPaymentSvc.postPayment(receipt) 
+        println 'Online realty tax payment successfully posted.'
 	}
+    
+    @ProxyMethod
+	public def getEmailAttachments( eor ) {
+        return []
+    }
 
-	def generateBilling(params){
+
+    def generateBill(params){
         def bill = [:]
         if (!env.ORGID) env.ORGID = params.orgcode 
 
@@ -86,6 +63,7 @@ class OnlineLandTaxBillingService {
         bill.rptledger = bill.remove('ledgers')[0]
         return bill 
     }
+
 
     def buildPeriod(rptledger){
         def period = ''

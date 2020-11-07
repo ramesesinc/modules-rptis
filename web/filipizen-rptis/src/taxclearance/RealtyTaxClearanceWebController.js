@@ -1,22 +1,85 @@
-import React from 'react'
-import { Page, Panel, Content } from 'rsi-react-web-components'
+import React, { useState } from 'react'
+import { Page, StateProvider, Content } from "rsi-react-web-components";
+import "rsi-react-web-components/dist/index.css";
 
-import { EPayment } from 'rsi-react-filipizen-components'
-import OnlineTaxClearance from './OnlineTaxClearance'
+import { ContactVerification } from 'rsi-react-filipizen-components'
 
-const RealtyTaxClearanceWebController = (props) => {
-  const module = {
-    title: 'Online Realty Tax Clearance',
-    component: OnlineTaxClearance
+const initialState = {
+  txntype: "rpttaxclearance",
+  refno: null,
+  bill: {},
+  contact: {},
+}
+
+const reducer = (draft, action) => {
+  switch(action.type) {
+    case "SET_BILL":
+      draft.refno = action.refno;
+      draft.bill = action.bill;
+      return;
+
+    case "SET_CONTACT":
+      draft.contact = action.contact;
+      return;
   }
+}
+
+import InitialInfo from "./InitialInfo";
+import Payment from "./Payment";
+
+const pages = [
+  {step: 1, name: "verification", caption: "Verification", Component: ContactVerification},
+  {step: 2, name: "initial", caption: "Initial Information", Component: InitialInfo},
+  {step: 3, name: "payment", caption: "Payment", Component: Payment},
+]
+
+const RealtyTaxClearanceWebController = ({
+  partner,
+  service,
+  location,
+  history,
+  initialStep=0
+}) => {
+
+  const [step, setStep] = useState(initialStep);
+
+  const moveNextStep = () => {
+    setStep(cs => cs+1);
+  }
+
+  const movePrevStep = () => {
+    if (step === 0) {
+      history.goBack();
+    } else {
+      setStep(cs => cs-1);
+    }
+  }
+
+  const cancelPayment = () => {
+    setStep(1);
+  }
+
+  const page = pages[step];
+  const PageComponent = page.Component;
+  const compProps = {
+    partner,
+    service,
+    location,
+    history,
+    moveNextStep,
+    movePrevStep,
+    cancelPayment,
+    title: "Online Realty Tax Clearance",
+  };
+
   return (
-    <Page>
-      <Content center>
-        <Panel>
-          <EPayment module={module} {...props} />
-        </Panel>
-      </Content>
-    </Page>
+    <StateProvider initialState={initialState} reducer={reducer}>
+      <Page>
+        <Content center>
+          <PageComponent page={page} {...compProps} />
+        </Content>
+      </Page>
+    </StateProvider>
   )
 }
 
