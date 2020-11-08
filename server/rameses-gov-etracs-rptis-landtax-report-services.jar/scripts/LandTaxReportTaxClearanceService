@@ -128,6 +128,7 @@ class LandTaxReportTaxClearanceService
     @ProxyMethod
     public def getOnlineIssuedClearance(params) {
         def cert = em_cert_online.find([refid: params.refid]).first()
+        if (!cert) cert = em_cert_online.find([objid: params.refid]).first()
         if (!cert) throw new Exception("Online certification payment does not exist or has been deleted.")
         def clearance = openClearance(cert.objid)
         clearance.qrcode = getQrCodeData(clearance)
