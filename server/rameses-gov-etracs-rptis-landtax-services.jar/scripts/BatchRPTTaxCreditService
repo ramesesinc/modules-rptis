@@ -44,6 +44,13 @@ class BatchRPTTaxCreditService
         batch.txnno = getNextSeries()
         batch.txndate = dtSvc.serverDate
         batch.amtapplied = 0
+
+        if (batch.validity) {
+            def validity = dtSvc.parse('yyyy-MM-dd', batch.validity)
+            if (validity < dtSvc.serverDate) {
+                throw new Exception('Validity Date should be greater than current date.')
+            }
+        }
     }
 
     @ProxyMethod

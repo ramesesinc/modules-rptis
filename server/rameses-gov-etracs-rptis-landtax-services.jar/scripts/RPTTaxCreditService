@@ -12,6 +12,9 @@ class RPTTaxCreditService
     @DataContext('rpttaxcredit')
     def em_credit
 
+    @DataContext('batch_rpttaxcredit')
+    def em_batch
+
     @DataContext('rptledger')
     def em_rptledger
 
@@ -200,14 +203,24 @@ class RPTTaxCreditService
         // cr items
         def params = [rptledgerid: credit.rptledger.objid, year: credit.info.creditedyear]
 
-        items += em_credit.getCreditYearPayments(params).each{
+        em_credit.getCreditYearPayments(params).each{
             def period = "";
             if (it.startqtr != it.endqtr) {
-                period = "Paid " + qtrs[it.startqtr] + " - " + qtrs[it.endqtr] + " quarters"
+                period = qtrs[it.startqtr] + " - " + qtrs[it.endqtr] + " quarters"
             } else {
-                period = " Paid " + qtrs[it.startqtr] + " quarter"
+                period = qtrs[it.startqtr] + " quarter"
             } 
-            it.particulars = "OR# " + it.receiptno + " " + period
+            it.particulars = "OR# " + it.receiptno + " " + period + " payment"
+
+            items << [ txndate: it.txndate, particulars: it.particulars, cr: it.cr ]
+
+            if (it.crdisc > 0) {
+                items << [ 
+                    txndate: it.txndate, 
+                    particulars: period + " Discount", 
+                    cr: it.crdisc 
+                ]
+            }
         }
 
         // tax credit
@@ -216,6 +229,15 @@ class RPTTaxCreditService
             particulars: credit.remarks,
             cr: credit.amount
         ]
+
+        // total availed discounts
+        if (credit.discapplied > 0) {
+            items << [
+                txndate: credit.txndate,
+                particulars: "Availed Discount",
+                dr: credit.discapplied
+            ]
+        }
 
         return items;
     }
@@ -445,7 +467,16 @@ class RPTTaxCreditService
             throw new Exception("Cannot credit zero amount.")
         }
         data.credit = numSvc.round(data.taxdue * params.rate / 100.0)
+        data.discountavailed = em_credit.findDiscountAvailed(filter).discount
+        if (data.discountavailed == null) data.discountavailed = 0.0
         return data;
+    }
+
+    @ProxyMethod
+    public void closeBatchTaxCredits(batch) {
+        em_credit.revertTaxCredits(batch)
+        em_credit.closeBatchTaxCredits(batch)
+        em_batch.find([objid: batch.objid]).update([state: "CLOSED"])
     }
 
     void buildTaxAdjustmentCreditInfo(credit) {
@@ -462,7 +493,8 @@ class RPTTaxCreditService
             rate: credit.info.rate,
         ])
         credit.amount = creditinfo.credit
-        credit.balance = credit.amount
+        credit.discapplied = creditinfo.discountavailed
+        credit.balance = credit.amount - credit.discapplied
         credit.amtapplied = 0
         credit.info = [
             creditedyear: credit.info.creditedyear,
