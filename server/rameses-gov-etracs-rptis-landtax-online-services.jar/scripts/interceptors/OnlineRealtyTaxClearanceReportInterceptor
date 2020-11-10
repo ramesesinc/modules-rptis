@@ -1,0 +1,14 @@
+import com.rameses.annotations.*;
+
+class OnlineRealtyTaxClearanceReportInterceptor {
+    @Service("LandTaxReportTaxClearanceService")
+	def clearanceSvc;
+	
+	@Before(pattern="JasperReportService.generateReport", index=100)
+	public void beforeGenerateReport(def evt) {
+		def arg = evt.args[0];
+		arg.reportid = "rpttaxclearance";
+		arg.template = "reports/rpt/taxclearance";
+		arg.data = clearanceSvc.getOnlineIssuedClearance(arg);
+	}
+}
