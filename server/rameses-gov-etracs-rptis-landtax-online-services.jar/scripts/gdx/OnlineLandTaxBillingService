@@ -41,7 +41,8 @@ class OnlineLandTaxBillingService
             toyear: rptledger.toyear,
             toqtr: rptledger.toqtr,
         ]
-        data.amount = bill.totals.total 
+        data.amount = bill.totals.total;
+        data.info.txntypename = 'Real Property Tax'; 
         return data;
     }
 

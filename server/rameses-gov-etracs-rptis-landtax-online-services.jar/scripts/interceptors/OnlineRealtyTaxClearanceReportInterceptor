@@ -4,11 +4,13 @@ class OnlineRealtyTaxClearanceReportInterceptor {
     @Service("LandTaxReportTaxClearanceService")
 	def clearanceSvc;
 	
-	@Before(pattern="JasperReportService.generateReport", index=100)
-	public void beforeGenerateReport(def evt) {
+	@After(pattern="FormReportService.getData", eval="#{args[0].reportid == 'rpttaxclearance'}", index=100)
+	public void afterGetData(def evt) {
 		def arg = evt.args[0];
-		arg.reportid = "rpttaxclearance";
-		arg.template = "reports/rpt/taxclearance";
-		arg.data = clearanceSvc.getOnlineIssuedClearance(arg);
+		def result = evt.result;
+
+		def data = clearanceSvc.getOnlineIssuedClearance([refid: arg.parameters.objid]);
+		data.template = "reports/rpt/taxclearance";
+		result.data = data;
 	}
 }

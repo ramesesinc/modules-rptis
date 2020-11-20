@@ -61,6 +61,19 @@ class RPTReceiptService
 	@DataContext('cashreceipt_rpt_share_forposting')
 	def em_cashreceipt_forposting
 
+    @DataContext('sys_org')
+    def em_org
+
+    @DataContext("city")
+    def em_city
+
+    @DataContext("province")
+    def em_prov
+
+    @DataContext("municipality")
+    def em_muni
+
+
 	@ProxyMethod
 	public def create(receipt) {
 		validateTotals(receipt)
@@ -334,27 +347,26 @@ class RPTReceiptService
 
 	@ProxyMethod
 	public void addLGUInfo( receipt ) {
-		def lgutype = env.ORGCLASS
-		if("province".equalsIgnoreCase(lgutype)) {
-			receipt.lguname = receipt._items.collect{[munidistrict: it.munidistrict]}.unique{it.munidistrict}*.munidistrict.join('/')
-			receipt.parentlguname = receipt._items[0].provcity 
-		} else if ("city".equalsIgnoreCase(lgutype)) { 
-			def i = receipt._items[0]
-			receipt.lguname = i.provcity  
-		} else {
-			def i = receipt._items[0]
-			receipt.lguname = i.munidistrict
-			receipt.parentlguname = i.provcity 
+		def lgu = em_city.find([root: 1]).first()
+        if (!lgu) lgu = em_prov.find([root: 1]).first()
+        if (!lgu) lgu = em_muni.find([root: 1]).first()
+        if (!lgu) throw new Exception("sys_org root lgu not specified.")
+
+        def org = em_org.find([objid: lgu.objid]).first()
+
+        def parentlgu = [:]
+        if (org.orgclass == "MUNICIPALITY") {
+			parentlgu = em_prov.find([objid: lgu.parentid]).first()
 		}
+
+        receipt.lguname = lgu.fullname
+        receipt.parentlguname = parentlgu.fullname
 	}
 
 	@ProxyMethod
 	public def getPaidLedgers(receipt) {
 		return em.getPaidLedgers(receipt)
 	}
-
-
-
 
 
 	/*======================================================
