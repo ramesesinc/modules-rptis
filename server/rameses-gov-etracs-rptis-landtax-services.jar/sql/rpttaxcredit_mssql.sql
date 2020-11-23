@@ -99,3 +99,21 @@ where rli.parentid = x.rptledgerid
 and rli.year = x.year 
 and rli.revtype = x.revtype 
 
+
+[findTaxDifference]
+select 
+	(
+		convert(varchar(4),year) + '-' +
+		case 
+			when fromqtr = 1 then '01'
+			when fromqtr = 2 then '04'
+			when fromqtr = 3 then '07'
+			else '10'
+		end + '-01'
+	) as txndate,
+	remarks as particulars,
+	sum(amount) as dr 
+from rptledger_item 
+where parentid = $P{objid}
+and taxdifference = 1 
+group by year, fromqtr, remarks
