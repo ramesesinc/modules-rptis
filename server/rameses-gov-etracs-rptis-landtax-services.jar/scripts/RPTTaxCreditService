@@ -222,14 +222,7 @@ class RPTTaxCreditService
                 ]
             }
         }
-
-        // tax credit
-        items << [
-            txndate: credit.txndate,
-            particulars: credit.remarks,
-            cr: credit.amount
-        ]
-
+        
         // total availed discounts
         if (credit.discapplied > 0) {
             items << [
@@ -239,7 +232,22 @@ class RPTTaxCreditService
             ]
         }
 
-        return items;
+        // tax credit
+        items << [
+            txndate: credit.txndate,
+            particulars: credit.remarks,
+            cr: credit.amount
+        ]
+
+        
+
+        //tax differences
+        def taxdiff = em_credit.findTaxDifference(credit.rptledger)
+        if (taxdiff.dr > 0) {
+            taxdiff.txndate = dtSvc.parse('yyyy-MM-dd', taxdiff.txndate)
+            items << taxdiff
+        }
+        return items
     }
 
     def qtrs = [
@@ -377,6 +385,7 @@ class RPTTaxCreditService
     }
 
     void postRptPayment(credit) {
+        println 'credit.items => ' + credit.items;
         def pmt = [objid: 'RP' + new java.rmi.server.UID()]
         pmt.type = 'credit'
         pmt.refid = credit.rptledger.objid
@@ -395,8 +404,10 @@ class RPTTaxCreditService
         pmt.voided = false
         pmt.fromyear = credit.items.first().year
         pmt.fromqtr = credit.items.first().qtr
+        if (!pmt.fromqtr) pmt.fromqtr = 1
         pmt.toyear = credit.items.last().year
         pmt.toqtr = credit.items.last().qtr
+        if (!pmt.toqtr) pmt.toqtr = 4
         em_rptpayment.create(pmt)
 
         credit.items.each{
@@ -512,5 +523,7 @@ class RPTTaxCreditService
             println 'Ignore: ' + e.message
         }
     }
+
+
 }
 
