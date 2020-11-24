@@ -56,6 +56,7 @@ class RPTTaxCreditModel extends CrudFormModel
         if (MsgBox.confirm('Apply credit?')){
             entity.putAll(svc.apply(entity));
             reloadEntity();
+            MsgBox.alert("Credit has been successfully applied.");
         }
     }
 

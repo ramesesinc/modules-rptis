@@ -177,7 +177,7 @@ public class RPTTaxCreditPage extends javax.swing.JPanel {
         xDateField1.setRequired(true);
         xFormPanel1.add(xDateField1);
 
-        xIntegerField1.setCaption("Credited Year");
+        xIntegerField1.setCaption("Tax Year");
         xIntegerField1.setDepends(new String[] {"entity.type"});
         xIntegerField1.setName("entity.info.creditedyear"); // NOI18N
         xIntegerField1.setRequired(true);

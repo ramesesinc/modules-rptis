@@ -332,7 +332,7 @@
                 </Component>
                 <Component class="com.rameses.rcp.control.XIntegerField" name="xIntegerField1">
                   <Properties>
-                    <Property name="caption" type="java.lang.String" value="Credited Year"/>
+                    <Property name="caption" type="java.lang.String" value="Tax Year"/>
                     <Property name="depends" type="[Ljava.lang.String;" editor="org.netbeans.beaninfo.editors.StringArrayEditor">
                       <StringArray count="1">
                         <StringItem index="0" value="entity.type"/>
