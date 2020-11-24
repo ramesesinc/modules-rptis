@@ -1,0 +1,16 @@
+<workunit>
+    <invokers>
+        <invoker type="occupancy_rpt_inspection:list:listActions" 
+            action="init"
+            caption="Create Building FAAS"
+            visibleWhen="#{selectedItem &amp;&amp; selectedItem.state == 'PENDING'}"
+            depends="selectedItem"
+            target="window"
+        />
+
+    </invokers>
+    <code class="rptis.obo.models.BuildingFaasCreateModel" />
+    <pages>
+        <page template="rptis.obo.views.BuildingFaasCreatePage" />
+    </pages>
+</workunit>

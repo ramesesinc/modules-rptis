@@ -1,0 +1,15 @@
+"entity.*" [true] {
+    enabled:true;
+}
+
+"entity.*" [occupancy.state != "PENDING"] {
+    enabled:false;
+}
+
+"submit|cancel" [occupancy.state == "PENDING"] {
+    visible:true;
+}
+
+"submit|cancel" [occupancy.state != "PENDING"] {
+    visible:false;
+}

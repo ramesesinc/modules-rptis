@@ -139,14 +139,12 @@ public class RPUBldgInfoGeneralPage extends javax.swing.JPanel {
         xTextField8.setCaption("Condominium Certificate of Title");
         xTextField8.setName("entity.rpu.condocerttitle"); // NOI18N
         xTextField8.setCaptionWidth(200);
-        xTextField8.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
         xTextField8.setPreferredSize(new java.awt.Dimension(0, 18));
         formPanel1.add(xTextField8);
 
         xDateField7.setCaption("Certificate of Completion Issuance");
         xDateField7.setName("entity.rpu.dtcertcompletion"); // NOI18N
         xDateField7.setCaptionWidth(200);
-        xDateField7.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
         xDateField7.setIndex(-6);
         xDateField7.setPreferredSize(new java.awt.Dimension(0, 18));
         formPanel1.add(xDateField7);
@@ -154,7 +152,6 @@ public class RPUBldgInfoGeneralPage extends javax.swing.JPanel {
         xDateField8.setCaption("Date of Certificate of Occupancy");
         xDateField8.setName("entity.rpu.dtcertoccupancy"); // NOI18N
         xDateField8.setCaptionWidth(200);
-        xDateField8.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
         xDateField8.setIndex(-6);
         xDateField8.setPreferredSize(new java.awt.Dimension(0, 18));
         formPanel1.add(xDateField8);
@@ -166,7 +163,6 @@ public class RPUBldgInfoGeneralPage extends javax.swing.JPanel {
         xTextArea2.setName("entity.rpu.additionalinfo"); // NOI18N
         xTextArea2.setWrapStyleWord(true);
         xTextArea2.setCaptionWidth(125);
-        xTextArea2.setCellPadding(new java.awt.Insets(0, 10, 0, 0));
         xTextArea2.setPreferredSize(new java.awt.Dimension(164, 30));
         jScrollPane2.setViewportView(xTextArea2);
 
@@ -272,14 +268,13 @@ public class RPUBldgInfoGeneralPage extends javax.swing.JPanel {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(formPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(formPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(formPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 38, Short.MAX_VALUE))
+                        .addComponent(formPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(formPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         add(jPanel3, java.awt.BorderLayout.CENTER);

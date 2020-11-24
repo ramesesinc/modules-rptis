@@ -1,8 +1,11 @@
-<workunit extends="com/rameses/menu/templates/MenuCategory.xml" context="rpt">
+<workunit extends="com/rameses/menu/templates/FXMenuCategory.xml" context="rpt" cols="2">
     <invokers>
         <invoker type="home.action" 
-                 caption="Assessor" icon="home/icons/assessor.png"
-                 visibleWhen="#{self.hasChildren('menucategory/rpt')==true}" 
-                 action="init"/>
+            action="init" 
+            role=".*"
+            caption="Assessor" 
+            icon="home/icons/assessor.png"
+            notificationid="rpt"
+        />
     </invokers> 
 </workunit>
