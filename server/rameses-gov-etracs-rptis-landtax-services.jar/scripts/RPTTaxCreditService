@@ -320,11 +320,6 @@ class RPTTaxCreditService
         credit.postingitems = items.findAll{ it.year >= credit.info.creditedyear}
         credit._hasarrears = items.find{it.year < credit.info.creditedyear}
         if (!credit.postingitems) return
-        credit.postingitems.each{
-            it.discount = 0.0
-            it.interest = 0.0
-            it.total = it.amount
-        }
         distributeCredit(credit)
         postRptPayment(credit)
     }
@@ -347,7 +342,7 @@ class RPTTaxCreditService
 
             def yritems = postingitems.findAll{it.year == yrs[idx]}
             def qtrs = yritems.qtr.unique().sort();
-
+            
             for (int q = 0; q < qtrs.size(); q++){
                 if (partialamt <= 0) break;
 
@@ -357,6 +352,7 @@ class RPTTaxCreditService
 
                     def items = qtritems.findAll{it.priority == priorities[i]}
                     def itemtotal = numSvc.round(items.total.sum())
+                    
                     if (partialamt >= itemtotal){
                         partialamt -= itemtotal 
                         credititems += items 
@@ -379,9 +375,40 @@ class RPTTaxCreditService
     }
 
     void generateBilling(credit) {
-        credit.rptledger = em_rptledger.find([objid: credit.rptledger.objid]).first()
-        def bill = billingSvc.generateBillByLedger(credit.rptledger)
-        credit.postingitems = bill.ledgers[0].postingitems
+        def bill = null;
+        try {
+            credit.rptledger = em_rptledger.find([objid: credit.rptledger.objid]).first()
+            bill = billingSvc.generateBillByLedger(credit.rptledger)
+            credit.postingitems = bill.ledgers[0].postingitems
+        } catch(e) {
+            if ( credit.type == TAX_ADJUSTMENT && ( !e.message || e.message.matches(".*unpaid.*") )) {
+                // credit for next year 
+                bill = billingSvc.initBill([:])
+                def rptledger = credit.rptledger
+                bill.taxpayer = rptledger.taxpayer
+                bill.ledgers = [rptledger]
+                bill._forpayment = true
+
+                //check if there is a ledger item lastyearpaid 
+                // if so post credit against it 
+
+                def ledgeritem = em_rptledger_item
+                                    .select("year")
+                                    .where(["parentid = :objid AND year <= :lastyearpaid", rptledger])
+                                    .orderBy("year")
+                                    .first()
+                if (ledgeritem) {
+                    bill.billtoyear = ledgeritem.year
+                } else if (credit.rptledger.lastqtrpaid == 4) {
+                    bill.billtoyear = credit.rptledger.lastyearpaid + 1
+                } else {
+                    bill.billtoyear = credit.rptledger.lastyearpaid
+                }
+
+                bill = billingSvc.generateBill(bill)
+                credit.postingitems = bill.ledgers[0].postingitems
+            }
+        }
     }
 
     void postRptPayment(credit) {
