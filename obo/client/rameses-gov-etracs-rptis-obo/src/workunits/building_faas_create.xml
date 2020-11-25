@@ -1,11 +1,51 @@
 <workunit>
     <invokers>
-        <invoker type="occupancy_rpt_inspection:list:listActions" 
+        <invoker type="vw_occupancy_rpu:list:listActions" 
             action="init"
             caption="Create Building FAAS"
-            visibleWhen="#{selectedItem &amp;&amp; selectedItem.state == 'PENDING'}"
+            visibleWhen="#{selectedItem &amp;&amp; selectedItem.state == 0}"
             depends="selectedItem"
             target="window"
+        />
+        
+        <invoker type="vw_occupancy_rpu:form:formActions" 
+            action="init"
+            caption="Create Building FAAS"
+            visibleWhen="#{entity.state == 0}"
+            depends="selectedItem"
+            target="window"
+        />
+
+        <invoker 
+            type="formActions" 
+            action="_close" 
+            caption="Cancel" 
+            visibleWhen="#{entity.state == 0}"
+            immediate="true"
+        />
+        <invoker 
+            type="formActions" 
+            action="_close" 
+            caption="Close" 
+            visibleWhen="#{entity.state != 0}"
+        />
+        <invoker 
+            type="formActions" 
+            action="submit" 
+            caption="Submit" 
+            visibleWhen="#{entity.state == 0}"
+        />
+        <invoker 
+            type="formActions" 
+            action="viewLandFaas" 
+            caption="View Land FAAS" 
+            immediate="true"
+        />
+        <invoker 
+            type="formActions" 
+            action="viewBuildingFaas" 
+            caption="View Building FAAS" 
+            visibleWhen="#{entity.state != 0}"
         />
 
     </invokers>

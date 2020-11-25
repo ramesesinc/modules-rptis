@@ -39,8 +39,6 @@ public class BuildingFaasCreatePage extends javax.swing.JPanel {
         xLabel10 = new com.rameses.rcp.control.XLabel();
         xComboBox1 = new com.rameses.rcp.control.XComboBox();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
-        xButton1 = new com.rameses.rcp.control.XButton();
-        xButton2 = new com.rameses.rcp.control.XButton();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setPadding(new java.awt.Insets(25, 10, 10, 10));
@@ -49,35 +47,35 @@ public class BuildingFaasCreatePage extends javax.swing.JPanel {
         xFormPanel1.setCaptionWidth(120);
 
         xLabel1.setCaption("Building Permit No.");
-        xLabel1.setExpression("#{occupancy.bldgpermitno}");
+        xLabel1.setExpression("#{entity.bldgpermitno}");
         xLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         xLabel1.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel1);
 
         xLabel2.setCaption("Project Title");
-        xLabel2.setExpression("#{occupancy.projecttitle}");
+        xLabel2.setExpression("#{entity.title}");
         xLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         xLabel2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel2);
 
         xLabel3.setCaption("Applicant Name");
-        xLabel3.setExpression("#{occupancy.applicant.name}");
+        xLabel3.setExpression("#{entity.applicant.name}");
         xLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel3);
 
         xLabel4.setCaption("Address");
-        xLabel4.setExpression("#{occupancy.applicant.address}");
+        xLabel4.setExpression("#{entity.applicant.address.text}");
         xLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         xLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel4);
 
         xDecimalField1.setCaption("Project Cost");
-        xDecimalField1.setName("occupancy.projectcost"); // NOI18N
+        xDecimalField1.setName("occupancy.actualprojectcost"); // NOI18N
         xDecimalField1.setEnabled(false);
         xDecimalField1.setPreferredSize(new java.awt.Dimension(120, 20));
         xFormPanel1.add(xDecimalField1);
@@ -105,7 +103,7 @@ public class BuildingFaasCreatePage extends javax.swing.JPanel {
 
         xComboBox1.setCaption("Land RPU");
         xComboBox1.setExpression("#{item.tdno}");
-        xComboBox1.setItems("occupancy.rpus");
+        xComboBox1.setItems("rpus");
         xComboBox1.setName("entity.landfaas"); // NOI18N
         xComboBox1.setAllowNull(false);
         xComboBox1.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -117,28 +115,16 @@ public class BuildingFaasCreatePage extends javax.swing.JPanel {
         xIntegerField1.setRequired(true);
         xFormPanel2.add(xIntegerField1);
 
-        xButton1.setMnemonic('c');
-        xButton1.setName("cancel"); // NOI18N
-        xButton1.setText("Cancel");
-
-        xButton2.setName("submit"); // NOI18N
-        xButton2.setText("Submit");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(xFormPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(xFormPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,17 +132,12 @@ public class BuildingFaasCreatePage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(xButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(42, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.rameses.rcp.control.XButton xButton1;
-    private com.rameses.rcp.control.XButton xButton2;
     private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XDecimalField xDecimalField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;

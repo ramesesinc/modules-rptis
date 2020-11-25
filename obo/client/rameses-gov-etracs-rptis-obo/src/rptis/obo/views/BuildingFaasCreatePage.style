@@ -1,15 +1,11 @@
-"entity.*" [true] {
+"entity.(taxpayer|landfaas|suffix)" [true] {
     enabled:true;
 }
 
-"entity.*" [occupancy.state != "PENDING"] {
+"entity.taxpayer" [entity.applicant?.profileid != null] {
     enabled:false;
 }
 
-"submit|cancel" [occupancy.state == "PENDING"] {
-    visible:true;
-}
-
-"submit|cancel" [occupancy.state != "PENDING"] {
-    visible:false;
+"entity.(landfaas|suffix)" [entity.state != 0] {
+    enabled:false;
 }

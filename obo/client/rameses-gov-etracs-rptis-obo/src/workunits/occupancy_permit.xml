@@ -1,0 +1,20 @@
+<workunit extends="com/rameses/seti2/templates/CrudForm.xml"
+    schemaName="vw_occupancy_rpu" 
+    windowTitle="Occupancy Permit"
+    allowCreate="false" 
+    allowEdit="false" 
+    allowDelete="false"
+>
+    <invokers>
+        <invoker type="vw_occupancy_rpu:open"  
+            action="open" caption="Occupancy Permit"  
+            role="OBO"
+        />
+
+    </invokers>
+    <pages>
+        <page template="rptis.obo.views.OccupancyPermitPage" />
+    </pages>
+        
+        
+</workunit>
