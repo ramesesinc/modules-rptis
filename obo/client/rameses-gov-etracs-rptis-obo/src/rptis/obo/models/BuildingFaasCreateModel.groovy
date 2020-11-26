@@ -6,40 +6,35 @@ import com.rameses.osiris2.client.*
 class BuildingFaasCreateModel {
     @Caller
     def caller;
-
+    
     @Service(value="RptOboPluginService", connection="rpt")
     def svc;
 
     @FormTitle
-    String title = "Occupancy Building FAAS";
+    String title = "Occupancy Building FAAS (Create)";
     
     def entity;
     def rpus;
     
     void init() {
-        entity = entity ? entity : caller.selectedItem;
         updateTaxpayer();
         rpus = svc.getRpus([bldgappid: entity.bldgappid]);
     }
-
-    // def open() {
-    //     def wu = entity.state == 0 ? 'faas:open' : 'faas:open:closedwf';
-    //     return Inv.lookupOpener(wu, [entity: [objid: entity.faasid]]);
-    // }
-    
-    def submit() {
+   
+    def createFaas() {
         if (MsgBox.confirm("Submit and create building FAAS?")) {
             def bldgfaas = svc.createFaas(entity);
             entity.state = 1;
             entity.faasid = bldgfaas.objid;
-            def invoker = Inv.lookupOpener('faas:open', [entity: bldgfaas]);
-            invoker.target = "self";
-            return invoker;
+            caller.openFaas(bldgfaas);
+            return "_close";
         }
     }
 
     def viewLandFaas() {
-        return Inv.lookupOpener('faas:open:closedwf', [entity: [objid: entity.landfaas.refid]]);
+        def invoker = Inv.lookupOpener('faas:open:closedwf', [entity: [objid: entity.landfaas.refid]]);
+        invoker.target = "popup";
+        return invoker;
     }
     
     def viewBuildingFaas() {
@@ -59,4 +54,5 @@ class BuildingFaasCreateModel {
             ]
         }
     }
+
 }

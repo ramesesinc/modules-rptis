@@ -5,41 +5,8 @@
             caption="Create Building FAAS"
             visibleWhen="#{entity.state == 0}"
             depends="selectedItem"
-            target="window"
+            target="popup"
         />
-
-        <invoker 
-            type="formActions" 
-            action="_close" 
-            caption="Cancel" 
-            visibleWhen="#{entity.state == 0}"
-            immediate="true"
-        />
-        <invoker 
-            type="formActions" 
-            action="_close" 
-            caption="Close" 
-            visibleWhen="#{entity.state != 0}"
-        />
-        <invoker 
-            type="formActions" 
-            action="submit" 
-            caption="Submit" 
-            visibleWhen="#{entity.state == 0}"
-        />
-        <invoker 
-            type="formActions" 
-            action="viewLandFaas" 
-            caption="View Land FAAS" 
-            immediate="true"
-        />
-        <invoker 
-            type="formActions" 
-            action="viewBuildingFaas" 
-            caption="View Building FAAS" 
-            visibleWhen="#{entity.state != 0}"
-        />
-
     </invokers>
     <code class="rptis.obo.models.BuildingFaasCreateModel" />
     <pages>

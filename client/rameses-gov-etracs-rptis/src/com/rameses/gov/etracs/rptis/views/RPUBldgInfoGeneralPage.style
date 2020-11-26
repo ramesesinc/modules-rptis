@@ -31,3 +31,6 @@
     enabled:false;
 }
 
+"entity.rpu.(permitno|permitdate|occpermitno|dtcertoccupancy)" [entity.rpu.isonline == 1 || entity.rpu.isonline == true] {
+    enabled:false;
+}

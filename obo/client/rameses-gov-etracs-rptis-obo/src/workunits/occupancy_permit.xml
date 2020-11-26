@@ -2,13 +2,19 @@
     schemaName="vw_occupancy_rpu" 
     windowTitle="Occupancy Permit"
     allowCreate="false" 
-    allowEdit="#{entity.state == 0}" 
+    allowEdit="false" 
     allowDelete="false"
 >
     <invokers>
         <invoker type="vw_occupancy_rpu:open"  
             action="open" caption="Occupancy Permit"  
             role="OBO"
+        />
+        
+        <invoker type="formActions" 
+            action="viewBldgFaas" 
+            caption="View Building FAAS"
+            visibleWhen="#{entity.faasid != null}"
         />
     </invokers>
     <code class="rptis.obo.models.OccupancyPermitModel" />
