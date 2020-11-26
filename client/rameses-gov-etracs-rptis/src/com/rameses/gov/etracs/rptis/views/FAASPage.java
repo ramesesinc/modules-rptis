@@ -253,12 +253,12 @@ public class FAASPage extends javax.swing.JPanel {
         );
         xSubFormPanel1Layout.setVerticalGroup(
             xSubFormPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 235, Short.MAX_VALUE)
+            .addGap(0, 255, Short.MAX_VALUE)
         );
 
         add(xSubFormPanel1, java.awt.BorderLayout.CENTER);
 
-        jPanel6.setPreferredSize(new java.awt.Dimension(553, 75));
+        jPanel6.setPreferredSize(new java.awt.Dimension(553, 55));
         jPanel6.setLayout(new java.awt.BorderLayout());
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();

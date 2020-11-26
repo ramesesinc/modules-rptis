@@ -35,3 +35,6 @@ _build
 /client/rameses-gov-etracs-rptis-sync/build/
 /client/rameses-gov-etracs-rptis/build/
 /client/rameses-gov-etracs-rptis/dist/
+/obo/client/rameses-gov-etracs-rptis-obo/nbproject/private/
+/obo/client/rameses-gov-etracs-rptis-obo/build/
+/obo/client/rameses-gov-etracs-rptis-obo/dist/

@@ -1,0 +1,17 @@
+<workunit extends="com/rameses/seti2/templates/CrudList.xml" 
+    schemaName="vw_occupancy_rpu" 
+    allowCreate="false"
+    allowDelete="false"
+    cols="bldgpermitno,bldgpermitdtissued,occpermitno,inspectionschedule,title,applicant.name,projectcost"
+    hiddenCols="state,applicant.profileid,applicant.address.text,actualprojectcost,faasid,bldgappid"
+    role="OBO"
+>
+    <invokers>
+        <invoker folderid="/menucategory/rpt-obo/obo" caption="For Occupancy Inspection"
+            action="init" 
+            role="OBO" 
+            notificationid="occupancy_rpu"
+            index="10"
+        />
+    </invokers>
+</workunit>

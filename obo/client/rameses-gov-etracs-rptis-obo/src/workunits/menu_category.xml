@@ -1,11 +1,11 @@
-<workunit extends="com/rameses/menu/templates/FXMenuCategory.xml" context="rpt" cols="2">
+<workunit extends="com/rameses/menu/templates/FXMenuCategory.xml" context="rpt-obo" cols="2">
     <invokers>
         <invoker type="home.action" 
             action="init" 
             role=".*"
-            caption="Assessor" 
+            caption="Assessor - OBO" 
             icon="home/icons/assessor.png"
-            notificationid="rpt"
+            notificationid="obo-rpt"
         />
     </invokers> 
 </workunit>
