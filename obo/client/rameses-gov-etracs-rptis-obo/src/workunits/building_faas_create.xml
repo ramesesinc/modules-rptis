@@ -1,13 +1,5 @@
 <workunit>
     <invokers>
-        <invoker type="vw_occupancy_rpu:list:listActions" 
-            action="init"
-            caption="Create Building FAAS"
-            visibleWhen="#{selectedItem &amp;&amp; selectedItem.state == 0}"
-            depends="selectedItem"
-            target="window"
-        />
-        
         <invoker type="vw_occupancy_rpu:form:formActions" 
             action="init"
             caption="Create Building FAAS"

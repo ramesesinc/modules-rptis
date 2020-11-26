@@ -2,7 +2,7 @@
     schemaName="vw_occupancy_rpu" 
     windowTitle="Occupancy Permit"
     allowCreate="false" 
-    allowEdit="false" 
+    allowEdit="#{entity.state == 0}" 
     allowDelete="false"
 >
     <invokers>
@@ -10,11 +10,10 @@
             action="open" caption="Occupancy Permit"  
             role="OBO"
         />
-
     </invokers>
+    <code class="rptis.obo.models.OccupancyPermitModel" />
     <pages>
         <page template="rptis.obo.views.OccupancyPermitPage" />
     </pages>
-        
-        
+                
 </workunit>

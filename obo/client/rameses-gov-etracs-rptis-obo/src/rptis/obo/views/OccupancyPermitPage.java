@@ -35,6 +35,11 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
         xLabel4 = new com.rameses.rcp.control.XLabel();
         xLabel5 = new com.rameses.rcp.control.XLabel();
         xLabel6 = new com.rameses.rcp.control.XLabel();
+        xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
+        xLookupField1 = new com.rameses.rcp.control.XLookupField();
+        xLabel10 = new com.rameses.rcp.control.XLabel();
+        xComboBox1 = new com.rameses.rcp.control.XComboBox();
+        xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setPadding(new java.awt.Insets(25, 10, 10, 10));
@@ -87,32 +92,76 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
         xLabel6.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel6);
 
+        com.rameses.rcp.control.border.XTitledBorder xTitledBorder2 = new com.rameses.rcp.control.border.XTitledBorder();
+        xTitledBorder2.setPadding(new java.awt.Insets(25, 10, 10, 10));
+        xTitledBorder2.setTitle("Building FAAS Information");
+        xFormPanel2.setBorder(xTitledBorder2);
+        xFormPanel2.setCaptionWidth(120);
+
+        xLookupField1.setCaption("Property Owner");
+        xLookupField1.setExpression("#{entity.taxpayer.name}");
+        xLookupField1.setHandler("entity:lookup");
+        xLookupField1.setName("entity.taxpayer"); // NOI18N
+        xLookupField1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xLookupField1.setRequired(true);
+        xFormPanel2.add(xLookupField1);
+
+        xLabel10.setCaption("Address");
+        xLabel10.setExpression("#{entity.taxpayer.addresstext}");
+        xLabel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        xLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        xLabel10.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel2.add(xLabel10);
+
+        xComboBox1.setCaption("Land RPU");
+        xComboBox1.setExpression("#{item.tdno}");
+        xComboBox1.setItems("rpus");
+        xComboBox1.setName("entity.landfaas"); // NOI18N
+        xComboBox1.setAllowNull(false);
+        xComboBox1.setPreferredSize(new java.awt.Dimension(0, 20));
+        xComboBox1.setRequired(true);
+        xFormPanel2.add(xComboBox1);
+
+        xIntegerField1.setCaption("Suffix");
+        xIntegerField1.setName("entity.suffix"); // NOI18N
+        xIntegerField1.setRequired(true);
+        xFormPanel2.add(xIntegerField1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(xFormPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(74, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.rameses.rcp.control.XComboBox xComboBox1;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
+    private com.rameses.rcp.control.XFormPanel xFormPanel2;
+    private com.rameses.rcp.control.XIntegerField xIntegerField1;
     private com.rameses.rcp.control.XLabel xLabel1;
+    private com.rameses.rcp.control.XLabel xLabel10;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;
     private com.rameses.rcp.control.XLabel xLabel5;
     private com.rameses.rcp.control.XLabel xLabel6;
     private com.rameses.rcp.control.XLabel xLabel7;
+    private com.rameses.rcp.control.XLookupField xLookupField1;
     // End of variables declaration//GEN-END:variables
 }
