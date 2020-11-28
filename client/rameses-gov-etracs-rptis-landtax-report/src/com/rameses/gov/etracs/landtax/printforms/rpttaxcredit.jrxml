@@ -295,12 +295,14 @@
 						y="47"
 						width="69"
 						height="13"
-						key="staticText-71"/>
+						key="staticText-71">
+							<printWhenExpression><![CDATA[$F{type} == "TAX_ADJUSTMENT"]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>
 					</textElement>
-				<text><![CDATA[Credit Year:]]></text>
+				<text><![CDATA[Tax Year:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -321,7 +323,9 @@
 						y="47"
 						width="126"
 						height="13"
-						key="textField-55"/>
+						key="textField-55">
+							<printWhenExpression><![CDATA[$F{type} == "TAX_ADJUSTMENT"]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="8"/>

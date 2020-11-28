@@ -148,15 +148,15 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="29"
-						y="5"
+						y="0"
 						width="464"
-						height="13"
+						height="18"
 						key="textField-5"/>
 					<box></box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Realtx Tax Receivable Eca Resources " + $P{TDNO}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Realty Tax Receivable Eca Resources " + $P{TDNO}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
@@ -168,7 +168,8 @@
 						y="0"
 						width="69"
 						height="15"
-						key="textField"/>
+						key="textField"
+						isPrintRepeatedValues="false"/>
 					<box></box>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Tahoma" size="9"/>
@@ -283,6 +284,7 @@
 					<box rightPadding="3">					<pen lineWidth="0.0" lineStyle="Double"/>
 					<topPen lineWidth="0.5" lineStyle="Double"/>
 					<leftPen lineWidth="0.0" lineStyle="Double"/>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
 					<rightPen lineWidth="1.0" lineStyle="Double"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -302,6 +304,8 @@
 					<box rightPadding="3">					<pen lineWidth="0.0" lineStyle="Double"/>
 					<topPen lineWidth="0.5" lineStyle="Double"/>
 					<leftPen lineWidth="0.5" lineStyle="Double"/>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+					<rightPen lineWidth="0.0" lineStyle="Double"/>
 </box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
