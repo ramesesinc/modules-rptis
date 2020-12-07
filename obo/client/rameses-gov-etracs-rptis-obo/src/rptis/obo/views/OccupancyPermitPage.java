@@ -27,18 +27,17 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
     private void initComponents() {
 
         xFormPanel1 = new com.rameses.rcp.control.XFormPanel();
-        xFormPanel3 = new com.rameses.rcp.control.XFormPanel();
-        xLabel10 = new com.rameses.rcp.control.XLabel();
         xLabel14 = new com.rameses.rcp.control.XLabel();
         xLabel1 = new com.rameses.rcp.control.XLabel();
         xDateField1 = new com.rameses.rcp.control.XDateField();
         xLabel9 = new com.rameses.rcp.control.XLabel();
         xDateField2 = new com.rameses.rcp.control.XDateField();
+        xLabel15 = new com.rameses.rcp.control.XLabel();
+        xLabel16 = new com.rameses.rcp.control.XLabel();
         xLabel5 = new com.rameses.rcp.control.XLabel();
         xLabel6 = new com.rameses.rcp.control.XLabel();
         xLabel2 = new com.rameses.rcp.control.XLabel();
         xLabel3 = new com.rameses.rcp.control.XLabel();
-        xLabel7 = new com.rameses.rcp.control.XLabel();
         xLabel4 = new com.rameses.rcp.control.XLabel();
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xLabel12 = new com.rameses.rcp.control.XLabel();
@@ -52,26 +51,11 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
         xFormPanel1.setBorder(xTitledBorder1);
         xFormPanel1.setCaptionWidth(130);
 
-        xFormPanel3.setCaptionWidth(130);
-        xFormPanel3.setOrientation(com.rameses.rcp.constant.UIConstants.HORIZONTAL);
-        xFormPanel3.setPadding(new java.awt.Insets(0, 0, 0, 0));
-        xFormPanel3.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel3.setShowCaption(false);
-
-        xLabel10.setCaption("Txn Mode:");
-        xLabel10.setExpression("#{entity.txnmode}");
-        xLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        xLabel10.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel3.add(xLabel10);
-
         xLabel14.setCaption("Application Type:");
-        xLabel14.setExpression("#{entity.txnmode}");
-        xLabel14.setCaptionWidth(100);
+        xLabel14.setExpression("#{entity.apptype}");
         xLabel14.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         xLabel14.setPreferredSize(new java.awt.Dimension(100, 20));
-        xFormPanel3.add(xLabel14);
-
-        xFormPanel1.add(xFormPanel3);
+        xFormPanel1.add(xLabel14);
 
         xLabel1.setCaption("Building Permit No.");
         xLabel1.setExpression("#{entity.bldgpermitno}");
@@ -99,6 +83,17 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
         xDateField2.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xDateField2);
 
+        xLabel15.setCaption("Project Title");
+        xLabel15.setExpression("#{entity.title}");
+        xLabel15.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
+        xLabel15.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLabel15);
+
+        xLabel16.setCaption("Project Location");
+        xLabel16.setExpression("#{entity.location.text}");
+        xLabel16.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xLabel16);
+
         xLabel5.setCaption("Applicant");
         xLabel5.setExpression("#{entity.applicant.name}");
         xLabel5.setCellPadding(new java.awt.Insets(10, 0, 0, 0));
@@ -121,13 +116,9 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
         xLabel3.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel3);
 
-        xLabel7.setCaption("Location");
-        xLabel7.setExpression("#{entity.location.text}");
-        xLabel7.setPreferredSize(new java.awt.Dimension(0, 20));
-        xFormPanel1.add(xLabel7);
-
         xLabel4.setCaption("Actual Project Cost");
         xLabel4.setExpression("#{entity.actualprojectcost}");
+        xLabel4.setNumberFormat("#,##0.00");
         xLabel4.setPreferredSize(new java.awt.Dimension(0, 20));
         xFormPanel1.add(xLabel4);
 
@@ -164,7 +155,7 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(xFormPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(xFormPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE))
                 .addContainerGap(51, Short.MAX_VALUE))
@@ -173,10 +164,10 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xFormPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(xFormPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -184,19 +175,18 @@ public class OccupancyPermitPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XDateField xDateField2;
     private com.rameses.rcp.control.XFormPanel xFormPanel1;
     private com.rameses.rcp.control.XFormPanel xFormPanel2;
-    private com.rameses.rcp.control.XFormPanel xFormPanel3;
     private com.rameses.rcp.control.XLabel xLabel1;
-    private com.rameses.rcp.control.XLabel xLabel10;
     private com.rameses.rcp.control.XLabel xLabel11;
     private com.rameses.rcp.control.XLabel xLabel12;
     private com.rameses.rcp.control.XLabel xLabel13;
     private com.rameses.rcp.control.XLabel xLabel14;
+    private com.rameses.rcp.control.XLabel xLabel15;
+    private com.rameses.rcp.control.XLabel xLabel16;
     private com.rameses.rcp.control.XLabel xLabel2;
     private com.rameses.rcp.control.XLabel xLabel3;
     private com.rameses.rcp.control.XLabel xLabel4;
     private com.rameses.rcp.control.XLabel xLabel5;
     private com.rameses.rcp.control.XLabel xLabel6;
-    private com.rameses.rcp.control.XLabel xLabel7;
     private com.rameses.rcp.control.XLabel xLabel8;
     private com.rameses.rcp.control.XLabel xLabel9;
     // End of variables declaration//GEN-END:variables

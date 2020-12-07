@@ -4,7 +4,7 @@
             action="init" 
             role=".*"
             caption="Assessor - OBO" 
-            icon="home/icons/obo.png"
+            icon="home/icons/obo-rpt.png"
             notificationid="obo-rpt"
         />
     </invokers> 

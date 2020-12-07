@@ -2,7 +2,7 @@
     schemaName="vw_occupancy_rpu" 
     allowCreate="false"
     allowDelete="false"
-    cols="bldgpermitno,bldgpermitdtissued,occpermitno,inspectionschedule,title,applicant.name,projectcost"
+    cols="bldgpermitno,bldgpermitdtissued,occpermitno,inspectiondate,title,applicant.name,actualprojectcost"
     hiddenCols="state,applicant.profileid,applicant.address.text,actualprojectcost,faasid,bldgappid"
     role="OBO"
 >
