@@ -55,6 +55,7 @@ class OnlineRealtyTaxClearanceService {
         clearance.billitems = [
             [item: acct, amount: clearance.amount]
         ]
+        clearance.txntypename = 'Realty Tax Clearance';
         return clearance
     }
 
