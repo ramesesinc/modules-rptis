@@ -3,6 +3,7 @@
     windowTitle="Building Permits Issued"
     allowCreate="false" 
     allowDelete="false" 
+    customFilter="NOT(controlid IS NULL)"
     cols="controlno,title,projectcost,location.text"
 >
     <invokers>
