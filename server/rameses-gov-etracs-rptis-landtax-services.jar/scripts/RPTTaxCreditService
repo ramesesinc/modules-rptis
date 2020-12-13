@@ -402,6 +402,7 @@ class RPTTaxCreditService
                     bill.billtoyear = ledgeritem.year
                 } else if (credit.rptledger.lastqtrpaid == 4) {
                     bill.billtoyear = credit.rptledger.lastyearpaid + 1
+                    bill.billtoqtr = 3
                 } else {
                     bill.billtoyear = credit.rptledger.lastyearpaid
                 }
