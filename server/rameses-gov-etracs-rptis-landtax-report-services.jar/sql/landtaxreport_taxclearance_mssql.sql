@@ -99,7 +99,7 @@ from rptcertificationitem rci
     LEFT JOIN cashreceipt_void cv ON rp.receiptid = cv.receiptid 
 where rci.rptcertificationid = $P{rptcertificationid}
     and rl.objid = $P{rptledgerid}
-  and (ri.year = $P{year} and ri.qtr <= $P{qtr}) 
+  and (ri.year = $P{year} and (ri.qtr <= $P{qtr} or ri.qtr is null)) 
   and cv.objid is null 
 GROUP BY rl.objid, rp.receiptno, rp.receiptdate, ri.year
 
