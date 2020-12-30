@@ -409,6 +409,7 @@ class RPTLedgerService
             ledger.advancebill = false 
             ledger.taxable = util.toBoolean(ledger.taxable, true)
             em_rptledger.update(ledger)
+            em_rptledger_item.where('parentid = :parentid AND year >= :effectivityyear AND amtpaid = 0', [parentid: ledger.objid, effectivityyear: faas.effectivityyear]).delete()
             createLedgerFaas(ledger, faas).each{
                 postLedgerFaas(it) 
             }
