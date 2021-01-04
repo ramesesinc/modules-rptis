@@ -19,12 +19,47 @@ class RPTLedgerModel
     String title = 'Create Province Ledger';
     
     def mode; 
+    def createMode = 'online'
     def msg; 
     def faas;
     def entity;
+    def rputypes = ['land', 'bldg', 'mach', 'planttree', 'misc'];
+    def quarters = [1,2,3,4];
+
+    @PropertyChangeListener
+    def listener = [
+        'faas.rp.barangay': {
+            if (faas.rp.barangay) {
+                faas.fullpin = faas.rp.barangay.pin;
+            } else {
+                faas.fullpin = null;
+            }
+            binding.refresh("faas.fullpin");
+        },
+        'faas.taxpayer': {
+            if (faas.taxpayer) {
+                faas.owner = [name: faas.taxpayer.name];
+            } 
+            binding.refresh("faas.owner.*");
+        },
+        'faas.rpu.(classification|totalarea.*)' : {
+            updateAreaValues();
+        }
+    ]
+
+    void updateAreaValues() {
+        if (faas.rpu.classification.name == 'AGRICULTURAL') {
+            faas.rpu.totalareasqm = faas.rpu.totalareaha * 10000
+        } else {
+            faas.rpu.totalareaha = faas.rpu.totalareasqm / 10000
+        }
+    }
     
-    void init() {
+    def init() {
+        faas = [owner:[:], administrator: [:], rpu: [:], rp: [:]];
         mode = 'init';
+        createMode = svc.getCreateMode();
+        return createMode == 'online' ?  'default'  : 'manual';
     }
     
     def onComplete = {
@@ -87,10 +122,19 @@ class RPTLedgerModel
     ] as Runnable 
     
     def create(){
-        if (MsgBox.confirm("Create ledger?")){
-            new Thread(task).start();
+        if (createMode == 'online') {
+            if (MsgBox.confirm('Create ledger?')){
+                new Thread(task).start();
+            }
+            return null;
+        } else {
+            def ledger = svc.createManualLedger(faas);
+            faas = [owner:[:], administrator: [:], rpu: [:], rp: [:]];
+            binding.refresh('faas.*');
+            def invoker = Inv.lookupOpener('rptledger:open', [entity: ledger]);
+            invoker.target = 'self';
+            return invoker;
         }
-        return null;
     }
     
     def getLookupFaas(){
@@ -116,5 +160,27 @@ class RPTLedgerModel
         if ( bean == null ) return false; 
         return bean.metaClass.respondsTo(bean, property ); 
     }   
+
+
+    def getMunicipalities() {
+        return svc.getMunicipalities();
+    }
+
+    def getBarangays() {
+        if (faas.lgu && faas.lgu.objid) {
+            return svc.getBarangays(faas.lgu);
+        }
+        return [];
+    }
+
+    def getTxntypes() {
+        return svc.getTxnTypes();
+    }
+
+    def getClassifications() {
+        return svc.getClassifications();
+    }
+
+    
     
 }

@@ -22,6 +22,57 @@ class ProvinceRPTLedgerService
 	@Service('RPTLedgerService')
 	def ledgerSvc 
 
+    @Service('Var')
+    def var
+    
+    @Service('RPTUtil')
+    def util
+
+    @DataContext("municipality")
+    def em_municipality
+    
+    @DataContext("barangay")
+    def em_barangay
+
+    @DataContext("propertyclassification")
+    def em_classification
+
+
+    @ProxyMethod 
+    public def getCreateMode()  {
+        def mode = util.toBoolean(var.landtax_create_ledger_as_online, true);
+        if (mode) {
+            return 'online'
+        }
+        return 'manual'
+    }
+
+    @ProxyMethod
+    public def getMunicipalities() {
+        return em_municipality.select('objid,name,indexno,pin')
+                    .where('1=1')
+                    .orderBy('indexno')
+                    .list()
+    }
+
+    @ProxyMethod
+    public def getBarangays(lgu) {
+        return em_barangay.select('objid,name,indexno,pin')
+                    .find([parentid: lgu.objid])
+                    .orderBy('indexno')
+                    .list()
+    }
+
+    @ProxyMethod
+    public def getTxnTypes() {
+        return faasSvc.getTxnTypes()
+    }
+
+    @ProxyMethod
+    public def getClassifications() {
+        return em_classification.find([state: 'APPROVED']).orderBy('orderno').list()
+    }
+
 
 	@ProxyMethod
 	public def createLedger( faas ) {
@@ -41,6 +92,20 @@ class ProvinceRPTLedgerService
             
         return ledgerSvc.postNewLedger(faas);
 	}
+
+    @ProxyMethod
+    public def createManualLedger(faas) {
+        try {
+            faas.lguid = faas.lgu.objid
+            faas.datacapture = true
+            faas.taxable = true
+            def ledger = ledgerSvc.postNewLedger(faas)
+            return ledgerSvc.open(ledger)
+        } catch (e ) {
+            e.printStackTrace()
+            throw e
+        }
+    }
 
 
 	@ProxyMethod

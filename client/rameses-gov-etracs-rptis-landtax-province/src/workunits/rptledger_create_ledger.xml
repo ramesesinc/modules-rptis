@@ -3,7 +3,8 @@
     <invokers>
         <invoker type="rptledger:list:listActions" 
                  action="init" caption="Create Ledger" 
-                 mnemonic="u" role="LANDTAX" index="20" />
+                 mnemonic="u" role="LANDTAX" index="20"
+                 target="window" />
         
         <invoker type="formActions" action="_close" caption="Close" immediate="true" 
                  visibleWhen="#{mode=='init'}" />
@@ -14,5 +15,6 @@
     <code class="com.rameses.gov.etracs.rptis.landtax.province.models.RPTLedgerModel"/>
     <pages>
         <page template="com.rameses.gov.etracs.rptis.landtax.province.views.NewLedgerPage"/>
+        <page name="manual" template="com.rameses.gov.etracs.rptis.landtax.province.views.NewManualLedgerPage"/>
     </pages>
 </workunit>

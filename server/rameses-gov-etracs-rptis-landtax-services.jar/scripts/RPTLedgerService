@@ -598,7 +598,9 @@ class RPTLedgerService
     =============================================================*/
 
     def createLedgerInfo(faas){
-        faas.rp = em_realproperty.find([objid:faas.rp.objid]).first()
+        if (faas.rp.objid) {
+            faas.rp = em_realproperty.find([objid:faas.rp.objid]).first()
+        }
         def ledger = [
             objid                   : faas.objid,
             state                   : 'PENDING',

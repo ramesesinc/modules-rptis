@@ -35,8 +35,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="xPanel2" min="-2" pref="35" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="xFormPanel1" min="-2" pref="175" max="-2" attributes="0"/>
-              <EmptySpace pref="33" max="32767" attributes="0"/>
+              <Component id="xFormPanel1" pref="197" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
