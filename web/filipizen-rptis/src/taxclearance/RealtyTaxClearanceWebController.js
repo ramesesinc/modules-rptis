@@ -69,6 +69,7 @@ const RealtyTaxClearanceWebController = ({
     moveNextStep,
     movePrevStep,
     cancelPayment,
+    emailRequired: true,
     title: "Online Realty Tax Clearance",
   };
 

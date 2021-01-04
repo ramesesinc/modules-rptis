@@ -86,7 +86,8 @@ const OnlineBilling = ({
     onCancel(0);
   }
 
-  const visible = contact.email === bill.email;
+  const visibleContactInfo = !contact.email ? false : contact.email === bill.email;
+
   return (
     <Card style={{maxWidth: 500}}>
       <Title>{title}</Title>
@@ -100,8 +101,8 @@ const OnlineBilling = ({
         </Panel>
         <Text name='tdno' caption='TD No.' readOnly />
         <Text name='fullpin' caption='PIN' readOnly />
-        <Text name='taxpayer.name' caption='Property Owner' readOnly visibleWhen={visible} />
-        <Text name='taxpayer.address' caption='Owner Address' readOnly visibleWhen={visible} />
+        <Text name='taxpayer.name' caption='Property Owner' readOnly visibleWhen={visibleContactInfo} />
+        <Text name='taxpayer.address' caption='Owner Address' readOnly visibleWhen={visibleContactInfo} />
         <Text name='billperiod' caption='Bill Period' readOnly />
         <Decimal name='amount' caption='Amount Due' readOnly textAlign="left" />
       </FormPanel>
