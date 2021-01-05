@@ -23,6 +23,8 @@
         
         <invoker type="historyActions" action="addFaas" caption="Add" 
                 mnemonic="A" visibleWhen="#{mode=='edit' &amp;&amp; entity.state=='PENDING'}" />
+        <invoker type="historyActions" action="addMixUseFaas" caption="Add Mix Use" 
+                mnemonic="A" visibleWhen="#{showMixUse == true}" />
         <invoker type="historyActions" action="editFaas" caption="Edit" 
                 mnemonic="E" visibleWhen="#{mode=='edit' &amp;&amp; entity.state=='PENDING' &amp;&amp; selectedItem &amp;&amp; selectedItem.systemcreated==0}" />
         <invoker type="historyActions" action="removeFaas" caption="Delete" 

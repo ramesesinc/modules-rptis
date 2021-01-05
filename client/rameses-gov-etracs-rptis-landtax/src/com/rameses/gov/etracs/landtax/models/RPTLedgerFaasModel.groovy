@@ -17,14 +17,24 @@ public class RPTLedgerFaasModel
     def ledgerfaas;
     def mode;
     def faastype;
+    def faas;
+    def mixUse = false;
     
     
     void create() {
-        ledgerfaas = createLedgerFaas();
-        if (ledger.faases){
-            def lastitem = ledger.faases.last();
-            ledgerfaas.toyear = (lastitem.fromqtr == 1 ? lastitem.fromyear - 1 : lastitem.fromyear);
-            ledgerfaas.toqtr = (lastitem.fromqtr == 1 ? 4 : lastitem.fromqtr - 1);
+        if (mixUse) {
+            ledgerfaas = [:];
+            ledgerfaas.putAll(faas);
+            ledgerfaas.objid = 'LI' + new java.rmi.server.UID();
+            ledgerfaas.state = 'PENDING';
+            ledgerfaas.taxable = true;
+        } else {
+            ledgerfaas = createLedgerFaas();
+            if (ledger.faases){
+                def lastitem = ledger.faases.last();
+                ledgerfaas.toyear = (lastitem.fromqtr == 1 ? lastitem.fromyear - 1 : lastitem.fromyear);
+                ledgerfaas.toqtr = (lastitem.fromqtr == 1 ? 4 : lastitem.fromqtr - 1);
+            }
         }
         mode = 'create';
         faastype = 'arrear';

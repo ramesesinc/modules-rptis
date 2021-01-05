@@ -12,6 +12,9 @@ class RPTLedgerModel extends CrudFormModel
 {
     @Service('RPTLedgerService')
     def svc;
+
+    @Service('Var')
+    def var;
     
     boolean showConfirm = false;
 
@@ -73,6 +76,16 @@ class RPTLedgerModel extends CrudFormModel
 
     def addFaas() {
         return InvokerUtil.lookupOpener('rptledgerfaas:create',[onadd:onaddItem, ledger:entity] )
+    }
+
+    def addMixUseFaas() {
+        def params = [
+            onadd: onaddItem, 
+            ledger: entity,
+            faas: selectedItem,
+            mixUse: true
+        ]
+        return InvokerUtil.lookupOpener('rptledgerfaas:create', params)
     }
     
     def onupdateItem = { item ->
@@ -140,5 +153,18 @@ class RPTLedgerModel extends CrudFormModel
             return false;
         }
         return true;
+    }
+
+    def getShowMixUse() {
+        if (!selectedItem) return false;
+        if (entity.state != 'PENDING') return false;
+        if (mode != 'edit') return false;
+        return toBoolean(var.get("rptledger_post_ledgerfaas_by_actualuse"), false);
+    }
+
+    def toBoolean(val, defValue) {
+        if (val == null) return defValue;
+        if (val instanceof Boolean) return val;
+        return ('1/y/yes/t/true'.indexOf(val.toString().toLowerCase()) >= 0 ) 
     }
 }

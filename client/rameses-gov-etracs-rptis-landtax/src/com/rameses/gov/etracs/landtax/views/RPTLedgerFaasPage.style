@@ -14,3 +14,7 @@
 "ledgerfaas.(toyear|toqtr)"[createtype == null || createtype != 'newfaas']{
     enabled:false;
 }
+
+"ledgerfaas.(tdno|txntype|classification|fromyear|fromqtr|toyear|toqtr)" [mixUse == true] {
+    enabled:false;
+}
