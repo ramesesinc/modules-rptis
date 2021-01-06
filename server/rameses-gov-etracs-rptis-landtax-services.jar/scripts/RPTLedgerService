@@ -684,6 +684,7 @@ class RPTLedgerService
                 newlf.actualuse = it.actualuse
                 list << newlf
             }
+            if (!list) list << lf
             return list
         } else {
             return [lf]
