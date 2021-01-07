@@ -70,10 +70,4 @@ class RealPropertyCollectionReportModel extends com.rameses.gov.etracs.rpt.repor
         entity.reporttype = 'standard';
         svc.generateRPTCollectionReport(entity, asyncHandler);
     } 
-    
-    // SubReport[] getSubReports() { 
-    //     return [ 
-    //         new SubReport("rptcollectionitem", reportPath + "rptcollectionitem.jasper")
-    //     ] as SubReport[]; 
-    // } 
 } 

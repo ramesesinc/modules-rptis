@@ -222,7 +222,7 @@ abstract class AsyncReportController
     }
     
     List getMonths(){
-        return getMonthsByQtr();
+        return dtSvc.getMonths(); 
     }
     
     List getClassifications(){
