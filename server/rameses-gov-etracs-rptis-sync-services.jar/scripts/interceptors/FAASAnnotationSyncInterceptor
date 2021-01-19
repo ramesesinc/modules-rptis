@@ -50,17 +50,16 @@ class FAASAnnotationSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('FAASANNOTATION-.*')}") 
-    public void sendData( evt ) {
+    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('FAASANNOTATION-.*')}") 
+    public void writeToFile( evt ) {
         def syncdata = evt.result 
-        annotationSyncSvc.send(syncdata)
+        annotationSyncSvc.writeToFile(syncdata)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAASANNOTATION-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
         annotationSyncSvc.receive(syncdata)
-        evt.result.status = 'OK'
     }
 
 

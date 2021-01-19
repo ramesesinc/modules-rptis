@@ -28,8 +28,8 @@ class FAASAnnotationSyncService
 
 	def getActions(){
 		return  [
-	    	'FAASANNOTATION-POST': [send: getAnnotation, receive: postAnnotation, schedule: scheduleAnnotation],
-	    	'FAASANNOTATION-CANCELLED': [send: getCancelAnnotation, receive: postCancelAnnotation, schedule: scheduleCancelAnnotation],
+	    	'FAASANNOTATION-POST': [write: writeAnnotation, receive: postAnnotation, schedule: scheduleAnnotation],
+	    	'FAASANNOTATION-CANCELLED': [write: writeCancelAnnotation, receive: postCancelAnnotation, schedule: scheduleCancelAnnotation],
 	    ]
 	}
 
@@ -92,22 +92,22 @@ class FAASAnnotationSyncService
 	*
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void send(syncdata) {
-		rptSync.send(syncdata, getActions())
+	public void writeToFile(syncdata) {
+		rptSync.writeToFile(syncdata, getActions())
 	}
 
 	@ProxyMethod
 	public void receive(syncdata) {
 		rptSync.receive(syncdata, getActions())
 	}
-
 	/*---------------------------------------------------------
 	*
 	* SUPPORT METHODS
 	*
 	---------------------------------------------------------*/
-	def getAnnotation = {syncdata ->
-		return svc.open([objid: syncdata.refid])
+	def writeAnnotation = {syncdata, writer ->
+		def annotation = svc.open([objid: syncdata.refid])
+		writer.write(annotation)
 	}
 
 	def postAnnotation = {syncdata ->
@@ -116,8 +116,9 @@ class FAASAnnotationSyncService
 	}
 
 
-	def getCancelAnnotation = {syncdata ->
-		return cancelSvc.open([objid: syncdata.refid])
+	def writeCancelAnnotation = {syncdata, writer ->
+		def cancelannotation =  cancelSvc.open([objid: syncdata.refid])
+		writer.write(cancelannotation)
 	}
 
 	def postCancelAnnotation = {syncdata ->

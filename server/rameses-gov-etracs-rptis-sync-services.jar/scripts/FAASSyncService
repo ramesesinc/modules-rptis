@@ -61,18 +61,18 @@ class FAASSyncService
 
 	def getActions(){
 		return  [
-	    	'FAAS-DATA': [send: getFaasData, receive: saveFaasData, schedule: scheduleFaas],
-	    	'FAAS-DATACAPTURE': [send: getFaasData, receive: saveCapturedData, schedule: scheduleDataCapturedFAAS],
-	    	'FAAS-DELETE': [send: getFaas, receive: deleteFaas, schedule: scheduleDeleteFaas],
-	    	'FAAS-REVERT-TO-INTERIM': [send: getFaas, receive: deleteFaas, schedule: scheduleRevertToInterim],
-	    	'FAAS-AFFECTED-FAAS': [send: getFaasData, receive: saveAffectedFaas],
-	    	'FAAS-PARENT-FAAS': [send: getFaasData, receive: saveParentFaas],
-	    	'FAAS-STEWARDSHIP-FAAS': [send: getStewardshipFaas, receive: saveStewardshipFaas],
-	    	'FAAS-APPROVAL': [send: {}, receive: {}, schedule: scheduleOnlineApprovedFAAS],
-	    	'FAAS-REMOTE-TXN': [send: getFaasData, receive: postRemoteFaas],
-	    	'FAAS-REMOTE-APPROVAL': [send: getFaasData, receive: postRemoteApproval],
-	    	'FAAS-PROVINCE-APPROVAL': [send: getFaasData, receive: postFaasForApproval, schedule: scheduleProvinceApproval],
-	    	'FAAS-REQUIREMENTS': [send: {}, receive: {}, schedule: scheduleRequirements],
+	    	'FAAS-DATA': [write: writeFaasData, receive: saveFaasData, schedule: scheduleFaas],
+	    	'FAAS-DATACAPTURE': [write: writeFaasData, receive: saveCapturedData, schedule: scheduleDataCapturedFAAS],
+	    	'FAAS-DELETE': [write: writeFaas, receive: deleteFaas, schedule: scheduleDeleteFaas],
+	    	'FAAS-REVERT-TO-INTERIM': [write: writeFaas, receive: deleteFaas, schedule: scheduleRevertToInterim],
+	    	'FAAS-AFFECTED-FAAS': [write: writeFaasData, receive: saveAffectedFaas],
+	    	'FAAS-PARENT-FAAS': [write: writeFaasData, receive: saveParentFaas],
+	    	'FAAS-STEWARDSHIP-FAAS': [write: getStewardshipFaas, receive: saveStewardshipFaas],
+	    	'FAAS-APPROVAL': [write: {}, receive: {}, schedule: scheduleOnlineApprovedFAAS],
+	    	'FAAS-REMOTE-TXN': [write: writeFaasData, receive: postRemoteFaas],
+	    	'FAAS-REMOTE-APPROVAL': [write: writeFaasData, receive: postRemoteApproval],
+	    	'FAAS-PROVINCE-APPROVAL': [write: writeFaasData, receive: postFaasForApproval, schedule: scheduleProvinceApproval],
+	    	'FAAS-REQUIREMENTS': [write: {}, receive: {}, schedule: scheduleRequirements],
 	    ]
 	}
 
@@ -87,31 +87,21 @@ class FAASSyncService
 		def action= getActions()[data.action]
 		if (!action) throw new Exception('Scheduler not found for action ' + data.action)
 
-		def faas = faasSvc.openFaas([objid: data.objid])
+		def faas = em_faaslist.select('objid,lguid').find([objid: data.objid]).first()
 		data.remote = rptSync.getRemoteOrg(faas)
         def syncdata = syncSvc.create(data)
 
 		action.schedule(syncdata, faas)
 	}
 
-	def createItem(item, syncdata, action, async) {
-		return [
-			refid: item.objid, 
+	def createSyncItem(entity, syncdata, action) {
+		def item = [
+			refid: entity.objid, 
 			reftype: syncdata.reftype, 
 			refno: syncdata.refno, 
-			async: (async == null ? syncdata.async : async),
-			action: (action ? action : syncdata.action),
-			info: (syncdata.info ? syncdata.info : [:])
+			action: (action ? action : syncdata.action)
 		]
-	}
-
-	def createSyncItem(entity, syncdata, action) {
-		return createSyncItem(entity, syncdata, action, null) 
-	}
-
-	def createSyncItem(entity, syncdata, action, async) {
-		def item = createItem(entity, syncdata, action, async)
-        syncSvc.createItem(syncdata, item)
+        return syncSvc.createItem(syncdata, item)
 	}
 
 	def scheduleDataCapturedFAAS = {syncdata, faas ->
@@ -187,12 +177,12 @@ class FAASSyncService
 	
 	/*---------------------------------------------------------
 	*
-	* SEND/RECEIVE HANDLERS 
+	* UPLOAD/DOWNLOAD HANDLERS 
 	*
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void send(syncdata) {
-		rptSync.send(syncdata, getActions())
+	public void writeToFile(syncdata) {
+		rptSync.writeToFile(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -214,11 +204,11 @@ class FAASSyncService
 	def saveCapturedData = {syncdata ->
 		def faas = syncdata.data
 		saveFaas(faas)
-		if ('PROVINCE'.equalsIgnoreCase(syncdata.remote.orgclass)){
+		if ('PROVINCE'.equalsIgnoreCase(syncdata.parent.remote.orgclass)){
 			if (checkManuallyApprovedTransaction(faas)) { 
 				faasSvc.approveFaasByMunicipality(faas)
 			}
-		} else if ('MUNICIPALITY'.equalsIgnoreCase(syncdata.remote.orgclass)) {
+		} else if ('MUNICIPALITY'.equalsIgnoreCase(syncdata.parent.remote.orgclass)) {
 			faasSvc.approveFaasByRemote(faas)
 			postLedger(faas)
 		}
@@ -368,7 +358,11 @@ class FAASSyncService
 		return [objid: syncdata.refid]
 	}
 
-	def getFaasData = {syncdata -> 
+	def writeFaas = {syncdata, writer ->
+		return writer.write(getFaas(syncdata))
+	}
+
+	def writeFaasData = {syncdata, writer -> 
 		def faas = faasSvc.openFaas(getFaas(syncdata))
 		faas.rpu.rpumaster = rpuSvc.openRpuMaster(faas.rpu)
 		faas.taxpayer = entitySvc.open(faas.taxpayer)
@@ -376,7 +370,7 @@ class FAASSyncService
 		faas.signatory = faasSvc.findSignatory(faas)
 		faas.sketch = faasSvc.openSketch(faas)
 		faas._options = syncdata.info 
-		return faas 
+		writer.write(faas)
 	}
 
 	def getStewardshipFaas = {syncdata ->

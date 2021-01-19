@@ -66,13 +66,13 @@ class SubdivisionSyncService
     
     def getActions(){
 		return  [
-	    	'SUBDIVISION-FORAPPROVAL': [send: getForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
-	    	'SUBDIVISION-REQUIREMENTS': [send: {}, receive: {}, schedule: scheduleRequirements],
-	    	'SUBDIVISION-FAAS-APPROVED': [send: getApprovedFaas, receive: postApprovedFaas, schedule: {}],
-	    	'SUBDIVISION-APPROVED': [send: getApprovedSubdivision, receive: postApprovedSubdivision, schedule: scheduleSubdivisionApproval],
-	    	'SUBDIVISION-DISAPPROVAL': [send: getDisapprovedSubdivision, receive: postDisapprovedSubdivision, schedule: scheduleSubdivisionDisapproval],
-	    	'SUBDIVISION-CANCELLED-FAAS': [send: getCancelledFaas, receive: saveCancelledFaas, schedule: {}],
-	    	'SUBDIVISION-CANCELLED-FAAS-APPROVED': [send: getApprovedCancelledFaas, receive: postApprovedCancelledFaas, schedule: {}],
+	    	'SUBDIVISION-FORAPPROVAL': [write: writeForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
+	    	'SUBDIVISION-REQUIREMENTS': [write: {}, receive: {}, schedule: scheduleRequirements],
+	    	'SUBDIVISION-FAAS-APPROVED': [write: writeApprovedFaas, receive: postApprovedFaas, schedule: {}],
+	    	'SUBDIVISION-APPROVED': [write: writeApprovedSubdivision, receive: postApprovedSubdivision, schedule: scheduleSubdivisionApproval],
+	    	'SUBDIVISION-DISAPPROVAL': [write: writeDisapprovedSubdivision, receive: postDisapprovedSubdivision, schedule: scheduleSubdivisionDisapproval],
+	    	'SUBDIVISION-CANCELLED-FAAS': [write: writeCancelledFaas, receive: saveCancelledFaas, schedule: {}],
+	    	'SUBDIVISION-CANCELLED-FAAS-APPROVED': [write: writeApprovedCancelledFaas, receive: postApprovedCancelledFaas, schedule: {}],
 	    ]
 	}
 
@@ -187,8 +187,8 @@ class SubdivisionSyncService
 	* SEND/RECEIVE HANDLERS 
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void send(syncdata) {
-		rptSync.send(syncdata, getActions())
+	public void writeToFile(syncdata) {
+		rptSync.writeToFile(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -197,13 +197,12 @@ class SubdivisionSyncService
 	}
 
 
-
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def getForApproval = {syncdata ->
+	def writeForApproval = {syncdata, writer ->
 		def subdivision = [objid: syncdata.refid]
-		return subdivisionSupport.getForApproval(subdivision)
+		writer.write(subdivisionSupport.getForApproval(subdivision))
 	}
 
 	def postForApproval = {syncdata ->
@@ -212,6 +211,10 @@ class SubdivisionSyncService
 		startWorkflow(syncdata, subdivision)
 	}
 
+
+	def writeApprovedFaas = {syncdata, writer ->
+		writer.write(getApprovedFaas(syncdata))
+	}
 
 	def getApprovedFaas = {syncdata ->
 		def faas = [objid: syncdata.refid]
@@ -224,9 +227,9 @@ class SubdivisionSyncService
 
 	}
 
-	def getApprovedSubdivision = {syncdata ->
+	def writeApprovedSubdivision = {syncdata, writer ->
 		def subdivision = [objid: syncdata.refid]
-		return svc.open(subdivision)
+		writer.write(svc.open(subdivision))
 	}
 
 	def postApprovedSubdivision = {syncdata ->
@@ -235,14 +238,18 @@ class SubdivisionSyncService
 
 	}
 	
-	def getDisapprovedSubdivision = {syncdata ->
-		return  [objid: syncdata.refid]
+	def writeDisapprovedSubdivision = {syncdata, writer ->
+		writer.write([objid: syncdata.refid])
 	}
 
 	def postDisapprovedSubdivision = {syncdata ->
 		def subdivision = syncdata.data 
 		subdivisionSupport.postDisapprovedSubdivision(subdivision)
 
+	}
+
+	def writeCancelledFaas = {syncdata, writer ->
+		writer.write(getCancelledFaas(syncdata))
 	}
 
 	def getCancelledFaas = {syncdata ->
@@ -261,10 +268,10 @@ class SubdivisionSyncService
 		em_cancelledfaas_signatory.save(cancelledfaas.signatories)
 	}
 
-	def getApprovedCancelledFaas = {syncdata ->
+	def writeApprovedCancelledFaas = {syncdata, writer ->
 		def cancelledfaas = getCancelledFaas(syncdata)
 		cancelledfaas.faas = getApprovedFaas([refid: cancelledfaas.faasid])
-		return cancelledfaas 
+		writer.write(cancelledfaas) 
 	}
 
 	def postApprovedCancelledFaas = {syncdata ->

@@ -40,37 +40,37 @@ class RPTSyncService
     @DataContext('dbimage_chunk')
     def em_image_chunk
 
-    @DataContext('syncdata_forsync')
+    @DataContext('rpt_syncdata_forsync')
     def em_forsync
 
 
 
 
-	@ProxyMethod
-	public def syncMaster(params) {
-		util.required('schemaname', params.schemaname)
+	// @ProxyMethod
+	// public def syncMaster(params) {
+	// 	util.required('schemaname', params.schemaname)
 
-		params.reftype = params.schemaname
-		params.action = 'SYNCMASTER'
-		params.remote = getProvinceOrg()
+	// 	params.reftype = params.schemaname
+	// 	params.action = 'SYNCMASTER'
+	// 	params.remote = getProvinceOrg()
 
-		def data = syncSvc.send(params)
-		return masterSvc.sync(params.schemaname, data.items)
-	}
+	// 	def data = syncSvc.send(params)
+	// 	return masterSvc.sync(params.schemaname, data.items)
+	// }
 
-	@ProxyMethod
-	public def syncSetting(params) {
-		util.required('schemaname', params.schemaname)
+	// @ProxyMethod
+	// public def syncSetting(params) {
+	// 	util.required('schemaname', params.schemaname)
 
-		params.reftype = params.schemaname
-		params.action = 'SYNC-REVISION-SETTING'
-		params.orgid = env.ORGID
-		params.orgcode = env.ORGCODE 
-		params.remote = getProvinceOrg()
+	// 	params.reftype = params.schemaname
+	// 	params.action = 'SYNC-REVISION-SETTING'
+	// 	params.orgid = env.ORGID
+	// 	params.orgcode = env.ORGCODE 
+	// 	params.remote = getProvinceOrg()
 		
-		def data = syncSvc.send(params)
-		return revisionSvc.sync(params.schemaname, data.settings)
-	}
+	// 	def data = syncSvc.send(params)
+	// 	return revisionSvc.sync(params.schemaname, data.settings)
+	// }
 
 
 	@ProxyMethod
@@ -118,20 +118,17 @@ class RPTSyncService
 		return remote
 	}
 
-	/*------------------------------------------
-	*
-	* SEND / RECEIVE SUPPORT
-	*
-	------------------------------------------*/
+	// /*------------------------------------------
+	// *
+	// * UPLOAD/DOWNLOAD SUPPORT
+	// *
+	// ------------------------------------------*/
 	@ProxyMethod
-	public void send(syncdata, actions) {
-		def action = syncdata.action.toUpperCase()
-
+	public void writeToFile(params, actions) {
+		def action = params.item.action.toUpperCase()
 		def handler = actions[action]
-		if (!handler) throw new Exception('Send action ' + action + ' is not supported.')
-
-		def data = handler.send(syncdata)
-		syncSvc.send2(syncdata, data)
+		if (!handler) throw new Exception('writeToFile action ' + action + ' is not supported.')
+		handler.write(params.item, params.writer)
 	}
 
 	@ProxyMethod
@@ -141,7 +138,7 @@ class RPTSyncService
 
 		def handler = actions[action]
 		if (!handler) throw new Exception('Receive action ' + action + ' is not supported.')
-
+		syncdata.sender = syncdata.parent.sender
 		handler.receive(syncdata)
 	}
 
@@ -203,20 +200,9 @@ class RPTSyncService
 			reftype: syncdata.reftype, 
 			refno: syncdata.refno, 
 			async: false,
-			action: 'RPT-IMAGE-HEADER'
+			action: 'RPT-IMAGE'
 		]
     	syncSvc.createItem(syncdata, item)
-
-		em_image_chunk.find([parentid: header.objid]).list().each{chunk->
-			item = [
-				refid: chunk.objid, 
-				reftype: syncdata.reftype, 
-				refno: syncdata.refno, 
-				async: true,
-				action: 'RPT-IMAGE-CHUNK'
-			]
-        	syncSvc.createItem(syncdata, item)
-		}
 	}
 
 }

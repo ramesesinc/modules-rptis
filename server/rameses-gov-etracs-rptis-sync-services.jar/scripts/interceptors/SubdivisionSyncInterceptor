@@ -75,17 +75,16 @@ class SubdivisionSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('SUBDIVISION-.*')}") 
-    public void sendData( evt ) {
+    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('SUBDIVISION-.*')}") 
+    public void writeToFile( evt ) {
         def syncdata = evt.result 
-        subdivisionSync.send(syncdata)
+        subdivisionSync.writeToFile(syncdata)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('SUBDIVISION-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
         subdivisionSync.receive(syncdata)
-        evt.result.status = 'OK'
     }
 
 

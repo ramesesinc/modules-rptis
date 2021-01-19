@@ -71,13 +71,13 @@ class FAASSyncInterceptor
     }   
 
 
-    // @After(pattern="FAASService.deleteFaas") 
-    // public void createDeleteFaas( evt ) {
-    //     def faas = evt.args[0]
-    //     if (faas) {
-    //         syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
-    //     }
-    // }
+    @After(pattern="FAASService.deleteFaas") 
+    public void createDeleteFaas( evt ) {
+        def faas = evt.args[0]
+        if (faas) {
+            syncSvc.createDataForSync(getDataForSync(faas, 'FAAS-DELETE'))
+        }
+    }
 
     @After(pattern="FAASService.revertToInterim") 
     public void createRevertToInterim( evt ) {
@@ -96,20 +96,17 @@ class FAASSyncInterceptor
 
     /*---------------------------------------------------------
     *
-    * SEND/RECEIVE HANDLERS
+    * UPLOAD/DOWNLOAD SUPPORT
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('FAAS-.*')}") 
-    public void sendData( evt ) {
-        def syncdata = evt.result 
-        faasSync.send(syncdata)
+    @After(pattern="RPTMainSyncService.writeToFile", eval="#{args[0].item.action.matches('FAAS-.*')}") 
+    public void writeToFile( evt ) {
+        faasSync.writeToFile(evt.args[0])
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAAS-.*')}") 
     public void receiveData(evt){
-        def syncdata = evt.args[0]
-        faasSync.receive(syncdata)
-        evt.result.status = 'OK'
+        faasSync.receive(evt.args[0])
     }
 
 
@@ -118,9 +115,9 @@ class FAASSyncInterceptor
         data.objid = faas.objid
         data.reftype = 'faas'
         data.refno = (faas.tdno ? faas.tdno : faas.utdno)
-        data.orgid = env.ORGID
         data.action = action
-        data.info = [:]
+        data.orgid = env.ORGID
+        data.info = faas.info
         return data
     }
 }

@@ -43,17 +43,16 @@ class FAASChangeInfoSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('CHANGEINFO-FAAS-.*')}") 
-    public void sendData( evt ) {
+    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('CHANGEINFO-FAAS-.*')}") 
+    public void writeToFile( evt ) {
         def syncdata = evt.result 
-        changeInfoSync.send(syncdata)
+        changeInfoSync.writeToFile(syncdata)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('CHANGEINFO-FAAS-.*')}") 
     public void receiveData(evt){
         def syncdata = evt.args[0]
         changeInfoSync.receive(syncdata)
-        evt.result.status = 'OK'
     }
 
 

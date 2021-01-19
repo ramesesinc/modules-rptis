@@ -22,7 +22,7 @@ class FAASChangeInfoSyncService
 
 	def getActions(){
 		return  [
-	    	'CHANGEINFO-FAAS-POST': [send: getChangeInfo, receive: postChangeInfo, schedule: schedulePostChangeInfo],
+	    	'CHANGEINFO-FAAS-POST': [write: writeChangeInfo, receive: postChangeInfo, schedule: schedulePostChangeInfo],
 	    ]
 	}
 
@@ -90,8 +90,8 @@ class FAASChangeInfoSyncService
 	*
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void send(syncdata) {
-		rptSync.send(syncdata, getActions())
+	public void writeToFile(syncdata) {
+		rptSync.writeToFile(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -105,13 +105,13 @@ class FAASChangeInfoSyncService
 	* SUPPORT METHODS
 	*
 	---------------------------------------------------------*/
-	def getChangeInfo = {syncdata ->
+	def writeChangeInfo = {syncdata, writer ->
 		def changeinfo = svc.open([objid: syncdata.refid])
 		if (changeinfo.redflagid) {
 			def redflag = redFlagSvc.open([objid: changeinfo.redflagid])
 			changeinfo = svc.openByRedFlag(redflag)
 		}
-		return changeinfo
+		writer.write(changeinfo)
 	}
 
 	def postChangeInfo = {syncdata ->

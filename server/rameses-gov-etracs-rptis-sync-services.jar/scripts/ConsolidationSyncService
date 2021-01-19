@@ -44,10 +44,10 @@ class ConsolidationSyncService
 
 	def getActions(){
 		return  [
-	    	'CONSOLIDATION-FORAPPROVAL': [send: getForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
-	    	'CONSOLIDATION-REQUIREMENTS': [send: {}, receive: {}, schedule: scheduleRequirements],
-	    	'CONSOLIDATION-FAAS-APPROVED': [send: getApprovedFaas, receive: postApprovedFaas, schedule: {}],
-	    	'CONSOLIDATION-APPROVED': [send: getApprovedConsolidation, receive: postApprovedConsolidation, schedule: scheduleConsolidationApproval],
+	    	'CONSOLIDATION-FORAPPROVAL': [write: writeForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
+	    	'CONSOLIDATION-REQUIREMENTS': [write: {}, receive: {}, schedule: scheduleRequirements],
+	    	'CONSOLIDATION-FAAS-APPROVED': [write: writeApprovedFaas, receive: postApprovedFaas, schedule: {}],
+	    	'CONSOLIDATION-APPROVED': [write: writeApprovedConsolidation, receive: postApprovedConsolidation, schedule: scheduleConsolidationApproval],
 	    ]
 	}
 
@@ -137,8 +137,8 @@ class ConsolidationSyncService
 	* SEND/RECEIVE HANDLERS 
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void send(syncdata) {
-		rptSync.send(syncdata, getActions())
+	public void writeToFile(syncdata) {
+		rptSync.writeToFile(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -146,12 +146,13 @@ class ConsolidationSyncService
 		rptSync.receive(syncdata, getActions())
 	}
 
+
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def getForApproval = {syncdata ->
+	def writeForApproval = {syncdata, writer ->
 		def consolidation = [objid: syncdata.refid]
-		return consolidationSupport.getForApproval(consolidation)
+		writer.write(consolidationSupport.getForApproval(consolidation))
 	}
 
 	def postForApproval = {syncdata ->
@@ -160,9 +161,9 @@ class ConsolidationSyncService
 		startWorkflow(syncdata, consolidation)
 	}
 
-	def getApprovedFaas = {syncdata ->
+	def writeApprovedFaas = {syncdata, writer ->
 		def faas = [objid: syncdata.refid]
-		return consolidationSupport.getApprovedFaas(faas)
+		writer.write(consolidationSupport.getApprovedFaas(faas))
 	}
 
 	def postApprovedFaas = {syncdata ->
@@ -171,9 +172,9 @@ class ConsolidationSyncService
 
 	}
 
-	def getApprovedConsolidation = {syncdata ->
+	def writeApprovedConsolidation = {syncdata, writer ->
 		def consolidation = [objid: syncdata.refid]
-		return consolidationSupport.getApprovedConsolidation(consolidation)
+		writer.write(consolidationSupport.getApprovedConsolidation(consolidation))
 	}
 
 	def postApprovedConsolidation = {syncdata ->
