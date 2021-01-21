@@ -11,7 +11,7 @@ public abstract class AbstractSyncModel
     @Binding
     def binding;
     
-    @Service('RPTSyncService')
+    @Service('RPTSyncDataService')
     def syncSvc;
     
     @Caller

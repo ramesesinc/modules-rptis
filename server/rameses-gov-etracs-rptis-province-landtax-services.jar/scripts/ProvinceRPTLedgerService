@@ -7,13 +7,13 @@ class ProvinceRPTLedgerService
 	@Env 
 	def env 
 
-	@Service('RPTMainSyncService')
+	@Service('RPTMainSyncDataService')
 	def syncSvc
 
-    @Service('RPTLedgerSyncService')
+    @Service('RPTLedgerSyncDataService')
     def  ledgerSyncSvc
 
-    @Service('RPTLedgerSyncSupportService')
+    @Service('RPTLedgerSyncDataSupportService')
     def supportSvc     
 
 	@Service('FAASService')

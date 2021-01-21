@@ -1,0 +1,35 @@
+NEW SYNC FACILITY
+=======================
+
+PROVINCE/MUNI SERVER
+========================
+    1. Add server libs
+        - slf4j-api-1.7.25.jar
+        - httpcore5-5.0.2.jar
+        - httpclient5-5.0.3.jar
+        - rameses-fileupload.jar
+
+    2. Add and configure "fileupload" connection
+
+        provider=fileupload
+        host=192.168.1.9
+        port=7000
+        channel=000
+        downloadDir=d:/Temp/000/downloads
+        uploadDir=d:/Temp/000/uploads
+        debug=true
+
+    3. Register sys_var 
+        * assesser_new_sync_lgus
+
+GDX-CLIENT
+=============================
+    1. Add default connection (etracs)
+
+        provider=script
+        app.host=localhost:8070
+        app.cluster=osiris3
+        app.context=etracs25
+
+   2. Update gdx libs
+        - rameses-gdx-coordinator.jar
