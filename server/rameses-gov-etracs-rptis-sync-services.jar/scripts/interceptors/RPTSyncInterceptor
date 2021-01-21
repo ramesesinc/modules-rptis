@@ -31,13 +31,12 @@ class RPTSyncInterceptor
     *  EXAMINATIONS SUPPORT
     * 
     ------------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('RPT-EXAMINATION')}") 
-    public void writeExamination( evt ) {
-        def syncdata = evt.result.item 
-        def writer = evt.result.writer
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('RPT-EXAMINATION')}") 
+    public void sendExamination( evt ) {
+        def syncdata = evt.result
         def examination = examinationSvc.open([objid: syncdata.refid])
         if (examination) {
-            writer.write(examination)
+            syncdata.data = examination
         }
     }   
 
@@ -55,13 +54,12 @@ class RPTSyncInterceptor
     *  REQUIREMENTS SUPPORT
     * 
     ------------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('RPT-REQUIREMENT')}") 
-    public void writeRequirement( evt ) {
-        def syncdata = evt.result.item 
-        def writer = evt.result.writer
+    @After(pattern="RPTMainSyncService.send", eval="#{result.action.matches('RPT-REQUIREMENT')}") 
+    public void sendRequirement( evt ) {
+        def syncdata = evt.result
         def requirement = reqSvc.open([objid: syncdata.refid])
         if (requirement) {
-            writer.write(requirement)
+            syncdata.data = requirement
         }
     }   
 
@@ -79,16 +77,15 @@ class RPTSyncInterceptor
     *  IMAGE SUPPORT
     * 
     ------------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('RPT-IMAGE')}") 
-    public void writeImage( evt ) {
-        def syncdata = evt.result.item 
-        def writer = evt.result.writer
+    @After(pattern="RPTMainSyncService.send", eval="#{result.action.matches('RPT-IMAGE')}") 
+    public void sendImage( evt ) {
+        def syncdata = evt.result
 
         def image = [:]
         image.header = em_image_header.find([objid: syncdata.refid]).first()
         image.chunks = em_image_chunk.find([parentid: image.header.objid]).list()
         if (image.header) {
-            writer.write(image)
+            syncdata.data = image
         }
     }   
 

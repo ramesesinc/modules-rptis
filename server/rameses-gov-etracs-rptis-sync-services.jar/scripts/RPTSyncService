@@ -46,31 +46,31 @@ class RPTSyncService
 
 
 
-	// @ProxyMethod
-	// public def syncMaster(params) {
-	// 	util.required('schemaname', params.schemaname)
+	@ProxyMethod
+	public def syncMaster(params) {
+		util.required('schemaname', params.schemaname)
 
-	// 	params.reftype = params.schemaname
-	// 	params.action = 'SYNCMASTER'
-	// 	params.remote = getProvinceOrg()
+		params.reftype = params.schemaname
+		params.action = 'SYNCMASTER'
+		params.remote = getProvinceOrg()
 
-	// 	def data = syncSvc.send(params)
-	// 	return masterSvc.sync(params.schemaname, data.items)
-	// }
+		def data = syncSvc.send(params)
+		return masterSvc.sync(params.schemaname, data.items)
+	}
 
-	// @ProxyMethod
-	// public def syncSetting(params) {
-	// 	util.required('schemaname', params.schemaname)
+	@ProxyMethod
+	public def syncSetting(params) {
+		util.required('schemaname', params.schemaname)
 
-	// 	params.reftype = params.schemaname
-	// 	params.action = 'SYNC-REVISION-SETTING'
-	// 	params.orgid = env.ORGID
-	// 	params.orgcode = env.ORGCODE 
-	// 	params.remote = getProvinceOrg()
+		params.reftype = params.schemaname
+		params.action = 'SYNC-REVISION-SETTING'
+		params.orgid = env.ORGID
+		params.orgcode = env.ORGCODE 
+		params.remote = getProvinceOrg()
 		
-	// 	def data = syncSvc.send(params)
-	// 	return revisionSvc.sync(params.schemaname, data.settings)
-	// }
+		def data = syncSvc.send(params)
+		return revisionSvc.sync(params.schemaname, data.settings)
+	}
 
 
 	@ProxyMethod
@@ -124,11 +124,11 @@ class RPTSyncService
 	// *
 	// ------------------------------------------*/
 	@ProxyMethod
-	public void writeToFile(params, actions) {
-		def action = params.item.action.toUpperCase()
+	public void send(syncdata, actions) {
+		def action = syncdata.action.toUpperCase()
 		def handler = actions[action]
-		if (!handler) throw new Exception('writeToFile action ' + action + ' is not supported.')
-		handler.write(params.item, params.writer)
+		if (!handler) throw new Exception('send action ' + action + ' is not supported.')
+		syncdata.data = handler.send(syncdata)
 	}
 
 	@ProxyMethod

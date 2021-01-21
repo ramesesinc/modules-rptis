@@ -31,10 +31,10 @@ class FAASRestrictionSyncService
 
 	def getActions(){
 		return  [
-	    	'FAASRESTRICTION-POST': [write: writeRestriction, receive: postRemoteData, schedule: scheduleRestriction],
-	    	'FAASRESTRICTION-DELETE': [write: writeRestriction, receive: postRemoteDelete, schedule: scheduleRestriction],
-	    	'FAASRESTRICTION-CANCEL': [write: writeRestriction, receive: postRemoteCancel, schedule: scheduleRestriction],
-	    	'FAASRESTRICTION-REACTIVATE': [write: writeRestriction, receive: postRemoteReactivate, schedule: scheduleRestriction],
+	    	'FAASRESTRICTION-POST': [send: sendRestriction, receive: postRemoteData, schedule: scheduleRestriction],
+	    	'FAASRESTRICTION-DELETE': [send: sendRestriction, receive: postRemoteDelete, schedule: scheduleRestriction],
+	    	'FAASRESTRICTION-CANCEL': [send: sendRestriction, receive: postRemoteCancel, schedule: scheduleRestriction],
+	    	'FAASRESTRICTION-REACTIVATE': [send: sendRestriction, receive: postRemoteReactivate, schedule: scheduleRestriction],
 	    ]
 	}
 
@@ -82,8 +82,8 @@ class FAASRestrictionSyncService
 	*
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void writeToFile(syncdata) {
-		rptSync.writeToFile(syncdata, getActions())
+	public void send(syncdata) {
+		rptSync.send(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -98,9 +98,8 @@ class FAASRestrictionSyncService
 	* SUPPORT METHODS
 	*
 	---------------------------------------------------------*/
-	def writeRestriction = {syncdata, writer ->
-		def restriction = em_restriction.read([objid: syncdata.refid])
-		writer.write(restriction)
+	def sendRestriction = {syncdata ->
+		return em_restriction.read([objid: syncdata.refid])
 	}
 
 	def postRemoteData = {syncdata ->

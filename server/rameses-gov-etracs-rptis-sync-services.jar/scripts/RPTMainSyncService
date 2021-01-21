@@ -34,6 +34,10 @@ class RPTMainSyncService {
 	@XConnection('fileupload')
 	def xconn;
 
+	@Service(value='SyncCoordinatorService', connection='coordinator-script-service')
+    def coordinator 
+
+
 
 	@ProxyMethod
 	public def createDataForSync(data) {
@@ -89,14 +93,15 @@ class RPTMainSyncService {
 	============================================================*/
 	@ProxyMethod
 	public void processItemsForSync() {
-		def list = em_sync_item.where(['1=1']).orderBy('parent.dtfiled, idx').list();
+		def list = em_sync_item.where(['1=1']).orderBy('parent.dtfiled, parentid, idx').list();
 		if (list) {
 			list.each {
 				try {
-					def fileName = it.action + '-' + safeFileId(it.parent.refid) + '-' + safeFileId(it.refid)
+					def fileName = [it.reftype, it.refno, it.idx.toString().padLeft(5, '0'), it.action, safeFileId(it.refid)].join('-')
 					def writer = new ObjectWriter(fileName, xconn.conf);
 					writer.write(it);
-					self.writeToFile([item: it, writer: writer]);
+					self.asyncSend(it);
+					writer.write(it.data);
 					writer.close();
 					em_sync_item.find([objid: it.objid]).delete();
 					println "sync [FORUPLOAD] " + fileName;
@@ -112,8 +117,8 @@ class RPTMainSyncService {
 	* Intercepted by action handlers to append the item data 
 	===========================================================*/
 	@ProxyMethod
-	public def writeToFile(params) {
-		return params
+	public def asyncSend(syncdata) {
+		return syncdata
 	}
 
 
@@ -123,6 +128,16 @@ class RPTMainSyncService {
 	@ProxyMethod
 	public def receive(syncdata) {
 		return syncdata
+	}
+
+	/*-------------------------------------
+	*
+	* directly send data to coordinator
+	*
+	--------------------------------------*/
+	@ProxyMethod
+	public def send(syncdata){
+		return coordinator.send(syncdata)
 	}
 
 

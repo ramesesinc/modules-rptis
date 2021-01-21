@@ -38,9 +38,9 @@ class CancelledFAASSyncService
 
 	def getActions(){
 		return  [
-	    	'CANCELLEDFAAS-MANUAL-APPROVED': [write: writeData, receive: saveApprovedData, schedule: scheduleManualApproved],
-	    	'CANCELLEDFAAS-FORAPPROVAL': [write: writeData, receive: saveDataForApproval, schedule: scheduleSubmitToProvince],
-	    	'CANCELLEDFAAS-ONLINE-APPROVED': [write: writeData, receive: postOnlineApproval, schedule: scheduleOnlineApproved],
+	    	'CANCELLEDFAAS-MANUAL-APPROVED': [send: sendData, receive: saveApprovedData, schedule: scheduleManualApproved],
+	    	'CANCELLEDFAAS-FORAPPROVAL': [send: sendData, receive: saveDataForApproval, schedule: scheduleSubmitToProvince],
+	    	'CANCELLEDFAAS-ONLINE-APPROVED': [send: sendData, receive: postOnlineApproval, schedule: scheduleOnlineApproved],
 	    ]
 	}
 
@@ -102,8 +102,8 @@ class CancelledFAASSyncService
 	* SEND/RECEIVE HANDLERS 
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void writeToFile(syncdata) {
-		rptSync.writeToFile(syncdata, getActions())
+	public void send(syncdata) {
+		rptSync.send(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -114,7 +114,7 @@ class CancelledFAASSyncService
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def writeData = {syncdata, writer ->
+	def sendData = {syncdata ->
 		def cancelledfaas = [objid: syncdata.refid]
 		cancelledfaas.putAll(svc.open(cancelledfaas))
 
@@ -126,8 +126,7 @@ class CancelledFAASSyncService
 		if (!cancelledfaas.signatory) {
 			cancelledfaas.signatory = [:]
 		}
-
-		writer.write(cancelledfaas)
+		return cancelledfaas
 	}
 
 

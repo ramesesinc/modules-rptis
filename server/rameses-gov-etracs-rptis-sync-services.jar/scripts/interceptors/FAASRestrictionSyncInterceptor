@@ -63,10 +63,10 @@ class FAASRestrictionSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('FAASRESTRICTION-.*')}") 
-    public void writeToFile( evt ) {
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('FAASRESTRICTION-.*')}") 
+    public void send( evt ) {
         def syncdata = evt.result 
-        restrictionSync.writeToFile(syncdata)
+        restrictionSync.send(syncdata)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAASRESTRICTION-.*')}") 

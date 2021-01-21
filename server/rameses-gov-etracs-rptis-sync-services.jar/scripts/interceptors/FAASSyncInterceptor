@@ -99,9 +99,9 @@ class FAASSyncInterceptor
     * UPLOAD/DOWNLOAD SUPPORT
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{args[0].item.action.matches('FAAS-.*')}") 
-    public void writeToFile( evt ) {
-        faasSync.writeToFile(evt.args[0])
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{args[0].action.matches('FAAS-.*')}") 
+    public void send( evt ) {
+        faasSync.send(evt.args[0])
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('FAAS-.*')}") 

@@ -44,10 +44,10 @@ class ConsolidationSyncService
 
 	def getActions(){
 		return  [
-	    	'CONSOLIDATION-FORAPPROVAL': [write: writeForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
-	    	'CONSOLIDATION-REQUIREMENTS': [write: {}, receive: {}, schedule: scheduleRequirements],
-	    	'CONSOLIDATION-FAAS-APPROVED': [write: writeApprovedFaas, receive: postApprovedFaas, schedule: {}],
-	    	'CONSOLIDATION-APPROVED': [write: writeApprovedConsolidation, receive: postApprovedConsolidation, schedule: scheduleConsolidationApproval],
+	    	'CONSOLIDATION-FORAPPROVAL': [send: sendForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
+	    	'CONSOLIDATION-REQUIREMENTS': [send: {}, receive: {}, schedule: scheduleRequirements],
+	    	'CONSOLIDATION-FAAS-APPROVED': [send: sendApprovedFaas, receive: postApprovedFaas, schedule: {}],
+	    	'CONSOLIDATION-APPROVED': [send: sendApprovedConsolidation, receive: postApprovedConsolidation, schedule: scheduleConsolidationApproval],
 	    ]
 	}
 
@@ -76,7 +76,6 @@ class ConsolidationSyncService
 			refno: syncdata.refno, 
 			async: (async == null ? syncdata.async : async),
 			action: (action ? action : syncdata.action),
-			dependedaction: syncdata.dependedaction,
 			info: [:]
 		]
 	}
@@ -99,14 +98,10 @@ class ConsolidationSyncService
     	faasSyncSvc.scheduleFaasData(syncdata, consolidatedfaas)
 
 		svc.getAffectedRpus(consolidation.objid).each {
-			syncdata.async = true
 			faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
-        syncdata.async = false
-        syncdata.dependedaction = 'FAAS-DATA'
         createSyncItem(consolidation, syncdata, 'CONSOLIDATION-FORAPPROVAL')
-        syncdata.dependedaction = null
 
         rptSync.scheduleExaminations(syncdata, consolidation.objid)
     	rptSync.scheduleRequirements(syncdata, consolidation.objid)
@@ -121,14 +116,10 @@ class ConsolidationSyncService
     	createSyncItem(faas, syncdata, 'CONSOLIDATION-FAAS-APPROVED')
 		
 		svc.getAffectedRpus(consolidation.objid).each {
-			syncdata.async = true
         	createSyncItem(faas, syncdata, 'CONSOLIDATION-FAAS-APPROVED')
         }
 
-		syncdata.async = false
-		syncdata.dependedaction = 'CONSOLIDATION-FAAS-APPROVED'
         createSyncItem(consolidation, syncdata, 'CONSOLIDATION-APPROVED')
-        syncdata.dependedaction = null
 	}
 
 
@@ -137,8 +128,8 @@ class ConsolidationSyncService
 	* SEND/RECEIVE HANDLERS 
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void writeToFile(syncdata) {
-		rptSync.writeToFile(syncdata, getActions())
+	public void send(syncdata) {
+		rptSync.send(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -150,9 +141,9 @@ class ConsolidationSyncService
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def writeForApproval = {syncdata, writer ->
+	def sendForApproval = {syncdata ->
 		def consolidation = [objid: syncdata.refid]
-		writer.write(consolidationSupport.getForApproval(consolidation))
+		return consolidationSupport.getForApproval(consolidation)
 	}
 
 	def postForApproval = {syncdata ->
@@ -161,9 +152,9 @@ class ConsolidationSyncService
 		startWorkflow(syncdata, consolidation)
 	}
 
-	def writeApprovedFaas = {syncdata, writer ->
+	def sendApprovedFaas = {syncdata ->
 		def faas = [objid: syncdata.refid]
-		writer.write(consolidationSupport.getApprovedFaas(faas))
+		return consolidationSupport.getApprovedFaas(faas)
 	}
 
 	def postApprovedFaas = {syncdata ->
@@ -172,15 +163,14 @@ class ConsolidationSyncService
 
 	}
 
-	def writeApprovedConsolidation = {syncdata, writer ->
+	def sendApprovedConsolidation = {syncdata ->
 		def consolidation = [objid: syncdata.refid]
-		writer.write(consolidationSupport.getApprovedConsolidation(consolidation))
+		return consolidationSupport.getApprovedConsolidation(consolidation)
 	}
 
 	def postApprovedConsolidation = {syncdata ->
 		def consolidation = syncdata.data 
 		consolidationSupport.postApprovedConsolidation(consolidation)
-
 	}
 
 

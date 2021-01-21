@@ -189,8 +189,8 @@ class RPTLedgerSyncService
 
     def getActions() {
         return  [
-            'RPTLEDGER-POST-PAYMENT': [send: getPaymentData, receive: postPayment, schedule: schedulePostPayment],
-            'RPTLEDGER-POST-VOID-PAYMENT': [send: getVoidPaymentData, receive: postVoidPayment, schedule: scheduleVoidReceipt],
+            'RPTLEDGER-POST-PAYMENT': [send: sendPaymentData, receive: postPayment, schedule: schedulePostPayment],
+            'RPTLEDGER-POST-VOID-PAYMENT': [send: sendVoidPaymentData, receive: postVoidPayment, schedule: scheduleVoidReceipt],
         ]
     }
 
@@ -247,15 +247,15 @@ class RPTLedgerSyncService
     * SEND/RECEIVE HANDLERS 
     *
     ---------------------------------------------------------*/
-    @ProxyMethod
-    public void send(syncdata) {
-        rptSync.send(syncdata, getActions())
-    }
+	@ProxyMethod
+	public void send(syncdata) {
+		rptSync.send(syncdata, getActions())
+	}
 
-    @ProxyMethod
-    public void receive(syncdata) {
-        rptSync.receive(syncdata, getActions())
-    }
+	@ProxyMethod
+	public void receive(syncdata) {
+		rptSync.receive(syncdata, getActions())
+	}
 
 
 
@@ -264,7 +264,7 @@ class RPTLedgerSyncService
     * SEND/RECEIVE SUPPORT METHODS
     *
     ---------------------------------------------------------*/
-    def getPaymentData = {syncdata ->
+    def sendPaymentData = {syncdata ->
         def pmt = em_rptpayment.find([objid: syncdata.info.paymentid]).first()
         if (pmt) {
             def mapping = em_remote.find([objid: pmt.refid, doctype:'rptledger']).first()
@@ -312,7 +312,7 @@ class RPTLedgerSyncService
 
 
 
-    def getVoidPaymentData = {syncdata ->
+    def sendVoidPaymentData = {syncdata ->
         def pmt = em_rptpayment.find([objid: syncdata.info.paymentid]).first()
         if (pmt) {
             def mapping = em_remote.find([objid: pmt.refid, doctype:'rptledger']).first()

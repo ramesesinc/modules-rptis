@@ -66,13 +66,13 @@ class SubdivisionSyncService
     
     def getActions(){
 		return  [
-	    	'SUBDIVISION-FORAPPROVAL': [write: writeForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
-	    	'SUBDIVISION-REQUIREMENTS': [write: {}, receive: {}, schedule: scheduleRequirements],
-	    	'SUBDIVISION-FAAS-APPROVED': [write: writeApprovedFaas, receive: postApprovedFaas, schedule: {}],
-	    	'SUBDIVISION-APPROVED': [write: writeApprovedSubdivision, receive: postApprovedSubdivision, schedule: scheduleSubdivisionApproval],
-	    	'SUBDIVISION-DISAPPROVAL': [write: writeDisapprovedSubdivision, receive: postDisapprovedSubdivision, schedule: scheduleSubdivisionDisapproval],
-	    	'SUBDIVISION-CANCELLED-FAAS': [write: writeCancelledFaas, receive: saveCancelledFaas, schedule: {}],
-	    	'SUBDIVISION-CANCELLED-FAAS-APPROVED': [write: writeApprovedCancelledFaas, receive: postApprovedCancelledFaas, schedule: {}],
+	    	'SUBDIVISION-FORAPPROVAL': [send: sendForApproval, receive: postForApproval, schedule: scheduleSubmitToProvince],
+	    	'SUBDIVISION-REQUIREMENTS': [send: {}, receive: {}, schedule: scheduleRequirements],
+	    	'SUBDIVISION-FAAS-APPROVED': [send: sendApprovedFaas, receive: postApprovedFaas, schedule: {}],
+	    	'SUBDIVISION-APPROVED': [send: sendApprovedSubdivision, receive: postApprovedSubdivision, schedule: scheduleSubdivisionApproval],
+	    	'SUBDIVISION-DISAPPROVAL': [send: sendDisapprovedSubdivision, receive: postDisapprovedSubdivision, schedule: scheduleSubdivisionDisapproval],
+	    	'SUBDIVISION-CANCELLED-FAAS': [send: sendCancelledFaas, receive: saveCancelledFaas, schedule: {}],
+	    	'SUBDIVISION-CANCELLED-FAAS-APPROVED': [send: sendApprovedCancelledFaas, receive: postApprovedCancelledFaas, schedule: {}],
 	    ]
 	}
 
@@ -101,7 +101,6 @@ class SubdivisionSyncService
 			refno: syncdata.refno, 
 			async: (async == null ? syncdata.async : async),
 			action: (action ? action : syncdata.action),
-			dependedaction: syncdata.dependedaction
 		]
 	}
 
@@ -120,26 +119,18 @@ class SubdivisionSyncService
     	syncdata.info.txntype = 'SD'
 
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
-        	syncdata.async = true
         	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
-			syncdata.async = true
         	faasSyncSvc.scheduleFaasData(syncdata, [objid: it.newfaasid])
         }
 
-        syncdata.async = true
         em_cancelledimprovement.find([parentid: subdivision.objid]).list().each {
         	createSyncItem(it, syncdata, 'SUBDIVISION-CANCELLED-FAAS')	
         }
 
-        //subdivision
-        syncdata.async = false
-        syncdata.dependedaction = 'FAAS-DATA'
         createSyncItem(subdivision, syncdata, 'SUBDIVISION-FORAPPROVAL')
-        syncdata.dependedaction = null
-
         rptSync.scheduleExaminations(syncdata, subdivision.objid)
     	rptSync.scheduleRequirements(syncdata, subdivision.objid)
 	}
@@ -153,27 +144,20 @@ class SubdivisionSyncService
 
 	def scheduleSubdivisionApproval = {syncdata, subdivision ->
         em_subdividedland.find([subdivisionid: subdivision.objid]).list().each {
-        	syncdata.async = true
         	def faas = [objid: it.newfaasid]
         	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
         }
 
 		em_affectedrpu.find([subdivisionid: subdivision.objid]).list().each {
-			syncdata.async = true
 			def faas = [objid: it.newfaasid]
         	createSyncItem(faas, syncdata, 'SUBDIVISION-FAAS-APPROVED')
         }
 
-		syncdata.async = false
         em_cancelledimprovement.find([parentid: subdivision.objid]).list().each {
         	createSyncItem(it, syncdata, 'SUBDIVISION-CANCELLED-FAAS-APPROVED')	
         }
 
-    	//subdivision
-        syncdata.async = false
-        syncdata.dependedaction = 'SUBDIVISION-FAAS-APPROVED'
-        createSyncItem(subdivision, syncdata, 'SUBDIVISION-APPROVED')
-        syncdata.dependedaction = null
+    	createSyncItem(subdivision, syncdata, 'SUBDIVISION-APPROVED')
 
         rptSync.scheduleExaminations(syncdata, subdivision.objid)
 	}
@@ -187,8 +171,8 @@ class SubdivisionSyncService
 	* SEND/RECEIVE HANDLERS 
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void writeToFile(syncdata) {
-		rptSync.writeToFile(syncdata, getActions())
+	public void send(syncdata) {
+		rptSync.send(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -200,9 +184,9 @@ class SubdivisionSyncService
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def writeForApproval = {syncdata, writer ->
+	def sendForApproval = {syncdata ->
 		def subdivision = [objid: syncdata.refid]
-		writer.write(subdivisionSupport.getForApproval(subdivision))
+		return subdivisionSupport.getForApproval(subdivision)
 	}
 
 	def postForApproval = {syncdata ->
@@ -212,8 +196,8 @@ class SubdivisionSyncService
 	}
 
 
-	def writeApprovedFaas = {syncdata, writer ->
-		writer.write(getApprovedFaas(syncdata))
+	def sendApprovedFaas = {syncdata ->
+		return getApprovedFaas(syncdata)
 	}
 
 	def getApprovedFaas = {syncdata ->
@@ -227,9 +211,9 @@ class SubdivisionSyncService
 
 	}
 
-	def writeApprovedSubdivision = {syncdata, writer ->
+	def sendApprovedSubdivision = {syncdata ->
 		def subdivision = [objid: syncdata.refid]
-		writer.write(svc.open(subdivision))
+		return svc.open(subdivision)
 	}
 
 	def postApprovedSubdivision = {syncdata ->
@@ -238,8 +222,8 @@ class SubdivisionSyncService
 
 	}
 	
-	def writeDisapprovedSubdivision = {syncdata, writer ->
-		writer.write([objid: syncdata.refid])
+	def sendDisapprovedSubdivision = {syncdata ->
+		return [objid: syncdata.refid]
 	}
 
 	def postDisapprovedSubdivision = {syncdata ->
@@ -248,8 +232,8 @@ class SubdivisionSyncService
 
 	}
 
-	def writeCancelledFaas = {syncdata, writer ->
-		writer.write(getCancelledFaas(syncdata))
+	def sendCancelledFaas = {syncdata ->
+		return getCancelledFaas(syncdata)
 	}
 
 	def getCancelledFaas = {syncdata ->
@@ -268,10 +252,10 @@ class SubdivisionSyncService
 		em_cancelledfaas_signatory.save(cancelledfaas.signatories)
 	}
 
-	def writeApprovedCancelledFaas = {syncdata, writer ->
+	def sendApprovedCancelledFaas = {syncdata ->
 		def cancelledfaas = getCancelledFaas(syncdata)
 		cancelledfaas.faas = getApprovedFaas([refid: cancelledfaas.faasid])
-		writer.write(cancelledfaas) 
+		return cancelledfaas
 	}
 
 	def postApprovedCancelledFaas = {syncdata ->

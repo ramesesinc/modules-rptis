@@ -28,8 +28,8 @@ class RedFlagSyncService
 
 	def getActions(){
 		return  [
-	    	'RPT-REDFLAG-FOR-MUNICIPALITY': [write: writeDataToResolve, receive: postDataToResolve, schedule: scheduleSubmitToMunicipality],
-	    	'RPT-REDFLAG-RESOLVED': [write: writeResolvedData, receive: postResolvedData, schedule: scheduleResolvedRedFlag],
+	    	'RPT-REDFLAG-FOR-MUNICIPALITY': [send: sendDataToResolve, receive: postDataToResolve, schedule: scheduleSubmitToMunicipality],
+	    	'RPT-REDFLAG-RESOLVED': [send: sendResolvedData, receive: postResolvedData, schedule: scheduleResolvedRedFlag],
 	    ]
 	}
 
@@ -81,8 +81,8 @@ class RedFlagSyncService
 	* SEND/RECEIVE HANDLERS 
 	---------------------------------------------------------*/
 	@ProxyMethod
-	public void writeToFile(syncdata) {
-		rptSync.writeToFile(syncdata, getActions())
+	public void send(syncdata) {
+		rptSync.send(syncdata, getActions())
 	}
 
 	@ProxyMethod
@@ -94,10 +94,9 @@ class RedFlagSyncService
 	/*---------------------------------------------------------
 	* SUPPORT METHODS
 	---------------------------------------------------------*/
-	def writeDataToResolve = {syncdata, writer ->
+	def sendDataToResolve = {syncdata ->
 		def redflag = [objid: syncdata.refid]
-		def data = svc.getDataToResolve(redflag)
-		writer.write(data)
+		return svc.getDataToResolve(redflag)
 	}
 
 	def postDataToResolve = {syncdata ->
@@ -106,10 +105,9 @@ class RedFlagSyncService
 		notifyRecommender(syncdata, redflag)
 	}
 
-	def writeResolvedData = {syncdata, writer ->
+	def sendResolvedData = {syncdata ->
 		def redflag = [objid: syncdata.refid]
-		def data = svc.getResolvedData(redflag)
-		writer.write(data)
+		return svc.getResolvedData(redflag)
 	}
 
 	def postResolvedData = {syncdata ->

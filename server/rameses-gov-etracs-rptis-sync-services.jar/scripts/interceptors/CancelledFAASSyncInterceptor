@@ -56,9 +56,9 @@ class CancelledFAASSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('CANCELLEDFAAS-.*')}") 
-    public void writeToFile( evt ) {
-        cancelSync.writeToFile(evt.result)
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('CANCELLEDFAAS-.*')}") 
+    public void send( evt ) {
+        cancelSync.send(evt.result)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('CANCELLEDFAAS-.*')}") 

@@ -81,8 +81,8 @@ class RPTLedgerSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('RPTLEDGER-.*')}") 
-    public void sendData( evt ) {
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.item.action.matches('RPTLEDGER-.*')}") 
+    public void send( evt ) {
         def syncdata = evt.result 
         ledgerSyncSvc.send(syncdata)
     }        
@@ -91,7 +91,6 @@ class RPTLedgerSyncInterceptor
     public void receiveData(evt){
         def syncdata = evt.args[0]
         ledgerSyncSvc.receive(syncdata)
-        evt.result.status = 'OK'
     }
 
 

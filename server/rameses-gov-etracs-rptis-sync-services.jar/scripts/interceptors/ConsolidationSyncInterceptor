@@ -67,10 +67,10 @@ class ConsolidationSyncInterceptor
     * SEND/RECEIVE HANDLERS
     *
     ---------------------------------------------------------*/
-    @After(pattern="RPTMainSyncService.writeToFile", eval="#{result.item.action.matches('CONSOLIDATION-.*')}") 
-    public void writeToFile( evt ) {
+    @After(pattern="RPTMainSyncService.asyncSend", eval="#{result.action.matches('CONSOLIDATION-.*')}") 
+    public void send( evt ) {
         def syncdata = evt.result 
-        consolidationSync.writeToFile(syncdata)
+        consolidationSync.send(syncdata)
     }   
 
     @After(pattern="RPTMainSyncService.receive", eval="#{args[0].action.matches('CONSOLIDATION-.*')}") 
