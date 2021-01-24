@@ -96,16 +96,17 @@ class RPTMainSyncDataService {
 		def list = em_sync_item.where(['1=1']).orderBy('parent.dtfiled, parentid, idx').list();
 		if (list) {
 			list.each {
+				def writer = null;
 				try {
 					def fileName = [it.reftype, it.refno, it.idx.toString().padLeft(5, '0'), it.action, safeFileId(it.refid)].join('-')
-					def writer = new ObjectWriter(fileName, xconn.conf);
+					writer = new ObjectWriter(fileName, xconn.conf);
 					writer.write(it);
 					self.asyncSend(it);
 					writer.write(it.data);
 					writer.close();
 					em_sync_item.find([objid: it.objid]).delete();
-					println "sync [FORUPLOAD] " + fileName;
 				} catch( e ) {
+					if (writer) writer.cancel();
 					e.printStackTrace();
 				}
 			}

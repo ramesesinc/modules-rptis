@@ -16,7 +16,7 @@ class RPTSyncDataSupport
 		if (!env) 
 			env = [:]
 
-		if (!env.orgclass) {
+		if (syncdata.parent && syncdata.parent.remote && !env.orgclass) {
 			env.ORGID = syncdata.parent.remote.orgid
 			env.ORGCLASS = syncdata.parent.remote.orgclass
 		}

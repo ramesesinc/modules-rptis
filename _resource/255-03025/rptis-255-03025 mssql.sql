@@ -73,6 +73,34 @@ alter table rpt_syncdata_item
   FOREIGN KEY (parentid) REFERENCES rpt_syncdata (objid)
 go 
 
+CREATE TABLE rpt_syncdata_error (
+  [objid] varchar(50) NOT NULL,
+  [filekey] varchar(1000) NOT NULL,
+  [error] text,
+  [refid] varchar(50) NOT NULL,
+  [reftype] varchar(50) NOT NULL,
+  [refno] varchar(50) NOT NULL,
+  [action] varchar(50) NOT NULL,
+  [idx] int NOT NULL,
+  [info] text,
+  [parent] text,
+  [remote_orgid] varchar(50) DEFAULT NULL,
+  [remote_orgcode] varchar(5) DEFAULT NULL,
+  [remote_orgclass] varchar(50) DEFAULT NULL,
+  PRIMARY KEY (objid)
+)
+go 
+
+create index ix_refid on rpt_syncdata_error (refid)
+go
+create index ix_refno on rpt_syncdata_error (refno)
+go
+create index ix_filekey on rpt_syncdata_error (filekey(255))
+go
+create index ix_remote_orgid on rpt_syncdata_error (remote_orgid)
+go
+create index ix_remote_orgcode on rpt_syncdata_error (remote_orgcode)
+go
 
 INSERT INTO sys_var ([name], [value], [description], [datatype], [category]) 
 VALUES ('assesser_new_sync_lgus', NULL, 'List of LGUs using new sync facility', NULL, 'ASSESSOR')

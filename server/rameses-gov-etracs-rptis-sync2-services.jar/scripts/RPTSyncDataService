@@ -180,7 +180,6 @@ class RPTSyncDataService
 
 	@ProxyMethod
 	public void scheduleImages(syncdata, parentid) {
-		println 'scheduleImages...'
 		em_image_header.find([parentid: parentid]).list().each{header->
 			scheduleImage(syncdata, header)
         }
@@ -188,7 +187,6 @@ class RPTSyncDataService
 
 	@ProxyMethod
 	public void scheduleImagesByRefId(syncdata, refid) {
-		println 'scheduleImagesByRefId...'
 		em_image_header.find([refid: refid]).list().each{header->
 			scheduleImage(syncdata, header)
         }

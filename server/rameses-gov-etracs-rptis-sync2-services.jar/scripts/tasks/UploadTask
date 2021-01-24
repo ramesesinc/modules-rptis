@@ -27,7 +27,7 @@ class UploadTask {
                     def reader = new ObjectReader(fileEntry);
                     def syncitem = reader.read();
                     reader.close();
-                    fu.upload(key, fileEntry, syncitem.parent.remote.orgid);
+                    fu.upload(key, fileEntry, syncitem.parent.remote.orgcode);
                     fileEntry.delete();
                 }
             }

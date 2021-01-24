@@ -8,6 +8,9 @@
 		<field name="refno" caption="Ref No." />
 		<field name="action" required="true" caption="Action" />
 		<field name="idx" required="true" type="integer" />
+		<field name="remote_orgid" required="true" />
+		<field name="remote_orgcode" required="true" />
+		<field name="remote_orgclass" required="true" />
 		<complex name="info" serializer="default" />
 		<complex name="parent" serializer="default" />
 	</element>
