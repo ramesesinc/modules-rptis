@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="com/rameses/seti2/templates/CrudForm.xml" 
+    schemaName="rpt_syncdata_error"
+    allowCreate="false"
+    allowEdit="false"
+    allowPrint="false"
+    allowSave="false"
+    allowViewReport="false"
+>
+    <invokers>
+        <invoker type="rpt_syncdata_error:open"
+                 action="open" 
+                 caption="Synchronization Error"
+                 role="ADMIN" permission="syncdata_error.open" 
+                 target="popup"
+        />
+    </invokers>
+    <pages>
+        <page template="com.rameses.rptis.sync.views.SyncDataErrorPage" />
+    </pages>
+</workunit>

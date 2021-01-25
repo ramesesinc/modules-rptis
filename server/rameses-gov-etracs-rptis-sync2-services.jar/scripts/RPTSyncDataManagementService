@@ -1,0 +1,15 @@
+import com.rameses.annotations.*;
+import com.rameses.common.*;
+import com.rameses.services.extended.*;
+
+class RPTSyncDataManagementService
+{   
+	@DataContext('rpt_syncdata_error')
+	def em_sync_error
+
+	@ProxyMethod
+	public void clearAllErrors() {
+		em_sync_error.where('1=1').delete();
+	}
+
+}

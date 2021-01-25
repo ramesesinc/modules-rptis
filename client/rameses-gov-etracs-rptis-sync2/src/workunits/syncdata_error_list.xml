@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="com/rameses/seti2/templates/CrudList.xml" 
+    schemaName="rpt_syncdata_error"
+    cols="remote.orgcode,reftype,action,idx,filekey,error"
+    allowCreate="false"
+    allowPrint="false"
+>
+    <invokers>
+        <invoker folderid="/menucategory/rpt/util" 
+                 action="init" 
+                 caption="Synchronization Errors"
+                 role="ADMIN" permission="syncdata_error.list" 
+        />
+        <invoker type="listActions"  
+                 action="clearAll" 
+                 caption="Clear All Errors"
+                 role="ADMIN" permission="syncdata_error.clear-all" 
+        />
+    </invokers>
+    <code class="com.rameses.rptis.sync.models.SyncDataListModel" />
+</workunit>
