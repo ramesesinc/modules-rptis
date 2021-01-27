@@ -84,3 +84,6 @@ VALUES ('assesser_new_sync_lgus', NULL, 'List of LGUs using new sync facility', 
 ;
 
 
+
+ALTER TABLE rpt_syncdata_forsync ADD remote_orgid VARCHAR(15)
+;

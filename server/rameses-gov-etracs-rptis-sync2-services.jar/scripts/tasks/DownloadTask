@@ -13,7 +13,7 @@ class DownloadTask {
     @DataContext('rpt_syncdata_error')
     def em_sync_error
 
-    @Schedule(interval=10)
+    @Schedule(interval=120)
     public void doDownload( evt ) {
         try {
             fu.getList().each{

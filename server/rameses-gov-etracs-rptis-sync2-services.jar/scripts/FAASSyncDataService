@@ -88,6 +88,7 @@ class FAASSyncDataService
 		if (!action) throw new Exception('Scheduler not found for action ' + data.action)
 
 		def faas = em_faaslist.select('objid,lguid').find([objid: data.objid]).first()
+		if (!faas) faas = [objid: data.objid, lguid: data.remote.orgid]
 		data.remote = rptSync.getRemoteOrg(faas)
         def syncdata = syncSvc.create(data)
 

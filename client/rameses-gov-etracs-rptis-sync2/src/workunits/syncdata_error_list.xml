@@ -12,9 +12,14 @@
                  role="ADMIN" permission="syncdata_error.list" 
         />
         <invoker type="listActions"  
-                 action="clearAll" 
-                 caption="Clear All Errors"
-                 role="ADMIN" permission="syncdata_error.clear-all" 
+                 action="rescheduleErrors" 
+                 caption="Reschedule"
+                 role="ADMIN" permission="syncdata_error.reschedule" 
+        />
+        <invoker type="listActions"  
+                 action="deleteAllErrors" 
+                 caption="Delete from File Server"
+                 role="ADMIN" permission="syncdata_error.delete" 
         />
     </invokers>
     <code class="com.rameses.rptis.sync.models.SyncDataListModel" />

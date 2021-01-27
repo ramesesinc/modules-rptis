@@ -11,9 +11,16 @@ class SyncDataListModel extends CrudListModel
     @Service('RPTSyncDataManagementService')
     def svc;
 
-    void clearAll() {
+    void rescheduleErrors() {
         if (MsgBox.confirm('Clear all errors?')) {
-            svc.clearAllErrors();
+            svc.rescheduleErrors();
+            reload();
+        }
+    }
+
+    void deleteAllErrors() {
+        if (MsgBox.confirm('Deelte all errors from file server?')) {
+            svc.deleteErrors();
             reload();
         }
     }

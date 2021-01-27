@@ -109,3 +109,6 @@ go
 
 
 
+
+ALTER TABLE rpt_syncdata_forsync ADD remote_orgid VARCHAR(15)
+go 

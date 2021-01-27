@@ -6,8 +6,19 @@ class UploadTask {
     @XConnection('fileupload')
     def fu;
 
+    @Service('Var')
+    def var;
+
+    @Service('RPTUtil')
+    def util;
+
     @Schedule(interval=10)
     public void upload( evt ) {
+        if (!util.toBoolean(var.fileserver_upload_task_active, true)) {
+            println 'UploadTask [INFO] inactive'
+            return;
+        }
+
         try {
             File folder = new File(fu.conf.uploadDir);
             uploadFolderFiles(folder);
