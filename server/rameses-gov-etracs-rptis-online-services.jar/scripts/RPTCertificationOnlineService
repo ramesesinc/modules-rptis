@@ -74,8 +74,8 @@ class RPTCertificationOnlineService {
 			def entity = entitySvc.open([objid: params.entityid])
 			entity.address = entity.address.text
 			cert.taxpayer = entity
-			cert.requestedby = entity.name
-			cert.requestedbyaddress = entity.address
+			cert.requestedby = params.requestedby?.name ? params.requestedby.name :  entity.name
+			cert.requestedbyaddress = params.requestedby?.address ? params.requestedby.name :  entity.address
 			clearanceSvc.createClearance(cert)
 			return createOnlineCertification(cert, params)
 		}
@@ -129,7 +129,9 @@ class RPTCertificationOnlineService {
 	def initTrueCopy(params) {
 		required('faas', params.faas);
 		required('faas.objid', params.faas.objid);
-		required('faas.tdno', params.faas.tdno);
+		params.faas = em_faas.find([objid: params.faas.objid]).first();
+		if (!params.faas) throw new Exception("FAAS does not exist or has alrady been deleted.");
+		params.entityid = params.faas.taxpayer.objid;
 		required('refid', params.refid);
 		required('reftype', params.reftype);
 		required('refno', params.refno);
