@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit >
+    <invokers>
+        <invoker folderid="/menucategory/rpt/util"
+                 action="init" 
+                 caption="Synchronization Management"
+                 role="ADMIN" permission="syncdata.management" />
+        
+        <invoker type="formActions" 
+                 action="_close" 
+                 caption="Close" />
+
+        <invoker type="uploaderActions" 
+                 action="startUploader" 
+                 caption="Start" 
+                 visibleWhen="#{info.service.uploader == 'off'}" />
+        
+        <invoker type="uploaderActions" 
+                 action="stopUploader" 
+                 caption="Stop" 
+                 visibleWhen="#{info.service.uploader == 'on'}" />
+        
+        <invoker type="downloaderActions" 
+                 action="startDownloader" 
+                 caption="Start" 
+                 visibleWhen="#{info.service.downloader == 'off'}" />
+        
+        <invoker type="downloaderActions" 
+                 action="stopDownloader" 
+                 caption="Stop" 
+                 visibleWhen="#{info.service.downloader == 'on'}" />
+        
+    </invokers>
+    <code class="rptis.models.SyncDataManagementModel" />
+    <pages>
+        <page template="rptis.views.SyncDataManagementPage" />
+    </pages>
+</workunit>

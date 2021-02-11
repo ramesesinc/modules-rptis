@@ -1,4 +1,4 @@
-package com.rameses.rptis.sync.models;
+package rptis.models;
 
 import com.rameses.rcp.annotations.*;
 import com.rameses.rcp.common.*;
@@ -12,14 +12,14 @@ class SyncDataListModel extends CrudListModel
     def svc;
 
     void rescheduleErrors() {
-        if (MsgBox.confirm('Clear all errors?')) {
+        if (MsgBox.confirm('Reschedule all errors?')) {
             svc.rescheduleErrors();
             reload();
         }
     }
 
     void deleteAllErrors() {
-        if (MsgBox.confirm('Deelte all errors from file server?')) {
+        if (MsgBox.confirm('Delete all errors from file server?')) {
             svc.deleteErrors();
             reload();
         }

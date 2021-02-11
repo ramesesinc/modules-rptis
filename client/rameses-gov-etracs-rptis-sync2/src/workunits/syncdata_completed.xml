@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workunit extends="com/rameses/seti2/templates/CrudNodeList.xml" 
+          schemaName="rpt_syncdata_completed"
+          cols="lgu.name,reftype,refno,action,idx,sender.name,sender.title,dtcreated"
+          allowCreate="false"
+          allowOpen="false"
+          allowPrint="false"
+          allowDelete="false"
+          orderBy="dtcreated"
+>
+    <invokers>
+        <invoker folderid="/menucategory/rpt/util"
+                         action="init" 
+                         caption="Synchronized Data"
+                         role="SHARED" />
+    </invokers>
+</workunit>

@@ -6,7 +6,7 @@
     allowPrint="false"
 >
     <invokers>
-        <invoker folderid="/menucategory/rpt/util" 
+        <invoker type="syncdata_error:list" 
                  action="init" 
                  caption="Synchronization Errors"
                  role="ADMIN" permission="syncdata_error.list" 
@@ -22,5 +22,5 @@
                  role="ADMIN" permission="syncdata_error.delete" 
         />
     </invokers>
-    <code class="com.rameses.rptis.sync.models.SyncDataListModel" />
+    <code class="rptis.models.SyncDataListModel" />
 </workunit>

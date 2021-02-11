@@ -16,6 +16,6 @@
         />
     </invokers>
     <pages>
-        <page template="com.rameses.rptis.sync.views.SyncDataErrorPage" />
+        <page template="rptis.views.SyncDataErrorPage" />
     </pages>
 </workunit>
