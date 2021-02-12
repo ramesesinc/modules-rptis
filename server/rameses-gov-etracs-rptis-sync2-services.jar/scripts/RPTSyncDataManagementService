@@ -16,7 +16,7 @@ class RPTSyncDataManagementService
 	@Service("Var")
 	def var
 
-	@DataContext("sys_var")
+	@DataContext("rpt_syncdata_var")
 	def em_var
 	
 
