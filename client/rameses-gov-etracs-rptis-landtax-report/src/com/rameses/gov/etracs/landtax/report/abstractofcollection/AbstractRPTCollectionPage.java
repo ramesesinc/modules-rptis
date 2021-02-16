@@ -41,6 +41,7 @@ public class AbstractRPTCollectionPage extends javax.swing.JPanel {
         xNumberField1 = new com.rameses.rcp.control.XNumberField();
         xDateField2 = new com.rameses.rcp.control.XDateField();
         xDateField3 = new com.rameses.rcp.control.XDateField();
+        xComboBox5 = new com.rameses.rcp.control.XComboBox();
         xComboBox3 = new com.rameses.rcp.control.XComboBox();
 
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
@@ -50,11 +51,11 @@ public class AbstractRPTCollectionPage extends javax.swing.JPanel {
         xFormPanel1.setCaptionVAlignment(com.rameses.rcp.constant.UIConstants.CENTER);
         xFormPanel1.setCaptionWidth(100);
 
-        xComboBox4.setAllowNull(false);
         xComboBox4.setCaption("Posting Type");
         xComboBox4.setExpression("#{item.caption}");
         xComboBox4.setItems("postingtypes");
         xComboBox4.setName("entity.postingtype"); // NOI18N
+        xComboBox4.setAllowNull(false);
         xComboBox4.setPreferredSize(new java.awt.Dimension(0, 22));
         xComboBox4.setRequired(true);
         xFormPanel1.add(xComboBox4);
@@ -94,6 +95,13 @@ public class AbstractRPTCollectionPage extends javax.swing.JPanel {
         xDateField3.setName("entity.enddate"); // NOI18N
         xDateField3.setPreferredSize(new java.awt.Dimension(125, 20));
         xFormPanel1.add(xDateField3);
+
+        xComboBox5.setCaption("Collection");
+        xComboBox5.setExpression("#{item.caption}");
+        xComboBox5.setItems("collectiontypes");
+        xComboBox5.setName("entity.collectiontype"); // NOI18N
+        xComboBox5.setPreferredSize(new java.awt.Dimension(0, 20));
+        xFormPanel1.add(xComboBox5);
 
         xComboBox3.setCaption("Collector");
         xComboBox3.setExpression("#{item.lastname+\", \"+item.firstname}");
@@ -141,6 +149,7 @@ public class AbstractRPTCollectionPage extends javax.swing.JPanel {
     private com.rameses.rcp.control.XComboBox xComboBox2;
     private com.rameses.rcp.control.XComboBox xComboBox3;
     private com.rameses.rcp.control.XComboBox xComboBox4;
+    private com.rameses.rcp.control.XComboBox xComboBox5;
     private com.rameses.rcp.control.XDateField xDateField1;
     private com.rameses.rcp.control.XDateField xDateField2;
     private com.rameses.rcp.control.XDateField xDateField3;

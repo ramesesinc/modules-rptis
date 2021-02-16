@@ -57,7 +57,7 @@ class StatementOfShareReportModel extends com.rameses.gov.etracs.landtax.report.
     }
     
     def getPeriods(){
-        return ["Monthly"];
+        return ["Monthly", "Daily"];
     }
 
 }

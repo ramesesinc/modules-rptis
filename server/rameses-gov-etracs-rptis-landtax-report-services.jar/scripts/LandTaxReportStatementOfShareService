@@ -82,18 +82,7 @@ class LandTaxReportStatementOfShareService{
 
     @ProxyMethod
     public def generateBasicSharesAbstract( params ) {
-        String idx = (params.month.index+'').padLeft(2, '0')
-        params.fromdate = dtsvc.parse('yyyy-MM-dd', params.year+"-"+idx+"-01")
-        params.todate = dtsvc.getMonthEndDate(dtsvc.parse("yyyy-MM-dd",params.fromdate))
-        params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.todate),"1d")
-
-        def period = 'For the Month of ' + dtsvc.format('MMMMM, yyyy', params.fromdate)
-
-        params.filter = ' cv.controldate >= $P{fromdate} AND cv.controldate < $P{todate} '
-        if (params.postingtype && params.postingtype.code == 'byrem'){
-            params.filter = ' rem.controldate >= $P{fromdate} AND rem.controldate < $P{todate} '
-        }
-
+        buildDateFilters(params)
         def shares = em.getBasicSharesAbstract(params)
         if (!shares) 
             throw new Exception('Records not found.')
@@ -106,7 +95,7 @@ class LandTaxReportStatementOfShareService{
         }
 
         return [
-            params : [PERIOD : period],  
+            params : [PERIOD : params.periodtitle],  
             shares : shares
         ]
     }
@@ -114,17 +103,7 @@ class LandTaxReportStatementOfShareService{
 
     @ProxyMethod
     public def generateBasicShares( params ) {
-        String idx = (params.month.index+'').padLeft(2, '0')
-        params.fromdate = dtsvc.parse('yyyy-MM-dd', params.year+"-"+idx+"-01")
-        params.todate = dtsvc.getMonthEndDate(dtsvc.parse("yyyy-MM-dd",params.fromdate))
-        params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.todate),"1d")
-
-        def period = 'For the Month of ' + dtsvc.format('MMMMM, yyyy', params.fromdate)
-        params.filter = ' cv.controldate >= $P{fromdate} AND cv.controldate < $P{todate} '
-        if (params.postingtype && params.postingtype.code == 'byrem'){
-            params.filter = ' rem.controldate >= $P{fromdate} AND rem.controldate < $P{todate} '
-        }
-        
+        buildDateFilters(params)
         def shares = em.getBasicShares(params)
         if (!shares) 
             throw new Exception('Records not found.')
@@ -137,30 +116,19 @@ class LandTaxReportStatementOfShareService{
         }
 
         return [
-            params : [PERIOD : period],  
+            params : [PERIOD : params.periodtitle],  
             shares : shares
         ]
     }
 
     @ProxyMethod
     public def generateBasicSharesSummary( params ) {
-        String idx = (params.month.index+'').padLeft(2, '0')
-        params.fromdate = dtsvc.parse('yyyy-MM-dd', params.year+"-"+idx+"-01")
-        params.todate = dtsvc.getMonthEndDate(dtsvc.parse("yyyy-MM-dd",params.fromdate))
-        params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.todate),"1d")
-
-        def period = 'For the Month of ' + dtsvc.format('MMMMM, yyyy', params.fromdate)
-        params.filter = ' cv.controldate >= $P{fromdate} AND cv.controldate < $P{todate} '
-        if (params.postingtype && params.postingtype.code == 'byrem'){
-            params.filter = ' rem.controldate >= $P{fromdate} AND rem.controldate < $P{todate} '
-        }
-        
-
+        buildDateFilters(params)
         def shares = em.getBasicSharesSummary(params)
         if (!shares) 
             throw new Exception('Records not found.')
         return [
-            params : [PERIOD : period],  
+            params : [PERIOD : params.periodtitle],  
             shares : shares
         ]
     }   
@@ -169,16 +137,7 @@ class LandTaxReportStatementOfShareService{
 
     @ProxyMethod
     public def generateSefShares( params ) {
-        String idx = (params.month.index+'').padLeft(2, '0')
-        params.fromdate = dtsvc.parse('yyyy-MM-dd', params.year+"-"+idx+"-01")
-        params.todate = dtsvc.getMonthEndDate(dtsvc.parse("yyyy-MM-dd",params.fromdate))
-        params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.todate),"1d")
-
-        def period = 'For the Month of ' + dtsvc.format('MMMMM, yyyy', params.fromdate)
-        params.filter = ' cv.controldate >= $P{fromdate} AND cv.controldate < $P{todate} '
-        if (params.postingtype && params.postingtype.code == 'byrem'){
-            params.filter = ' rem.controldate >= $P{fromdate} AND rem.controldate < $P{todate} '
-        }
+        buildDateFilters(params)
         def shares = em.getSefShares(params)
         if (!shares) 
             throw new Exception('Records not found.')
@@ -186,29 +145,19 @@ class LandTaxReportStatementOfShareService{
         shares[0].totalshare = shares[0].munisharetotal + shares[0].provsharetotal
 
         return [
-            params : [PERIOD : period],  
+            params : [PERIOD : params.periodtitle],  
             shares : shares
         ]
     }
 
     @ProxyMethod
     public def getBarangayShares(params) {
-        String idx = (params.month.index+'').padLeft(2, '0')
-        params.fromdate = dtsvc.parse('yyyy-MM-dd', params.year+"-"+idx+"-01")
-        params.todate = dtsvc.getMonthEndDate(dtsvc.parse("yyyy-MM-dd",params.fromdate))
-        params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.todate),"1d")
-
-        def period = 'For the Month of ' + dtsvc.format('MMMMM, yyyy', params.fromdate)
-        params.filter = ' cv.controldate >= $P{fromdate} AND cv.controldate < $P{todate} '
-        if (params.postingtype && params.postingtype.code == 'byrem'){
-            params.filter = ' rem.controldate >= $P{fromdate} AND rem.controldate < $P{todate} '
-        }
-
+        buildDateFilters(params)
         def shares = em.getBrgyShares( params) 
         if(! shares )  throw new Exception('Records not found.')
         
         return [
-            params : [PERIOD : period],  
+            params : [PERIOD : params.periodtitle],  
             shares : shares
         ]
     }
@@ -280,5 +229,26 @@ class LandTaxReportStatementOfShareService{
             it.lgushare = 0.0
         }
         return shares 
+    }
+
+
+    void buildDateFilters(params) {
+        if ("daily".equalsIgnoreCase(params.period)) {
+            String idx = (params.month.index+'').padLeft(2, '0')
+            params.fromdate = dtsvc.parse('yyyy-MM-dd', params.date)
+            params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.fromdate),"1d")
+            params.periodtitle = 'For ' + dtsvc.format('MMMMM dd, yyyy', params.fromdate)
+        } else {
+            String idx = (params.month.index+'').padLeft(2, '0')
+            params.fromdate = dtsvc.parse('yyyy-MM-dd', params.year+"-"+idx+"-01")
+            params.todate = dtsvc.getMonthEndDate(dtsvc.parse("yyyy-MM-dd",params.fromdate))
+            params.todate = dtsvc.add(dtsvc.parse("yyyy-MM-dd",params.todate),"1d")
+            params.periodtitle = 'For the Month of ' + dtsvc.format('MMMMM, yyyy', params.fromdate)
+        }
+
+        params.filter = ' cv.controldate >= $P{fromdate} AND cv.controldate < $P{todate} '
+        if (params.postingtype && params.postingtype.code == 'byrem'){
+            params.filter = ' rem.controldate >= $P{fromdate} AND rem.controldate < $P{todate} '
+        }
     }
 }

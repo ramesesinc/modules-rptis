@@ -52,6 +52,13 @@ class AbstractRPTCollectionReportModel {
         [code:'byrem', caption:'By Remittance Date'],
     ]
 
+    def collectiontypes = [
+        [code: 'advance', caption: 'ADVANCE'],
+        [code: 'current', caption: 'CURRENT'],
+        [code: 'previous', caption: 'PREVIOUS'],
+        [code: 'currprev', caption: 'CURRENT/PREVIOUS'],
+    ]
+
     def initReport(){
         return 'default'
     }

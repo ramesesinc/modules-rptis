@@ -38,6 +38,8 @@
 	<parameter name="TITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="AbstractItem" isForPrompting="false" class="java.lang.Object"/>
 	<parameter name="AbstractAdvance" isForPrompting="false" class="java.lang.Object"/>
+	<parameter name="COLLECTIONTYPE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="COLLECTION" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="items" class="java.lang.Object"/>
 	<field name="advitems" class="java.lang.Object"/>
@@ -59,6 +61,7 @@
 			<groupExpression><![CDATA[]]></groupExpression>
 			<groupHeader>
 			<band height="32"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[$P{COLLECTIONTYPE} != 'advance']]></printWhenExpression>
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
@@ -102,7 +105,7 @@
 			</band>
 		</background>
 		<title>
-			<band height="108"  isSplitAllowed="true" >
+			<band height="118"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
 						mode="Transparent"
@@ -262,6 +265,26 @@
 						<font fontName="Tahoma" pdfFontName="Helvetica-Bold" size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{TITLE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="95"
+						width="770"
+						height="12"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-57"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Tahoma" pdfFontName="Helvetica" size="8" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{COLLECTION}]]></textFieldExpression>
 				</textField>
 			</band>
 		</title>

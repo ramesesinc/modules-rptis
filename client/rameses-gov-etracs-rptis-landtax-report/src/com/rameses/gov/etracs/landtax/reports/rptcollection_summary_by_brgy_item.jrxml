@@ -84,7 +84,7 @@
 		<variableExpression><![CDATA[$F{priortax}]]></variableExpression>
 	</variable>
 	<variable name="priorint" class="java.lang.Number" resetType="Group" resetGroup="BARANGAY" calculation="Sum">
-		<variableExpression><![CDATA[$F{priortax}]]></variableExpression>
+		<variableExpression><![CDATA[$F{priorint}]]></variableExpression>
 	</variable>
 	<variable name="subtotaltax" class="java.lang.Number" resetType="Group" resetGroup="BARANGAY" calculation="Sum">
 		<variableExpression><![CDATA[$F{subtotaltax}]]></variableExpression>
@@ -111,7 +111,7 @@
 		<variableExpression><![CDATA[$F{subtotaltax}]]></variableExpression>
 	</variable>
 	<variable name="tpriorint" class="java.lang.Number" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{priortax}]]></variableExpression>
+		<variableExpression><![CDATA[$F{priorint}]]></variableExpression>
 	</variable>
 	<variable name="tpriortax" class="java.lang.Number" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{priortax}]]></variableExpression>
