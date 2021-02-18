@@ -2,5 +2,8 @@
 <workunit extends="rpt_wtemplates/TxnLogs.xml">
     <invokers>
         <invoker type="faas:actions" caption="View Logs" index="100" visibleWhen="#{mode=='read'}" target="popup"/>
+        <invoker type="faas:formActions" caption="Logs" visibleWhen="#{mode=='read' &amp;&amp; !entity.state.matches('CURRENT|CANCELLED')}" index="100000" target="popup" />
+        <invoker type="faaslist:formActions" caption="Logs" visibleWhen="#{selectedEntity != null}" depends="listHandler.selectedEntity" index="100000" target="popup" />
+        <invoker type="faas:list:formActions" caption="Logs" visibleWhen="#{selectedEntity != null}" index="100000" target="popup" />
     </invokers>
 </workunit>
