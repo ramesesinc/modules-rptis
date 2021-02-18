@@ -86,7 +86,6 @@ rule "build-assessment"
 end
 
 
-
 rule "calc-total-av"
 	agenda-group "AFTER-SUMMARY"
 	salience 1
@@ -129,10 +128,9 @@ rule "recalc-rpu-total-av"
 		bindings.put("TOTAL_AV", TOTAL_AV );
 		Map _p0 = new HashMap();
 		_p0.put( "rpu", RPU );
-		_p0.put( "expr", (new ActionExpression("TOTAL_AV", bindings)) );
+		_p0.put( "expr", (new ActionExpression("@ROUNDTOTEN(TOTAL_AV)", bindings)) );
 		action.execute( "recalc-rpu-totalav",_p0,drools);
 end
-
 
 	
 	
