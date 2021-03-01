@@ -34,6 +34,8 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
         xFormPanel2 = new com.rameses.rcp.control.XFormPanel();
         xIntegerField1 = new com.rameses.rcp.control.XIntegerField();
 
+        xDataTable1.setHandler("landListHandler");
+        xDataTable1.setName("selectedItem"); // NOI18N
         com.rameses.rcp.control.border.XTitledBorder xTitledBorder1 = new com.rameses.rcp.control.border.XTitledBorder();
         xTitledBorder1.setTitle("Consolidated Lands");
         xDataTable1.setBorder(xTitledBorder1);
@@ -49,11 +51,13 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", true}
                 , new Object[]{"editableWhen", "#{item.objid == null}"}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.LookupColumnHandler("#{item.faas.tdno}", "lookupFaas")}
             }),
             new com.rameses.rcp.common.Column(new Object[]{
-                new Object[]{"name", "rpu.fullpin"}
+                new Object[]{"name", "faas.fullpin"}
                 , new Object[]{"caption", "PIN No."}
                 , new Object[]{"width", 180}
                 , new Object[]{"minWidth", 0}
@@ -62,6 +66,8 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.TextColumnHandler()}
             }),
@@ -75,6 +81,8 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.00", -1.0, -1.0, false, 0)}
             }),
@@ -88,13 +96,13 @@ public class ConsolidatedLandPage extends javax.swing.JPanel {
                 , new Object[]{"resizable", true}
                 , new Object[]{"nullWhenEmpty", true}
                 , new Object[]{"editable", false}
+                , new Object[]{"visible", true}
+                , new Object[]{"visibleWhen", null}
                 , new Object[]{"textCase", com.rameses.rcp.constant.TextCase.UPPER}
                 , new Object[]{"typeHandler", new com.rameses.rcp.common.DecimalColumnHandler("#,##0.0000", -1.0, -1.0, false, 0)}
             })
         });
-        xDataTable1.setHandler("landListHandler");
         xDataTable1.setImmediate(true);
-        xDataTable1.setName("selectedItem"); // NOI18N
         xDataTable1.setPreferredSize(new java.awt.Dimension(0, 0));
 
         xFormPanel1.setCaptionBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
