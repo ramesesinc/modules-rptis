@@ -13,7 +13,9 @@ import com.rameses.gov.etracs.rpt.subdivision.task.*;
 public class SubdivisionController extends AbstractSubdivisionController 
 {
     def getApproverTask(task){
-        if (task.state.matches('approver|provapprover'))
+        if (task.state.matches('muniapprover')) {
+            return new ApproveSubdivisionTask();
+        } else if (task.state.matches('approver|provapprover'))
             return new ManualApproveSubdivisionTask();
         else
             return new SubmitToProvinceSubdivisionTask();

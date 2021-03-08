@@ -46,14 +46,14 @@ public class ConsolidationModel extends com.rameses.gov.etracs.rpt.workflow.RPTW
             
     public void afterSignal(Object result){
         super.afterSignal(result);
-        if (task && task.state.matches('cityapprover|provapprover|forprovsubmission')){
+        if (task && task.state.matches('cityapprover|provapprover|muniapprover|forprovsubmission')){
             autoposting = true;
         }
     }
     
     
     public Object findPage(Map o){
-         if (task && task.state.matches('cityapprover|provapprover|forprovsubmission')){
+         if (task && task.state.matches('cityapprover|provapprover|muniapprover|forprovsubmission')){
              info = null;
              if (autoposting)
                 doApprove();

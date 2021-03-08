@@ -12,7 +12,9 @@ import com.rameses.util.MapBeanUtils;
 public class ConsolidationController extends AbstractConsolidationController
 {
     def getApproverTask(task){
-        if (task.state.matches('approver|provapprover'))
+        if (task.state.matches('muniapprover')) {
+            return new ApproveConsolidationTask();
+        } else if (task.state.matches('approver|provapprover'))
             return new ManualApproveConsolidationTask();
         else
             return new SubmitToProvinceConsolidationTask();
