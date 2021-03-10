@@ -40,7 +40,7 @@ class DownloadTask {
         }
     }
 
-    @Schedule(interval=120)
+    @Schedule(interval=900)
     public void rescheduleErrors( evt ) {
         mgmtSvc.rescheduleErrors();
     }
