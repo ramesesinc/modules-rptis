@@ -232,7 +232,7 @@ class RPTCertificationOnlineService {
 		required('refdate', params.refdate);
 		required('purpose', params.purpose);
 
-		def year = dtSvc.getServerYear()
+		def currdate = dtSvc.parseCurrentDate();
 		params.certid = 'RC' + new java.rmi.server.UID()
 
 		def reporttype = null;
@@ -257,6 +257,14 @@ class RPTCertificationOnlineService {
 			}
 		}
 
+		def faasledger = params.faases[0];
+		if (faasledger.lastyearpaid < currdate.year) {
+			throw new Exception('Ledger is not yet paid for the current year.')
+		}
+		if (faasledger.lastqtrpaid < currdate.qtr) {
+			throw new Exception('Ledger is not yet paid for the current quarter.')
+		}
+
 		def treasurer = getTreasurer()
 		def certifiedby = treasurer ? treasurer.name : "SYSTEM"
 		def certifiedbytitle = treasurer ? treasurer.title : "SYSTEM"
@@ -267,9 +275,9 @@ class RPTCertificationOnlineService {
         	certifiedby      : certifiedby,
         	certifiedbytitle : certifiedbytitle,
         	purpose          : params.purpose,
-			asofyear         : year,
-			year 			 : year,
-			qtr 			 : params.faases ? params.faases[0].lastqtrpaid : 4,
+			asofyear         : currdate.year,
+			year 			 : currdate.year,
+			qtr 			 : faasledger.lastqtrpaid != 4 ? faasledger.lastqtrpaid : 4,
 			items 			 : params.faases,
         	oramount         : 0.0,
         	stampamount      : 0.0,
